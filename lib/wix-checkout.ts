@@ -105,3 +105,29 @@ export async function createReservation(
     return null;
   }
 }
+
+export async function createPaymentRedirect(args: {
+  reservationId: string;
+  eventSlug: string;
+  thankYouPageUrl: string;
+  postFlowUrl: string;
+}): Promise<string | null> {
+  const token = await getVisitorToken();
+  if (!token) return null;
+  try {
+    const res = await fetch(`${API}/redirect-session/v1/redirect-session`, {
+      method: "POST",
+      headers: { Authorization: token, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        eventsCheckout: { reservationId: args.reservationId, eventSlug: args.eventSlug },
+        callbacks: { thankYouPageUrl: args.thankYouPageUrl, postFlowUrl: args.postFlowUrl },
+      }),
+      cache: "no-store",
+    });
+    if (!res.ok) return null;
+    const { redirectSession } = (await res.json()) as { redirectSession?: { fullUrl?: string } };
+    return redirectSession?.fullUrl ?? null;
+  } catch {
+    return null;
+  }
+}

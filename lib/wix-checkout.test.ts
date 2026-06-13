@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { queryAvailableTickets, createReservation } from "./wix-checkout";
+import { queryAvailableTickets, createReservation, createPaymentRedirect } from "./wix-checkout";
 
 const TOKEN_RES = { access_token: "visitor-token-abc" };
 
@@ -89,5 +89,39 @@ describe("createReservation", () => {
     mockFetchSequence([{ json: TOKEN_RES }, { ok: false, json: {} }]);
     const result = await createReservation([{ ticketDefinitionId: "ga", quantity: 1 }]);
     expect(result).toBeNull();
+  });
+});
+
+describe("createPaymentRedirect", () => {
+  it("creates a redirect session and returns the full url", async () => {
+    const fetchMock = mockFetchSequence([
+      { json: TOKEN_RES },
+      { json: { redirectSession: { fullUrl: "https://wix.example/redirect?token=xyz" } } },
+    ]);
+
+    const url = await createPaymentRedirect({
+      reservationId: "res-1",
+      eventSlug: "opening-night",
+      thankYouPageUrl: "https://site.test/thank-you",
+      postFlowUrl: "https://site.test/",
+    });
+
+    expect(url).toBe("https://wix.example/redirect?token=xyz");
+    const body = JSON.parse(fetchMock.mock.calls[1][1].body);
+    expect(body).toEqual({
+      eventsCheckout: { reservationId: "res-1", eventSlug: "opening-night" },
+      callbacks: { thankYouPageUrl: "https://site.test/thank-you", postFlowUrl: "https://site.test/" },
+    });
+  });
+
+  it("returns null when the session call fails", async () => {
+    mockFetchSequence([{ json: TOKEN_RES }, { ok: false, json: {} }]);
+    const url = await createPaymentRedirect({
+      reservationId: "res-1",
+      eventSlug: "opening-night",
+      thankYouPageUrl: "https://site.test/thank-you",
+      postFlowUrl: "https://site.test/",
+    });
+    expect(url).toBeNull();
   });
 });
