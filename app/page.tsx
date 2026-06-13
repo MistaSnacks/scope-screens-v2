@@ -12,6 +12,7 @@ import { ScheduleSection } from "@/components/schedule-section";
 import { SupportPress } from "@/components/support-press";
 import { SiteFooter } from "@/components/site-footer";
 import { FOUNDER } from "@/lib/festival";
+import { getPurchasableTargets } from "@/lib/wix-checkout";
 
 const FOUNDER_QUOTE =
   "A lot of my peers never had the chance to see their work on a big screen. I built this for access, for collaboration, and to break down the barriers placed in front of Black, brown, and tan creatives.";
@@ -38,7 +39,8 @@ function FilmRail() {
   );
 }
 
-export default function Home() {
+export default async function Home() {
+  const { nextShow, seasonPass } = await getPurchasableTargets();
   const stat = [
     { n: "200+", l: "Films" },
     { n: "150+", l: "Filmmakers" },
@@ -57,7 +59,7 @@ export default function Home() {
       <Marquee />
 
       <div id="tickets" className="scroll-mt-[120px]">
-        <BuyTickets />
+        <BuyTickets nextShow={nextShow} seasonPass={seasonPass} />
       </div>
 
       <div id="about" className="scroll-mt-[120px]">

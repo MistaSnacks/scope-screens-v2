@@ -1,4 +1,8 @@
+"use client";
+
 import { SEASON_PASS, VENUE, nextScreening, reserveUrl, ticketUrl } from "@/lib/festival";
+import { useCheckout } from "@/components/checkout/checkout-context";
+import type { CheckoutTarget } from "@/lib/wix-checkout";
 
 const INK_BARCODE =
   "repeating-linear-gradient(90deg,#0b0a09 0,#0b0a09 2px,transparent 2px,transparent 4px,#0b0a09 4px,#0b0a09 7px,transparent 7px,transparent 9px)";
@@ -16,16 +20,11 @@ function Perforation() {
   );
 }
 
-function NightTicket() {
+function NightTicket({ target }: { target: CheckoutTarget | null }) {
   const next = nextScreening();
-  return (
-    <a
-      href={reserveUrl(next)}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="ticket relative flex w-[548px] max-w-full shrink-0 -rotate-[1.5deg] [filter:drop-shadow(0_28px_55px_rgba(0,0,0,0.45))]"
-      aria-label={`Buy tickets for ${next.title}, ${next.label}`}
-    >
+  const { openCheckout } = useCheckout();
+  const body = (
+    <>
       {/* Body */}
       <div className="relative flex w-[380px] flex-col gap-4 overflow-hidden rounded-l-2xl border border-r-0 border-faint bg-cream px-8 py-7 text-ink">
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -76,19 +75,38 @@ function NightTicket() {
         style={{ backgroundImage: "url(/grain.png)", backgroundSize: "cover" }}
         aria-hidden
       />
+    </>
+  );
+  const className =
+    "ticket relative flex w-[548px] max-w-full shrink-0 -rotate-[1.5deg] [filter:drop-shadow(0_28px_55px_rgba(0,0,0,0.45))]";
+  return target ? (
+    <button
+      type="button"
+      onClick={() => openCheckout(target)}
+      aria-label={`Buy tickets for ${target.title}`}
+      className={`${className} cursor-pointer border-0 bg-transparent p-0 text-left`}
+    >
+      {body}
+    </button>
+  ) : (
+    <a
+      href={reserveUrl(next)}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={className}
+      aria-label={`Buy tickets for ${next.title}, ${next.label}`}
+    >
+      {body}
     </a>
   );
 }
 
-function SeasonPassLanyard() {
-  return (
-    <a
-      href={ticketUrl(SEASON_PASS.slug)}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="lanyard relative flex w-[248px] shrink-0 flex-col items-center [filter:drop-shadow(0_24px_42px_rgba(0,0,0,0.5))]"
-      aria-label="Buy a Season Pass — all seven nights"
-    >
+function SeasonPassLanyard({ target }: { target: CheckoutTarget | null }) {
+  const { openCheckout } = useCheckout();
+  const lanyardClassName =
+    "lanyard relative flex w-[248px] shrink-0 flex-col items-center [filter:drop-shadow(0_24px_42px_rgba(0,0,0,0.5))]";
+  const body = (
+    <>
       {/* Strap V + clip — woven black with the repeating wordmark */}
       <div className="relative h-[60px] w-[210px]">
         <span className="absolute bottom-0.5 left-[78px] h-24 w-[26px] origin-bottom rotate-[20deg] overflow-hidden rounded-[3px] border border-cream/10 bg-ink">
@@ -157,11 +175,37 @@ function SeasonPassLanyard() {
         </div>
         <span className="mt-2 font-mono text-[10px] tracking-[0.14em] text-cream/55">SS-SP-006 · TAP TO BUY ›</span>
       </div>
+    </>
+  );
+  return target ? (
+    <button
+      type="button"
+      onClick={() => openCheckout(target)}
+      aria-label="Buy a Season Pass — all seven nights"
+      className={`${lanyardClassName} cursor-pointer border-0 bg-transparent p-0 text-left`}
+    >
+      {body}
+    </button>
+  ) : (
+    <a
+      href={ticketUrl(SEASON_PASS.slug)}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={lanyardClassName}
+      aria-label="Buy a Season Pass — all seven nights"
+    >
+      {body}
     </a>
   );
 }
 
-export function BuyTickets() {
+export function BuyTickets({
+  nextShow,
+  seasonPass,
+}: {
+  nextShow: CheckoutTarget | null;
+  seasonPass: CheckoutTarget | null;
+}) {
   return (
     <section className="flex flex-col items-center gap-14 overflow-hidden border-t border-cream/10 px-5 py-24 md:px-[90px]">
       {/* Heading on top — like the Program section */}
@@ -182,10 +226,10 @@ export function BuyTickets() {
       {/* Ticket + lanyard underneath — scaled so neither overpowers the other */}
       <div className="flex w-full flex-col items-center justify-center gap-6 md:flex-row md:items-center md:gap-14">
         <div className="origin-center scale-[0.58] sm:scale-75 md:scale-[0.9]">
-          <NightTicket />
+          <NightTicket target={nextShow} />
         </div>
         <div className="origin-center md:scale-[1.12]">
-          <SeasonPassLanyard />
+          <SeasonPassLanyard target={seasonPass} />
         </div>
       </div>
     </section>

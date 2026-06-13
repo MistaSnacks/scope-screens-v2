@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { aachen, cinzel, libreFranklin, anton, fraunces, jetbrainsMono } from "./fonts";
 import { GrainOverlay } from "@/components/grain-overlay";
 import { ThemeProvider } from "@/components/theme-provider";
+import { CheckoutProvider } from "@/components/checkout/checkout-context";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -27,7 +28,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <ThemeProvider>
           <GrainOverlay />
-          {children}
+          <CheckoutProvider>{children}</CheckoutProvider>
         </ThemeProvider>
       </body>
     </html>
