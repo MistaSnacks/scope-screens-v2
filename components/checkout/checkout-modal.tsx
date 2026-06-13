@@ -69,7 +69,7 @@ export function CheckoutModal({ target, onClose }: { target: CheckoutTarget; onC
   return (
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center bg-ink/80 p-4"
-      onClick={onClose}
+      onClick={submitting ? undefined : onClose}
     >
       <div
         role="dialog"
@@ -81,7 +81,8 @@ export function CheckoutModal({ target, onClose }: { target: CheckoutTarget; onC
         <button
           type="button"
           aria-label="Close"
-          onClick={onClose}
+          onClick={submitting ? undefined : onClose}
+          disabled={submitting}
           className="absolute right-4 top-4 font-body text-xl leading-none text-smoke hover:text-fg"
         >
           ×
@@ -106,29 +107,33 @@ export function CheckoutModal({ target, onClose }: { target: CheckoutTarget; onC
         )}
 
         {state.phase === "ready" && (
-          <>
-            <TicketPicker
-              tiers={state.tiers}
-              quantities={quantities}
-              onChange={(id, q) => setQuantities((prev) => ({ ...prev, [id]: q }))}
-            />
-            <div className="flex items-center justify-between border-t border-faint pt-4">
-              <span className="font-mono text-[13px] uppercase tracking-[0.14em] text-smoke">Total</span>
-              <span className="font-marquee text-[28px] leading-none text-rust">${total.toFixed(2)}</span>
-            </div>
-            {submitError && <p className="font-body text-[13px] text-rust">{submitError}</p>}
-            <button
-              type="button"
-              disabled={!hasSelection || submitting}
-              onClick={handlePay}
-              className="rounded-lg bg-curtain py-3.5 font-body text-[14px] font-extrabold uppercase tracking-[0.06em] text-cream disabled:opacity-40"
-            >
-              {submitting ? "Starting checkout…" : "Reserve & Pay ›"}
-            </button>
-            <p className="text-center font-mono text-[10px] tracking-[0.1em] text-smoke">
-              Secure payment completed on Wix · seats held ~20 min
-            </p>
-          </>
+          state.tiers.length === 0 ? (
+            <p className="font-body text-smoke">No tickets are available for this show right now.</p>
+          ) : (
+            <>
+              <TicketPicker
+                tiers={state.tiers}
+                quantities={quantities}
+                onChange={(id, q) => setQuantities((prev) => ({ ...prev, [id]: q }))}
+              />
+              <div className="flex items-center justify-between border-t border-faint pt-4">
+                <span className="font-mono text-[13px] uppercase tracking-[0.14em] text-smoke">Total</span>
+                <span className="font-marquee text-[28px] leading-none text-rust">${total.toFixed(2)}</span>
+              </div>
+              {submitError && <p className="font-body text-[13px] text-rust">{submitError}</p>}
+              <button
+                type="button"
+                disabled={!hasSelection || submitting}
+                onClick={handlePay}
+                className="rounded-lg bg-curtain py-3.5 font-body text-[14px] font-extrabold uppercase tracking-[0.06em] text-cream disabled:opacity-40"
+              >
+                {submitting ? "Starting checkout…" : "Reserve & Pay ›"}
+              </button>
+              <p className="text-center font-mono text-[10px] tracking-[0.1em] text-smoke">
+                Secure payment completed on Wix · seats held ~20 min
+              </p>
+            </>
+          )
         )}
       </div>
     </div>

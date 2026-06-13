@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "could not reserve tickets" }, { status: 502 });
   }
 
-  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? new URL(request.url).origin;
+  const origin = (process.env.NEXT_PUBLIC_SITE_URL ?? new URL(request.url).origin).replace(/\/$/, "");
   const redirectUrl = await createPaymentRedirect({
     reservationId: reservation.reservationId,
     eventSlug: body.eventSlug,

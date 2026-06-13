@@ -147,4 +147,21 @@ describe("getPurchasableTargets", () => {
     const targets = await getPurchasableTargets();
     expect(targets).toEqual({ nextShow: null, seasonPass: null });
   });
+
+  it("returns null nextShow when every screening is in the past", async () => {
+    mockFetchSequence([
+      { json: TOKEN_RES },
+      {
+        json: {
+          events: [
+            { id: "pass5", slug: "season-pass-5", title: "Season Pass for Scope Screenings Season 5", dateAndTimeSettings: {} },
+            { id: "past", slug: "old-night", title: "Scope Screenings: August 26", dateAndTimeSettings: { startDate: "2020-01-01T00:00:00Z" } },
+          ],
+        },
+      },
+    ]);
+    const targets = await getPurchasableTargets();
+    expect(targets.nextShow).toBeNull();
+    expect(targets.seasonPass).toEqual({ eventId: "pass5", eventSlug: "season-pass-5", title: "Season Pass for Scope Screenings Season 5" });
+  });
 });
