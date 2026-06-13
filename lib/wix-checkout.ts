@@ -131,3 +131,63 @@ export async function createPaymentRedirect(args: {
     return null;
   }
 }
+
+export interface CheckoutTarget {
+  eventId: string;
+  eventSlug: string;
+  title: string;
+}
+
+interface WixEventRow {
+  id?: string;
+  slug?: string;
+  title?: string;
+  dateAndTimeSettings?: { startDate?: string };
+}
+
+function nowIso(): string {
+  // Server evaluation time; safe in a server module.
+  return new Date().toISOString();
+}
+
+export async function getPurchasableTargets(): Promise<{
+  nextShow: CheckoutTarget | null;
+  seasonPass: CheckoutTarget | null;
+}> {
+  const empty = { nextShow: null, seasonPass: null };
+  const token = await getVisitorToken();
+  if (!token) return empty;
+  try {
+    const res = await fetch(`${API}/events/v3/events/query`, {
+      method: "POST",
+      headers: { Authorization: token, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        query: { paging: { limit: 50 }, sort: [{ fieldName: "dateAndTimeSettings.startDate", order: "ASC" }] },
+      }),
+      next: { revalidate: 600 },
+    });
+    if (!res.ok) return empty;
+    const { events } = (await res.json()) as { events?: WixEventRow[] };
+    if (!events) return empty;
+
+    const isPass = (e: WixEventRow) => /season pass/i.test(e.title ?? "");
+    const toTarget = (e: WixEventRow): CheckoutTarget | null =>
+      e.id && e.slug ? { eventId: e.id, eventSlug: e.slug, title: e.title ?? "" } : null;
+
+    const today = nowIso();
+    const nextShowRow = events
+      .filter((e) => !isPass(e) && (e.dateAndTimeSettings?.startDate ?? "") >= today)
+      .sort((a, b) => (a.dateAndTimeSettings?.startDate ?? "").localeCompare(b.dateAndTimeSettings?.startDate ?? ""))[0];
+
+    // Season pass rows often have no startDate; pick the last one (newest season).
+    const passRows = events.filter(isPass);
+    const passRow = passRows[passRows.length - 1];
+
+    return {
+      nextShow: nextShowRow ? toTarget(nextShowRow) : null,
+      seasonPass: passRow ? toTarget(passRow) : null,
+    };
+  } catch {
+    return empty;
+  }
+}

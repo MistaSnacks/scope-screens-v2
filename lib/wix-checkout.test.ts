@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { queryAvailableTickets, createReservation, createPaymentRedirect } from "./wix-checkout";
+import { queryAvailableTickets, createReservation, createPaymentRedirect, getPurchasableTargets } from "./wix-checkout";
 
 const TOKEN_RES = { access_token: "visitor-token-abc" };
 
@@ -123,5 +123,28 @@ describe("createPaymentRedirect", () => {
       postFlowUrl: "https://site.test/",
     });
     expect(url).toBeNull();
+  });
+});
+
+describe("getPurchasableTargets", () => {
+  const EVENTS = {
+    events: [
+      { id: "pass5", slug: "season-pass-5", title: "Season Pass for Scope Screenings Season 5", dateAndTimeSettings: {} },
+      { id: "past", slug: "old-night", title: "Scope Screenings: August 26", dateAndTimeSettings: { startDate: "2020-01-01T00:00:00Z" } },
+      { id: "next", slug: "opening-night", title: "Scope Screenings: Opening Night", dateAndTimeSettings: { startDate: "2999-01-01T00:00:00Z" } },
+    ],
+  };
+
+  it("picks the soonest upcoming non-pass screening and the season pass", async () => {
+    mockFetchSequence([{ json: TOKEN_RES }, { json: EVENTS }]);
+    const targets = await getPurchasableTargets();
+    expect(targets?.nextShow).toEqual({ eventId: "next", eventSlug: "opening-night", title: "Scope Screenings: Opening Night" });
+    expect(targets?.seasonPass).toEqual({ eventId: "pass5", eventSlug: "season-pass-5", title: "Season Pass for Scope Screenings Season 5" });
+  });
+
+  it("returns null targets gracefully when the events call fails", async () => {
+    mockFetchSequence([{ json: TOKEN_RES }, { ok: false, json: {} }]);
+    const targets = await getPurchasableTargets();
+    expect(targets).toEqual({ nextShow: null, seasonPass: null });
   });
 });
