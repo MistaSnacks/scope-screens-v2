@@ -58,4 +58,10 @@ describe("queryAvailableTickets", () => {
     const tiers = await queryAvailableTickets("event-1");
     expect(tiers).toBeNull();
   });
+
+  it("returns null when the token call fails", async () => {
+    mockFetchSequence([{ ok: false, json: {} }]);
+    const tiers = await queryAvailableTickets("event-1");
+    expect(tiers).toBeNull();
+  });
 });

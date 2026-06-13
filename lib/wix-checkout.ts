@@ -55,7 +55,7 @@ export async function queryAvailableTickets(eventId: string): Promise<TicketTier
     const { definitions } = (await res.json()) as { definitions?: WixDefinition[] };
     if (!definitions) return null;
     return definitions.map((d) => {
-      const amount = Number(d.price?.amount ?? "0");
+      const amount = Number(d.price?.amount ?? "0") || 0; // guard against NaN from a bad price string
       const currency = d.price?.currency ?? "USD";
       const free = amount === 0;
       return {
