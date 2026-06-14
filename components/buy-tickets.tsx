@@ -6,6 +6,8 @@ import type { CheckoutTarget } from "@/lib/wix-checkout";
 
 const INK_BARCODE =
   "repeating-linear-gradient(90deg,#0b0a09 0,#0b0a09 2px,transparent 2px,transparent 4px,#0b0a09 4px,#0b0a09 7px,transparent 7px,transparent 9px)";
+const CREAM_BARCODE =
+  "repeating-linear-gradient(90deg,#f7f3e6 0,#f7f3e6 2px,transparent 2px,transparent 4px,#f7f3e6 4px,#f7f3e6 7px,transparent 7px,transparent 9px)";
 
 function Perforation() {
   // Punched holes the colour of the section ground, straddling the tear seam.
@@ -126,52 +128,52 @@ function SeasonPassLanyard({ target }: { target: CheckoutTarget | null }) {
         </span>
       </div>
 
-      {/* Credential — bright collage face */}
+      {/* Credential — B&W documentary collage face */}
       <div
-        className="relative flex w-[248px] flex-col overflow-hidden rounded-2xl border border-faint bg-cream px-6 pb-5 pt-5"
+        className="relative flex w-[248px] flex-col overflow-hidden rounded-2xl border border-[#5a5550] bg-ink px-6 pb-5 pt-5"
         style={{
           backgroundImage: "url(/season-pass-collage.png)",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
-        {/* cream wash — keeps the collage as a faint texture while the card reads bright */}
+        {/* scrim for legibility */}
         <div
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              "linear-gradient(180deg,rgba(247,243,230,0.80) 0%,rgba(247,243,230,0.88) 55%,rgba(247,243,230,0.95) 100%)",
+              "linear-gradient(180deg,rgba(11,10,9,0.62) 0%,rgba(11,10,9,0.78) 55%,rgba(11,10,9,0.92) 100%)",
           }}
           aria-hidden
         />
-        <span className="mx-auto mb-3 h-2.5 w-16 rounded-full border border-ink/15 bg-ink/10" />
+        <span className="mx-auto mb-3 h-2.5 w-16 rounded-full border border-[#2a241b] bg-[#15120f]" />
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/popcorn-logo.png" alt="Scope Screenings" className="mb-1.5 -ml-0.5 h-12 w-auto self-start" />
         <div className="mb-1 flex flex-col gap-0.5">
-          <span className="font-marquee text-[13px] uppercase leading-none tracking-[0.02em] text-ink">Scope Screenings</span>
-          <span className="font-mono text-[7px] tracking-[0.16em] text-ink/45">live underground film festival</span>
+          <span className="font-marquee text-[13px] uppercase leading-none tracking-[0.02em] text-cream">Scope Screenings</span>
+          <span className="font-mono text-[7px] tracking-[0.16em] text-cream/60">live underground film festival</span>
         </div>
         <span className="font-mono text-[10px] tracking-[0.24em] text-rust">ALL-ACCESS · 2026</span>
-        <span className="mt-2 w-fit self-start rounded-[2px] bg-curtain px-[9px] pb-1.5 pt-1 font-marquee text-[29px] uppercase leading-none tracking-[-0.01em] text-cream">
+        <span className="mt-2 w-fit self-start rounded-[2px] bg-curtain px-[9px] pb-1.5 pt-1 font-marquee text-[29px] uppercase leading-none tracking-[-0.01em] text-ink">
           Season Pass
         </span>
-        <span className="my-3.5 border-t border-ink/15" />
+        <span className="my-3.5 border-t border-[#2a241b]" />
         <div className="flex items-center justify-between pb-2">
-          <span className="font-mono text-[10px] tracking-[0.16em] text-ink/45">ADMITS</span>
-          <span className="font-body text-[14px] font-bold text-ink">Bearer · All {SEASON_PASS.nights} Nights</span>
+          <span className="font-mono text-[10px] tracking-[0.16em] text-cream/50">ADMITS</span>
+          <span className="font-body text-[14px] font-bold text-cream">Bearer · All {SEASON_PASS.nights} Nights</span>
         </div>
         <div className="flex items-center justify-between">
-          <span className="font-mono text-[10px] tracking-[0.16em] text-ink/45">SEASON</span>
-          <span className="font-body text-[14px] font-bold text-ink">No. 05 · Jun–Dec</span>
+          <span className="font-mono text-[10px] tracking-[0.16em] text-cream/50">SEASON</span>
+          <span className="font-body text-[14px] font-bold text-cream">No. 05 · Jun–Dec</span>
         </div>
         <div className="flex items-end justify-between pt-3">
           <div className="flex flex-col">
             <span className="font-mono text-[10px] tracking-[0.16em] text-rust">SEASON PASS</span>
             <span className="font-marquee text-[38px] leading-none text-rust">{SEASON_PASS.gaPrice}</span>
           </div>
-          <div className="mb-1 h-8 w-[88px]" style={{ backgroundImage: INK_BARCODE }} aria-hidden />
+          <div className="mb-1 h-8 w-[88px]" style={{ backgroundImage: CREAM_BARCODE }} aria-hidden />
         </div>
-        <span className="mt-2 font-mono text-[10px] tracking-[0.14em] text-ink/50">SS-SP-006 · TAP TO BUY ›</span>
+        <span className="mt-2 font-mono text-[10px] tracking-[0.14em] text-cream/55">SS-SP-006 · TAP TO BUY ›</span>
       </div>
     </>
   );
