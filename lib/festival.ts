@@ -107,8 +107,8 @@ export function nextScreening(): Screening {
 
 export const SEASON_PASS = {
   slug: "season-pass-for-scope-screenings-season-5",
-  gaPrice: "$109",
-  vipPrice: "$550.50",
+  gaPrice: "$99",
+  vipPrice: "$500",
   nights: 7,
 } as const;
 
