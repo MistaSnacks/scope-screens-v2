@@ -7,6 +7,10 @@
   isolation: isolate;
 }
 
+.hero:not(.awaitingCurtains) .curtainStandIn {
+  visibility: hidden;
+}
+
 /* ---- The sizzle reel playing on the revealed screen ---- */
 /* Sits at the very back (z-1); the curtains (z-20) cover it when closed and
    part to reveal it. A scrim (z-2) keeps the title + credits legible. */
@@ -234,16 +238,26 @@
   pointer-events: none;
 }
 
-/* Source geometry for the billowing valance pelmet plane (full-width strip at
-   the very top). curtains.js renders the scalloped velvet into .glCanvas. */
-.valancePlane {
+/* SSR-visible first paint. NOT an approximation: /curtain-closed.jpg is a
+   screenshot of the real closed WebGL curtain, captured against the seeded
+   (deterministic) velvet — so it carries the shader's fold-lighting, seam
+   gradient and edge shading, identical to the live render. There is no fade:
+   once the real canvas has painted, this layer is hidden in the same frame the
+   screen becomes visible, and because the image and the WebGL first frame are
+   pixel-identical the swap is invisible. Stretched 100%×100% over the same rect
+   the planes occupy; both stretch their velvet by texcoord, so it tracks at any
+   viewport size. Regenerate with `.shots/capture-curtain.mjs` after the shaders
+   or the velvet SEED change. */
+.curtainStandIn {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 72px;
-  z-index: 20;
+  inset: 56px 0 0;
+  z-index: 21;
   pointer-events: none;
+  background-color: #3a0a0a; /* shows only if the image 404s */
+  background-image: url("/curtain-closed.jpg");
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .letterboxBottom {

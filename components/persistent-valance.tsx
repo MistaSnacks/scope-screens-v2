@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { generateVelvetDataUrl } from "@/lib/velvet";
+import { getVelvetDataUrl } from "@/lib/velvet";
 import { useTheme } from "./theme-provider";
 
 /**
@@ -13,15 +13,14 @@ import { useTheme } from "./theme-provider";
 export function PersistentValance() {
   const { theme } = useTheme();
   const house = theme === "house";
-  const [velvetSrc, setVelvetSrc] = useState<string>("");
+  const [velvetSrc, setVelvetSrc] = useState("");
 
   useEffect(() => {
-    setVelvetSrc(generateVelvetDataUrl(theme));
+    setVelvetSrc(getVelvetDataUrl());
   }, [theme]);
 
   const topShade = house ? "rgba(74,14,12,0.26)" : "rgba(0,0,0,0.55)";
   const botShade = house ? "rgba(74,14,12,0.3)" : "rgba(0,0,0,0.5)";
-  const fallback = house ? "#b22a20" : "#5a0f0f";
   const boxShadow = house
     ? "inset 0 -8px 20px rgba(120,30,24,0.38), inset 0 4px 0 rgba(224,177,90,0.25)"
     : "inset 0 -8px 24px rgba(0,0,0,0.6), inset 0 4px 0 rgba(224,177,90,0.15)";
@@ -31,15 +30,15 @@ export function PersistentValance() {
   return (
     <div aria-hidden className="pointer-events-none fixed inset-x-0 top-0 z-50">
       <div
-        className="flex h-[56px] w-full items-end justify-center"
+        className="flex h-[88px] w-full items-end justify-center"
         style={{
           backgroundImage: velvetSrc
             ? `linear-gradient(180deg, ${topShade} 0%, rgba(0,0,0,0) 35%, ${botShade} 100%), url(${velvetSrc})`
-            : `linear-gradient(180deg, ${fallback} 0%, #7a1414 40%, #4a0c0c 100%)`,
-          backgroundSize: velvetSrc ? "100% 100%, 256px 256px" : undefined,
-          backgroundRepeat: velvetSrc ? "no-repeat, repeat" : undefined,
-          backgroundColor: fallback,
-          boxShadow,
+            : undefined,
+          backgroundSize: "100% 100%, 256px 256px",
+          backgroundRepeat: "no-repeat, repeat",
+          boxShadow: velvetSrc ? boxShadow : undefined,
+          visibility: velvetSrc ? "visible" : "hidden",
         }}
       >
         <div className="flex h-[16px] w-full">
@@ -50,10 +49,9 @@ export function PersistentValance() {
               style={{
                 backgroundImage: velvetSrc
                   ? `linear-gradient(180deg, ${scallopTop} 0%, rgba(0,0,0,0.15) 50%, ${scallopBot} 100%), url(${velvetSrc})`
-                  : "linear-gradient(180deg, transparent 0%, #6a1212 50%, #4a0c0c 100%)",
-                backgroundSize: velvetSrc ? "100% 100%, 256px 256px" : undefined,
-                backgroundRepeat: velvetSrc ? "no-repeat, repeat" : undefined,
-                backgroundColor: fallback,
+                  : undefined,
+                backgroundSize: "100% 100%, 256px 256px",
+                backgroundRepeat: "no-repeat, repeat",
                 borderRadius: "0 0 50% 50%",
                 boxShadow: house
                   ? "inset 0 -4px 8px rgba(120,30,24,0.4)"

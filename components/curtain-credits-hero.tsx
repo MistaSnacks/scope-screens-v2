@@ -5,7 +5,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import styles from "./curtain-credits-hero.module.css";
-import { generateVelvetDataUrl } from "@/lib/velvet";
+import { getVelvetDataUrl } from "@/lib/velvet";
 import { useTheme } from "./theme-provider";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -100,6 +100,7 @@ interface PlaneLike {
 
 interface CurtainsLike {
   dispose: () => void;
+  resize: () => void;
 }
 
 interface Credit {
@@ -139,11 +140,14 @@ export function CurtainCreditsHero() {
   const curtainsRef = useRef<CurtainsLike | null>(null);
 
   const { theme } = useTheme();
-  const [velvetSrc, setVelvetSrc] = useState<string>("");
+  const [velvetSrc, setVelvetSrc] = useState("");
+  const [curtainsReady, setCurtainsReady] = useState(false);
+  const screenVisibility = curtainsReady ? "visible" : "hidden";
 
-  // Regenerate the velvet texture whenever the mode flips (lights up / down).
+  // The original procedural velvet remains the single visual source for the
+  // valance, first-paint panels, and animated WebGL curtains.
   useEffect(() => {
-    setVelvetSrc(generateVelvetDataUrl(theme));
+    setVelvetSrc(getVelvetDataUrl());
   }, [theme]);
 
   // WebGL velvet: two curtains.js planes textured with the procedural velvet.
@@ -152,77 +156,106 @@ export function CurtainCreditsHero() {
   useEffect(() => {
     if (!velvetSrc) return;
     let cancelled = false;
+    let revealFrame: number | null = null;
 
     (async () => {
-      const mod = await import("curtainsjs");
-      if (
-        cancelled ||
-        !canvasContainerRef.current ||
-        !leftPlaneEl.current ||
-        !rightPlaneEl.current
-      ) {
-        return;
+      try {
+        const mod = await import("curtainsjs");
+        if (
+          cancelled ||
+          !canvasContainerRef.current ||
+          !leftPlaneEl.current ||
+          !rightPlaneEl.current
+        ) {
+          return;
+        }
+
+        const { Curtains, Plane, Vec3 } = mod as unknown as {
+          Curtains: new (opts: object) => CurtainsLike;
+          Plane: new (renderer: CurtainsLike, el: HTMLElement, params: object) => PlaneLike;
+          Vec3: new (x: number, y: number, z: number) => unknown;
+        };
+
+        const curtains = new Curtains({
+          container: canvasContainerRef.current,
+          pixelRatio: Math.min(1.5, window.devicePixelRatio),
+          antialias: true,
+          alpha: true,
+          // Reveal the screen if WebGL is unavailable instead of leaving the
+          // entire hero permanently blank.
+          onError: () => {
+            if (!cancelled) setCurtainsReady(true);
+          },
+          // Hero is pinned by ScrollTrigger, so disable curtains' own scroll watch;
+          // the open is driven entirely by progress.
+          watchScroll: false,
+        });
+        curtainsRef.current = curtains;
+
+        const commonParams = {
+          widthSegments: 24,
+          heightSegments: 24,
+          vertexShader,
+          fragmentShader,
+        };
+
+        const leftPlane = new Plane(curtains, leftPlaneEl.current, {
+          ...commonParams,
+          uniforms: {
+            progress: { name: "uProgress", type: "1f", value: 0 },
+            time: { name: "uTime", type: "1f", value: 0 },
+            side: { name: "uSide", type: "1f", value: -1 },
+          },
+        });
+
+        const rightPlane = new Plane(curtains, rightPlaneEl.current, {
+          ...commonParams,
+          uniforms: {
+            progress: { name: "uProgress", type: "1f", value: 0 },
+            time: { name: "uTime", type: "1f", value: 0 },
+            side: { name: "uSide", type: "1f", value: 1 },
+          },
+        });
+
+        const tick = (plane: PlaneLike, side: number, el: HTMLDivElement | null) => {
+          const p = progressRef.current.value;
+          plane.uniforms.progress.value = p;
+          plane.uniforms.time.value += 0.016;
+          // Slide the plane off its own side to the framed resting position. y
+          // locked to 0 so it parts dead-flat horizontally. `|| ` (not `??`) so a
+          // 0-width measurement during a racy mount falls back too, instead of
+          // collapsing the translation and misaligning the halves.
+          const width = el?.offsetWidth || window.innerWidth / 2;
+          plane.setRelativeTranslation(
+            new Vec3(side * p * width * openFactorRef.current, 0, 0)
+          );
+        };
+        leftPlane.onRender(() => tick(leftPlane, -1, leftPlaneEl.current));
+        let firstFrame = true;
+        rightPlane.onRender(() => {
+          tick(rightPlane, 1, rightPlaneEl.current);
+          if (firstFrame) {
+            firstFrame = false;
+            // onRender runs immediately before Curtains.js draws. Reveal on the
+            // next browser frame so the real curtain pixels have been composited.
+            revealFrame = window.requestAnimationFrame(() => {
+              if (!cancelled) setCurtainsReady(true);
+            });
+          }
+        });
+
+        // Re-measure after the planes exist alongside the pinned hero so the two
+        // halves seat exactly against center on refresh and restored scroll.
+        curtains.resize();
+        ScrollTrigger.refresh();
+      } catch {
+        if (!cancelled) setCurtainsReady(true);
       }
-
-      const { Curtains, Plane, Vec3 } = mod as unknown as {
-        Curtains: new (opts: object) => CurtainsLike;
-        Plane: new (renderer: CurtainsLike, el: HTMLElement, params: object) => PlaneLike;
-        Vec3: new (x: number, y: number, z: number) => unknown;
-      };
-
-      const curtains = new Curtains({
-        container: canvasContainerRef.current,
-        pixelRatio: Math.min(1.5, window.devicePixelRatio),
-        antialias: true,
-        alpha: true,
-        // Hero is pinned by ScrollTrigger, so disable curtains' own scroll watch;
-        // the open is driven entirely by progress.
-        watchScroll: false,
-      });
-      curtainsRef.current = curtains;
-
-      const commonParams = {
-        widthSegments: 24,
-        heightSegments: 24,
-        vertexShader,
-        fragmentShader,
-      };
-
-      const leftPlane = new Plane(curtains, leftPlaneEl.current, {
-        ...commonParams,
-        uniforms: {
-          progress: { name: "uProgress", type: "1f", value: 0 },
-          time: { name: "uTime", type: "1f", value: 0 },
-          side: { name: "uSide", type: "1f", value: -1 },
-        },
-      });
-
-      const rightPlane = new Plane(curtains, rightPlaneEl.current, {
-        ...commonParams,
-        uniforms: {
-          progress: { name: "uProgress", type: "1f", value: 0 },
-          time: { name: "uTime", type: "1f", value: 0 },
-          side: { name: "uSide", type: "1f", value: 1 },
-        },
-      });
-
-      const tick = (plane: PlaneLike, side: number, el: HTMLDivElement | null) => {
-        const p = progressRef.current.value;
-        plane.uniforms.progress.value = p;
-        plane.uniforms.time.value += 0.016;
-        // Slide the plane off its own side to the framed resting position. y
-        // locked to 0 so it parts dead-flat horizontally.
-        const width = el?.offsetWidth ?? window.innerWidth / 2;
-        plane.setRelativeTranslation(
-          new Vec3(side * p * width * openFactorRef.current, 0, 0)
-        );
-      };
-      leftPlane.onRender(() => tick(leftPlane, -1, leftPlaneEl.current));
-      rightPlane.onRender(() => tick(rightPlane, 1, rightPlaneEl.current));
     })();
 
     return () => {
       cancelled = true;
+      if (revealFrame !== null) window.cancelAnimationFrame(revealFrame);
       curtainsRef.current?.dispose();
       curtainsRef.current = null;
     };
@@ -298,11 +331,34 @@ export function CurtainCreditsHero() {
     return () => host.removeEventListener("pointermove", onMove);
   }, []);
 
+  // Browser back/forward (bfcache) restores this page with frozen GSAP pin
+  // measurements and a stale curtains canvas — the curtains end up misaligned or
+  // stuck open. On a restore, re-measure the curtains and the pinned
+  // ScrollTrigger so scroll once again drives the open 0 → 1 from a clean state.
+  useEffect(() => {
+    const onPageShow = (e: PageTransitionEvent) => {
+      if (!e.persisted) return; // a fresh load already mounts clean
+      curtainsRef.current?.resize();
+      ScrollTrigger.refresh();
+    };
+    window.addEventListener("pageshow", onPageShow);
+    return () => window.removeEventListener("pageshow", onPageShow);
+  }, []);
+
   return (
-    <section ref={root} className={styles.hero} aria-label="Scope Screenings">
+    <section
+      ref={root}
+      className={`${styles.hero} ${curtainsReady ? "" : styles.awaitingCurtains}`}
+      aria-label="Scope Screenings"
+    >
+      {/* Preload the first-paint curtain image so it's hot before the standIn
+          lays out (hoisted to <head> by React; only on routes with the hero). */}
+      <link rel="preload" as="image" href="/curtain-closed.jpg" fetchPriority="high" />
+
       {/* The sizzle reel on the screen (z-1) — curtains part to reveal it. */}
       <video
         className={styles.heroVideo}
+        style={{ visibility: screenVisibility }}
         autoPlay
         muted
         loop
@@ -312,16 +368,28 @@ export function CurtainCreditsHero() {
       >
         <source src={SIZZLE_REEL_MP4} type="video/mp4" />
       </video>
-      <div className={styles.heroScrim} aria-hidden />
+      <div
+        className={styles.heroScrim}
+        style={{ visibility: screenVisibility }}
+        aria-hidden
+      />
 
       {/* Deep oxblood edge guards (z-5): below the curtains, above the screen
           video. If the billow ever pulls the velvet inward at the far margins,
           these read as the dark proscenium fold instead of exposing the screen. */}
-      <div className={styles.edgeGuardL} aria-hidden />
-      <div className={styles.edgeGuardR} aria-hidden />
+      <div
+        className={styles.edgeGuardL}
+        style={{ visibility: screenVisibility }}
+        aria-hidden
+      />
+      <div
+        className={styles.edgeGuardR}
+        style={{ visibility: screenVisibility }}
+        aria-hidden
+      />
 
       {/* The screen the curtains reveal */}
-      <div className={styles.screen}>
+      <div className={styles.screen} style={{ visibility: screenVisibility }}>
         <div className={styles.title}>
           <span className={styles.eyebrow}>Feature Presentation</span>
           <h1 className={styles.wordmark}>
@@ -354,35 +422,40 @@ export function CurtainCreditsHero() {
       </div>
 
       {/* Follow spotlight */}
-      <div ref={spotRef} aria-hidden className={styles.spot} />
+      <div
+        ref={spotRef}
+        aria-hidden
+        className={styles.spot}
+        style={{ visibility: screenVisibility }}
+      />
+
+      {/* First-paint curtain: a screenshot of the real shaded WebGL curtain
+          (/curtain-closed.jpg — see .shots/capture-curtain.mjs), so it is in the
+          SSR markup and covers the screen on frame one, then swaps atomically to
+          the live canvas with no visible change. */}
+      <div aria-hidden className={styles.curtainStandIn} />
 
       {/* WebGL velvet curtain planes. The <img> is the texture sampler only
           (display:none); curtains.js renders the billowing velvet into the
           z-22 canvas and slides the planes apart. The source divs stay put and
           must never capture pointer input. */}
       <div ref={leftPlaneEl} aria-hidden className={`${styles.plane} ${styles.planeL}`}>
-        {velvetSrc ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={velvetSrc}
-            alt=""
-            data-sampler="velvetTexture"
-            crossOrigin="anonymous"
-            style={{ display: "none" }}
-          />
-        ) : null}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={velvetSrc}
+          alt=""
+          data-sampler="velvetTexture"
+          style={{ display: "none" }}
+        />
       </div>
       <div ref={rightPlaneEl} aria-hidden className={`${styles.plane} ${styles.planeR}`}>
-        {velvetSrc ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={velvetSrc}
-            alt=""
-            data-sampler="velvetTexture"
-            crossOrigin="anonymous"
-            style={{ display: "none" }}
-          />
-        ) : null}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={velvetSrc}
+          alt=""
+          data-sampler="velvetTexture"
+          style={{ display: "none" }}
+        />
       </div>
       <div ref={canvasContainerRef} aria-hidden className={styles.glCanvas} />
 

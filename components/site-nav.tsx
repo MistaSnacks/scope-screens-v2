@@ -25,22 +25,22 @@ export function SiteNav({ active = "Watch" }: { active?: string }) {
         />
       </a>
 
-      <div className="flex items-center gap-3 md:gap-9">
-        {/* Desktop inline nav */}
-        <div className="hidden items-center gap-9 lg:flex">
-          {NAV_ITEMS.map((item) => (
-            <a
-              key={item}
-              href={hrefFor(item)}
-              className={`font-mono text-[12px] uppercase tracking-[0.14em] transition-colors hover:text-rust ${
-                item === active ? "text-rust" : "text-cream"
-              }`}
-            >
-              {item}
-            </a>
-          ))}
-        </div>
+      {/* Desktop inline nav — horizontally centered in the bar */}
+      <div className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-9 lg:flex">
+        {NAV_ITEMS.map((item) => (
+          <a
+            key={item}
+            href={hrefFor(item)}
+            className={`font-mono text-[12px] uppercase tracking-[0.14em] transition-colors hover:text-rust ${
+              item === active ? "text-rust" : "text-cream"
+            }`}
+          >
+            {item}
+          </a>
+        ))}
+      </div>
 
+      <div className="flex items-center gap-3 md:gap-9">
         <ThemeToggle />
 
         <a
