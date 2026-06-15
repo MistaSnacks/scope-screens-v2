@@ -1,7 +1,7 @@
 import { getLiveSchedule, type ScheduleRow } from "@/lib/wix-events";
 import { SCREENINGS, SEASON_PASS, VENUE, reserveUrl, ticketUrl } from "@/lib/festival";
 
-export async function ScheduleSection() {
+export async function ScheduleSection({ headless = false }: { headless?: boolean } = {}) {
   // Hybrid: the planned season is the skeleton; any month that already exists
   // as a live Wix event becomes reservable (real event link). Nights not yet
   // created in Wix show as "on sale soon". As the client adds events in Wix,
@@ -38,15 +38,19 @@ export async function ScheduleSection() {
             alt="Scope Screenings"
             className="mb-2 h-[140px] w-auto self-start lg:self-center"
           />
-          <div className="flex items-center gap-3">
-            <span className="h-px w-10 bg-curtain" />
-            <span className="font-body text-[12px] font-bold uppercase tracking-[0.28em] text-label">
-              The Season · 2026—27
-            </span>
-          </div>
-          <h2 className="pulp font-display text-[52px] uppercase leading-[0.92] md:text-[68px]">
-            Seven Nights
-          </h2>
+          {!headless && (
+            <>
+              <div className="flex items-center gap-3">
+                <span className="h-px w-10 bg-curtain" />
+                <span className="font-body text-[12px] font-bold uppercase tracking-[0.28em] text-label">
+                  The Season · 2026—27
+                </span>
+              </div>
+              <h2 className="pulp font-display text-[52px] uppercase leading-[0.92] md:text-[68px]">
+                Seven Nights
+              </h2>
+            </>
+          )}
           <p className="max-w-[34ch] font-body text-[16px] leading-relaxed text-fg/65">
             One screening a month, last Tuesday, {SCREENINGS[0].month} through{" "}
             {SCREENINGS[SCREENINGS.length - 1].month}. Doors {VENUE.doors}, program {VENUE.program}.
