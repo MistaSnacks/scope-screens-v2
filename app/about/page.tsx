@@ -27,7 +27,7 @@ export default function AboutPage() {
       />
 
       {/* (b) What Is Scope Screenings */}
-      <section className="border-t border-hairline bg-bg-alt px-5 py-24 md:px-[90px] mt-24">
+      <section className="mt-16 border-t border-hairline bg-bg-alt px-5 py-24 md:px-[90px]">
         <div className="md:flex md:gap-16">
           {/* Left column */}
           <div className="md:w-[360px] md:shrink-0">
@@ -112,13 +112,13 @@ export default function AboutPage() {
 
       {/* (f) The Houses */}
       <section className="border-t border-hairline bg-bg-alt px-5 py-24 md:px-[90px]">
-        <div className="flex items-center justify-center gap-3">
+        <div className="flex items-center gap-3">
           <span className="h-px w-10 bg-curtain" />
           <span className="font-mono text-[12px] font-bold uppercase tracking-[0.3em] text-label">
             The houses
           </span>
         </div>
-        <h2 className="pulp font-display text-[44px] uppercase leading-[0.95] md:text-[64px] mt-5 text-center">
+        <h2 className="pulp mt-5 font-display text-[44px] uppercase leading-[0.95] md:text-[64px]">
           The Houses
         </h2>
         <div className="mt-12 grid gap-6 md:grid-cols-3">
