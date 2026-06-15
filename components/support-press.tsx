@@ -1,4 +1,5 @@
-const SUPPORT_URL = "https://shunpike.org/artist/scope-screenings/";
+import { DONATE_URL } from "@/lib/festival";
+
 const PRESS_EMAIL = "press@scopescreenings.com";
 
 const TIERS = [
@@ -48,7 +49,7 @@ export function SupportPress() {
             ))}
           </div>
           <a
-            href={SUPPORT_URL}
+            href={DONATE_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-7 flex items-center justify-center rounded-lg bg-rust py-4 font-body text-[15px] font-extrabold uppercase tracking-[0.06em] text-ink transition-transform hover:scale-[1.02]"

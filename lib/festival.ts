@@ -12,6 +12,9 @@ export function ticketUrl(slug: string): string {
 
 export const SUBMIT_URL = "https://filmfreeway.com/scopescreenings";
 
+// Donations run through Shunpike (Scope's fiscal sponsor / 501(c)(3)).
+export const DONATE_URL = "https://shunpike.org/artist/scope-screenings/";
+
 // Submissions — pulled from the live FilmFreeway listing (Season 5).
 // Founded 2021; monthly series June–December, Opening Night in June,
 // residency at Langston July–December. Season 5 introduces judged awards.

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SUPPORT_STATS, GIVING_LEVELS } from "@/lib/festival";
+import { SUPPORT_STATS, GIVING_LEVELS, DONATE_URL } from "@/lib/festival";
 import { PartnersMarquee } from "@/components/partners-marquee";
 
 export const metadata: Metadata = {
@@ -7,8 +7,6 @@ export const metadata: Metadata = {
   description:
     "Three hundred seats, ten directors, every last Tuesday — none of it is free. Keep the screen lit.",
 };
-
-const DONATE_URL = "https://shunpike.org/artist/scope-screenings/";
 
 export default function SupportPage() {
   return (
