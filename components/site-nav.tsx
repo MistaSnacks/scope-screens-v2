@@ -1,50 +1,58 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { NAV_ITEMS } from "@/lib/festival";
 import { ThemeToggle } from "./theme-toggle";
 
-function hrefFor(item: string) {
-  return item === "Watch" ? "#top" : `#${item.toLowerCase()}`;
+export function navHrefFor(item: string) {
+  return item === "Watch" ? "/" : `/${item.toLowerCase()}`;
+}
+
+export function navActiveFor(pathname: string): string {
+  const hit = NAV_ITEMS.find((i) => navHrefFor(i) === pathname);
+  return hit ?? "Watch";
 }
 
 // Persistent header — fixed, rides the whole page. Desktop shows the inline
 // anchor nav; below `lg` it collapses to a hamburger that opens a dropdown so
 // the section nav still works on mobile.
-export function SiteNav({ active = "Watch" }: { active?: string }) {
+export function SiteNav() {
   const [open, setOpen] = useState(false);
+  const active = navActiveFor(usePathname());
 
   return (
     <nav className="fixed left-5 right-5 top-2 z-[60] flex items-center justify-between md:left-[100px] md:right-[100px]">
-      <a href="/" aria-label="Scope Screenings — home" className="flex items-center">
+      <Link href="/" aria-label="Scope Screenings — home" className="flex items-center">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/popcorn-logo.png"
           alt="Scope Screenings"
           className="h-[56px] w-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.55)] md:h-[88px]"
         />
-      </a>
+      </Link>
 
       {/* Desktop inline nav — horizontally centered in the bar */}
       <div className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-9 lg:flex">
         {NAV_ITEMS.map((item) => (
-          <a
+          <Link
             key={item}
-            href={hrefFor(item)}
+            href={navHrefFor(item)}
             className={`font-mono text-[12px] uppercase tracking-[0.14em] transition-colors hover:text-rust ${
               item === active ? "text-rust" : "text-cream"
             }`}
           >
             {item}
-          </a>
+          </Link>
         ))}
       </div>
 
       <div className="flex items-center gap-3 md:gap-9">
         <ThemeToggle />
 
-        <a
-          href="#tickets"
+        <Link
+          href="/#tickets"
           className="group flex items-center gap-2 border border-rust px-3 py-2 transition-colors hover:bg-rust md:px-4 md:py-2.5"
         >
           <span
@@ -54,7 +62,7 @@ export function SiteNav({ active = "Watch" }: { active?: string }) {
           <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-rust group-hover:text-stage md:text-[11px]">
             Get Tickets
           </span>
-        </a>
+        </Link>
 
         {/* Mobile hamburger */}
         <button
@@ -85,16 +93,16 @@ export function SiteNav({ active = "Watch" }: { active?: string }) {
       {open && (
         <div className="absolute right-0 top-[calc(100%+10px)] flex w-52 flex-col overflow-hidden rounded-md border border-cream/15 bg-ink/95 backdrop-blur-md lg:hidden">
           {NAV_ITEMS.map((item) => (
-            <a
+            <Link
               key={item}
-              href={hrefFor(item)}
+              href={navHrefFor(item)}
               onClick={() => setOpen(false)}
               className={`border-b border-cream/10 px-5 py-3.5 font-mono text-[13px] uppercase tracking-[0.14em] transition-colors last:border-b-0 hover:bg-curtain/10 hover:text-rust ${
                 item === active ? "text-rust" : "text-cream"
               }`}
             >
               {item}
-            </a>
+            </Link>
           ))}
         </div>
       )}

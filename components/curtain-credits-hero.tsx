@@ -121,12 +121,12 @@ const SIZZLE_REEL_POSTER =
 
 // The navigation, rendered as an end-credits roll. Each line is a destination.
 const CREDITS: Credit[] = [
-  { role: "General · VIP · Season Pass", label: "Buy Tickets", href: "#tickets", spot: true },
-  { role: "Open Call · FilmFreeway", label: "Submit a Film", href: "#submit" },
-  { role: "200+ Shorts · 150+ Filmmakers", label: "The Films", href: "#films" },
-  { role: "Sponsor · Donate · Shunpike", label: "Become a Funder", href: "#support" },
-  { role: "Press Kit · Coverage · Contact", label: "Press & Media", href: "#support" },
-  { role: "Founded by Lex Scope · Est. 2022", label: "About the Festival", href: "#about" },
+  { role: "General · VIP · Season Pass", label: "Buy Tickets", href: "/#tickets", spot: true },
+  { role: "Open Call · FilmFreeway", label: "Submit a Film", href: "/submit" },
+  { role: "200+ Shorts · 150+ Filmmakers", label: "The Films", href: "/schedule" },
+  { role: "Sponsor · Donate · Shunpike", label: "Become a Funder", href: "/support" },
+  { role: "Press Kit · Coverage · Contact", label: "Press & Media", href: "/support" },
+  { role: "Founded by Lex Scope · Est. 2022", label: "About the Festival", href: "/about" },
 ];
 
 export function CurtainCreditsHero() {
