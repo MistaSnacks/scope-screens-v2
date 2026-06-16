@@ -6,6 +6,7 @@ import { CheckoutProvider } from "@/components/checkout/checkout-context";
 import { PersistentValance } from "@/components/persistent-valance";
 import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
+import { SmoothScrollProvider } from "@/components/motion/smooth-scroll-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -33,7 +34,9 @@ export default function RootLayout({
           <GrainOverlay />
           <PersistentValance />
           <SiteNav />
-          <CheckoutProvider>{children}</CheckoutProvider>
+          <SmoothScrollProvider>
+            <CheckoutProvider>{children}</CheckoutProvider>
+          </SmoothScrollProvider>
           <SiteFooter />
         </ThemeProvider>
       </body>
