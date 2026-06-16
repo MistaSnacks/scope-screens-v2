@@ -2,6 +2,7 @@ import { getLiveSchedule, type ScheduleRow } from "@/lib/wix-events";
 import { SCREENINGS, SEASON_PASS, VENUE, reserveUrl, ticketUrl } from "@/lib/festival";
 import { Reveal } from "@/components/motion/reveal";
 import { Stagger, StaggerItem } from "@/components/motion/stagger";
+import { KineticText } from "@/components/motion/kinetic-text";
 
 export async function ScheduleSection({ headless = false }: { headless?: boolean } = {}) {
   // Hybrid: the planned season is the skeleton; any month that already exists
@@ -48,9 +49,11 @@ export async function ScheduleSection({ headless = false }: { headless?: boolean
                   The Season · 2026—27
                 </span>
               </div>
-              <h2 className="pulp font-display text-[52px] uppercase leading-[0.92] md:text-[68px]">
-                Seven Nights
-              </h2>
+              <KineticText
+                as="h2"
+                className="pulp font-display text-[52px] uppercase leading-[0.92] md:text-[68px]"
+                text="Seven Nights"
+              />
             </>
           )}
           <p className="max-w-[34ch] font-body text-[16px] leading-relaxed text-fg/65">

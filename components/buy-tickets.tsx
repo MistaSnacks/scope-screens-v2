@@ -4,6 +4,7 @@ import { SEASON_PASS, VENUE, nextScreening, reserveUrl, ticketUrl } from "@/lib/
 import { useCheckout } from "@/components/checkout/checkout-context";
 import { Reveal } from "@/components/motion/reveal";
 import { Stagger, StaggerItem } from "@/components/motion/stagger";
+import { KineticText } from "@/components/motion/kinetic-text";
 import type { CheckoutTarget } from "@/lib/wix-checkout";
 
 const INK_BARCODE =
@@ -217,7 +218,7 @@ export function BuyTickets({
           <span className="font-body text-[12px] font-bold uppercase tracking-[0.3em] text-label">Chapter One</span>
           <span className="h-px w-10 bg-curtain" />
         </div>
-        <h2 className="pulp font-display text-[56px] uppercase leading-[0.94] md:text-[80px]">The Next Show</h2>
+        <KineticText as="h2" className="pulp font-display text-[56px] uppercase leading-[0.94] md:text-[80px]" text="The Next Show" />
         <p className="font-body text-[17px] leading-relaxed text-fg/70">
           Last Tuesday of the month, June through December. Ten directors, ten films, one packed
           house in the Central District — doors at 7:00, lights down at 7:30. Go for the night, or go

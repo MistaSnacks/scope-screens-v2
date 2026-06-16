@@ -5,6 +5,7 @@
 // (font-mono) for the slate codes/labels.
 
 import { Reveal } from "@/components/motion/reveal";
+import { KineticText } from "@/components/motion/kinetic-text";
 
 function Field({ k, v }: { k: string; v: string }) {
   return (
@@ -26,9 +27,11 @@ export function WhatIs() {
             SC. 01 · Roll 22 · Now Rolling
           </span>
         </div>
-        <h2 className="pulp font-display text-[34px] uppercase leading-[0.95] sm:text-[44px] md:text-[60px]">
-          What Is Scope Screenings?
-        </h2>
+        <KineticText
+          as="h2"
+          className="pulp font-display text-[34px] uppercase leading-[0.95] sm:text-[44px] md:text-[60px]"
+          text="What Is Scope Screenings?"
+        />
         <p className="max-w-[36em] font-body text-[17px] font-medium leading-[27px] text-muted">
           Seattle&rsquo;s underground film festival. A live, monthly short-film
           showcase built to put filmmakers on a real screen in front of a real,

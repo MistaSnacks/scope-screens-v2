@@ -12,7 +12,7 @@ export default function SchedulePage() {
     <main className="min-h-screen bg-bg">
       <PageHeader
         eyebrow="The Season"
-        title={<>Seven<br />Nights</>}
+        title={"Seven\nNights"}
         lede="One night a month, last Tuesday, June through December. Doors 6:30, lights down 7:30."
       />
       <ScheduleSection headless />

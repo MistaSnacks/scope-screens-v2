@@ -1,6 +1,7 @@
 import { DONATE_URL } from "@/lib/festival";
 import { Reveal } from "@/components/motion/reveal";
 import { Stagger, StaggerItem } from "@/components/motion/stagger";
+import { KineticText } from "@/components/motion/kinetic-text";
 
 const PRESS_EMAIL = "press@scopescreenings.com";
 
@@ -26,7 +27,7 @@ export function SupportPress() {
           <span className="font-body text-[12px] font-bold uppercase tracking-[0.3em] text-label">Chapter Four</span>
           <span className="h-px w-10 bg-curtain" />
         </div>
-        <h2 className="pulp font-display text-[56px] uppercase leading-[0.94] md:text-[80px]">Keep It Running</h2>
+        <KineticText as="h2" className="pulp font-display text-[56px] uppercase leading-[0.94] md:text-[80px]" text="Keep It Running" />
       </Reveal>
 
       <Stagger className="mx-auto grid max-w-[1260px] gap-7 md:grid-cols-2">

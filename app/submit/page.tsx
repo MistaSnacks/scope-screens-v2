@@ -8,6 +8,7 @@ import {
 import { Reveal } from "@/components/motion/reveal";
 import { Stagger, StaggerItem } from "@/components/motion/stagger";
 import { Hoverable } from "@/components/motion/hoverable";
+import { KineticText } from "@/components/motion/kinetic-text";
 
 export const metadata: Metadata = {
   title: "Submit — Scope Screenings",
@@ -29,9 +30,11 @@ export default function SubmitPage() {
                 Open call · via FilmFreeway
               </span>
             </div>
-            <h1 className="pulp mt-5 font-display text-[64px] uppercase leading-[0.9] md:text-[88px]">
-              Submit Your Film
-            </h1>
+            <KineticText
+              as="h1"
+              className="pulp mt-5 font-display text-[64px] uppercase leading-[0.9] md:text-[88px]"
+              text="Submit Your Film"
+            />
             <p className="mt-5 max-w-[44ch] font-credits text-[20px] leading-relaxed text-fg/75 md:text-[22px]">
               We&rsquo;re built to put underrepresented filmmakers on a big
               screen in front of a packed, loving house. Twenty minutes or less,
@@ -90,9 +93,11 @@ export default function SubmitPage() {
               What we look for
             </span>
           </div>
-          <h2 className="pulp mt-5 font-display text-[44px] uppercase leading-[0.95] md:text-[64px]">
-            What We&rsquo;re After
-          </h2>
+          <KineticText
+            as="h2"
+            className="pulp mt-5 font-display text-[44px] uppercase leading-[0.95] md:text-[64px]"
+            text="What We’re After"
+          />
           <p className="mt-5 max-w-[60ch] font-credits text-[18px] leading-relaxed text-fg/80 md:text-[19px]">
             Scope Screenings exists to break down the barriers placed in front of
             Black, brown, and tan creatives. We program for access, for craft, and
@@ -123,9 +128,11 @@ export default function SubmitPage() {
               Deadlines &amp; fees
             </span>
           </div>
-          <h2 className="pulp mt-5 font-display text-[44px] uppercase leading-[0.95] md:text-[64px]">
-            Mark Your Calendar
-          </h2>
+          <KineticText
+            as="h2"
+            className="pulp mt-5 font-display text-[44px] uppercase leading-[0.95] md:text-[64px]"
+            text="Mark Your Calendar"
+          />
         </Reveal>
 
         {/* Column headers */}
@@ -180,9 +187,11 @@ export default function SubmitPage() {
               How to enter
             </span>
           </div>
-          <h2 className="pulp mt-5 font-display text-[44px] uppercase leading-[0.95] md:text-[64px]">
-            Three Steps In
-          </h2>
+          <KineticText
+            as="h2"
+            className="pulp mt-5 font-display text-[44px] uppercase leading-[0.95] md:text-[64px]"
+            text="Three Steps In"
+          />
         </Reveal>
         <Stagger className="mt-14 grid gap-10 md:grid-cols-3">
           {SUBMIT_STEPS.map((s) => (
@@ -203,9 +212,11 @@ export default function SubmitPage() {
 
       {/* Closing CTA band */}
       <Reveal as="section" className="border-t border-hairline bg-bg-deep px-5 py-28 text-center md:px-[90px]">
-        <h2 className="pulp font-display text-[48px] uppercase leading-[0.95] md:text-[72px]">
-          Got A Film? Send It.
-        </h2>
+        <KineticText
+          as="h2"
+          className="pulp font-display text-[48px] uppercase leading-[0.95] md:text-[72px]"
+          text="Got A Film? Send It."
+        />
         <p className="mx-auto mt-5 max-w-[48ch] font-credits text-[18px] text-fg/75">
           Submissions run on FilmFreeway. It takes about ten minutes — and we
           read every single one.

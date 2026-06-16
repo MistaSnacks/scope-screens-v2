@@ -6,6 +6,7 @@ import { ABOUT_STATS, TIMELINE, HOUSES } from "@/lib/festival";
 import { Reveal } from "@/components/motion/reveal";
 import { Stagger, StaggerItem } from "@/components/motion/stagger";
 import { Hoverable } from "@/components/motion/hoverable";
+import { KineticText } from "@/components/motion/kinetic-text";
 
 export const metadata: Metadata = {
   title: "About — Scope Screenings",
@@ -19,13 +20,7 @@ export default function AboutPage() {
       {/* (a) Header */}
       <PageHeader
         eyebrow="About the Festival"
-        title={
-          <>
-            We Put The Fun
-            <br />
-            Back In Film Fests
-          </>
-        }
+        title={"We Put The Fun\nBack In Film Fests"}
         lede="Scope Screenings is Seattle's underground film festival — a live, monthly short-film night built for the filmmakers the industry tends to overlook. Tropical, wavy energy meets the illest shorts in the PNW."
       />
 
@@ -40,9 +35,11 @@ export default function AboutPage() {
                 The short version
               </span>
             </div>
-            <h2 className="pulp font-display text-[44px] uppercase leading-[0.95] md:text-[56px] mt-5">
-              What Is Scope Screenings
-            </h2>
+            <KineticText
+              as="h2"
+              className="pulp font-display text-[44px] uppercase leading-[0.95] md:text-[56px] mt-5"
+              text="What Is Scope Screenings"
+            />
           </Reveal>
 
           {/* Right column */}
@@ -93,9 +90,11 @@ export default function AboutPage() {
               The story
             </span>
           </div>
-          <h2 className="pulp font-display text-[44px] uppercase leading-[0.95] md:text-[64px] mt-5 mb-12">
-            How We Got Here
-          </h2>
+          <KineticText
+            as="h2"
+            className="pulp font-display text-[44px] uppercase leading-[0.95] md:text-[64px] mt-5 mb-12"
+            text="How We Got Here"
+          />
         </Reveal>
         <Stagger>
           {TIMELINE.map((t) => (
@@ -126,9 +125,11 @@ export default function AboutPage() {
               The houses
             </span>
           </div>
-          <h2 className="pulp mt-5 font-display text-[44px] uppercase leading-[0.95] md:text-[64px]">
-            The Houses
-          </h2>
+          <KineticText
+            as="h2"
+            className="pulp mt-5 font-display text-[44px] uppercase leading-[0.95] md:text-[64px]"
+            text="The Houses"
+          />
         </Reveal>
         <Stagger className="mt-12 grid gap-6 md:grid-cols-3">
           {HOUSES.map((h) => (

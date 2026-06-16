@@ -4,6 +4,7 @@ import { PartnersMarquee } from "@/components/partners-marquee";
 import { Reveal } from "@/components/motion/reveal";
 import { Stagger, StaggerItem } from "@/components/motion/stagger";
 import { Hoverable } from "@/components/motion/hoverable";
+import { KineticText } from "@/components/motion/kinetic-text";
 
 export const metadata: Metadata = {
   title: "Support — Scope Screenings",
@@ -25,9 +26,11 @@ export default function SupportPage() {
                 Funders &amp; philanthropy
               </span>
             </div>
-            <h1 className="pulp mt-5 font-display text-[64px] uppercase leading-[0.9] md:text-[88px]">
-              Keep It Running
-            </h1>
+            <KineticText
+              as="h1"
+              className="pulp mt-5 font-display text-[64px] uppercase leading-[0.9] md:text-[88px]"
+              text="Keep It Running"
+            />
             <p className="mt-5 max-w-[46ch] font-credits text-[20px] leading-relaxed text-fg/75 md:text-[22px]">
               Three hundred seats, ten directors, every last Tuesday — none of
               it is free. Your support keeps the screen lit, the venue booked,
@@ -68,9 +71,11 @@ export default function SupportPage() {
               Why give
             </span>
           </div>
-          <h2 className="pulp mt-5 font-display text-[44px] uppercase leading-[0.95] md:text-[64px]">
-            Where It Goes
-          </h2>
+          <KineticText
+            as="h2"
+            className="pulp mt-5 font-display text-[44px] uppercase leading-[0.95] md:text-[64px]"
+            text="Where It Goes"
+          />
           <p className="mt-5 max-w-[60ch] font-credits text-[18px] leading-relaxed text-fg/80 md:text-[19px]">
             We were built to break down the barriers placed in front of Black,
             brown, and tan creatives. Funding is how that promise stays real — no
@@ -103,9 +108,11 @@ export default function SupportPage() {
               Giving levels
             </span>
           </div>
-          <h2 className="pulp mt-5 font-display text-[44px] uppercase leading-[0.95] md:text-[64px]">
-            Pick Your Level
-          </h2>
+          <KineticText
+            as="h2"
+            className="pulp mt-5 font-display text-[44px] uppercase leading-[0.95] md:text-[64px]"
+            text="Pick Your Level"
+          />
         </Reveal>
         <Stagger className="mt-12 grid gap-5 md:grid-cols-4">
           {GIVING_LEVELS.map((g) => (
@@ -173,9 +180,11 @@ export default function SupportPage() {
               Partner with us
             </span>
           </div>
-          <h2 className="pulp mt-5 font-display text-[44px] uppercase leading-[0.95] md:text-[64px]">
-            Two Ways To Back Us
-          </h2>
+          <KineticText
+            as="h2"
+            className="pulp mt-5 font-display text-[44px] uppercase leading-[0.95] md:text-[64px]"
+            text="Two Ways To Back Us"
+          />
         </Reveal>
         <Stagger className="mt-12 grid gap-6 md:grid-cols-2">
           {/* Card 1 — Funders */}
@@ -240,9 +249,11 @@ export default function SupportPage() {
 
       {/* Closing band */}
       <Reveal as="section" className="border-t border-hairline bg-bg-deep px-5 py-28 text-center md:px-[90px]">
-        <h2 className="pulp font-display text-[48px] uppercase leading-[0.95] md:text-[72px]">
-          Keep The Screen Lit
-        </h2>
+        <KineticText
+          as="h2"
+          className="pulp font-display text-[48px] uppercase leading-[0.95] md:text-[72px]"
+          text="Keep The Screen Lit"
+        />
         <p className="mx-auto mt-5 max-w-[48ch] font-credits text-[18px] text-fg/75">
           Any amount keeps a filmmaker&rsquo;s work on a big screen in front of
           a full house. Give once, give monthly, or back the whole season.

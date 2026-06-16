@@ -1,6 +1,7 @@
 import { FOUNDER } from "@/lib/festival";
 import { Reveal } from "@/components/motion/reveal";
 import { Parallax } from "@/components/motion/parallax";
+import { KineticText } from "@/components/motion/kinetic-text";
 
 const FOUNDER_QUOTE =
   "A lot of my peers never had the chance to see their work on a big screen. I built this for access, for collaboration, and to break down the barriers placed in front of Black, brown, and tan creatives.";
@@ -53,11 +54,11 @@ export function FounderBand({ eyebrow = "Chapter Two" }: { eyebrow?: string }) {
 
       <Reveal delay={0.1} className="flex flex-col items-start justify-center gap-6">
         <div className="flex items-center gap-3"><span className="h-px w-10 bg-cream/50" /><span className="font-body text-[12px] font-bold uppercase tracking-[0.3em] text-cream/80">{eyebrow}</span></div>
-        <h2 className="pulp-on-red font-display text-[56px] uppercase leading-[0.94] md:text-[66px]">
-          Built For
-          <br />
-          Access
-        </h2>
+        <KineticText
+          as="h2"
+          className="pulp-on-red font-display text-[56px] uppercase leading-[0.94] md:text-[66px]"
+          text={"Built For\nAccess"}
+        />
         <blockquote className="max-w-[22em] font-credits text-[26px] italic leading-snug text-cream/90 md:text-[28px]">
           &ldquo;{FOUNDER_QUOTE}&rdquo;
         </blockquote>
