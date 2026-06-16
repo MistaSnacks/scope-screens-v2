@@ -278,7 +278,7 @@ export function CurtainCreditsHero() {
             mobile: boolean;
             reduced: boolean;
           };
-          openFactorRef.current = mobile ? 0.76 : 0.62;
+          openFactorRef.current = mobile ? 0.92 : 0.86;
 
           // Reduced motion: skip the scroll choreography, show the framed hero
           // with the logo opening already cleared away.
