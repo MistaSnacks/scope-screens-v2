@@ -101,17 +101,22 @@ body {
   text-shadow: 0.045em 0.06em 0 var(--color-curtain-deep);
 }
 
-/* Angled section seams — a 46px diagonal clip plus a -46px overlap, so each
-   band's top edge cuts into the one above it (matches the artboard zigzag).
-   Alternate .band-up / .band-down down the page; pair with ≥96px top padding
-   so content clears the diagonal. */
+/* Angled section seams — a diagonal clip plus a matching negative overlap, so
+   each band's top edge cuts into the one above it (matches the artboard zigzag).
+   Depth is a fraction of viewport width (--band-skew) so the angle reads the
+   same on any screen instead of flattening out on wide desktops. Alternate
+   .band-up / .band-down down the page; sections pair with ≥band-skew top
+   padding so content clears the diagonal. */
+:root {
+  --band-skew: clamp(34px, 5.5vw, 104px);
+}
 .band-down {
-  clip-path: polygon(0 46px, 100% 0, 100% 100%, 0 100%);
-  margin-top: -46px;
+  clip-path: polygon(0 var(--band-skew), 100% 0, 100% 100%, 0 100%);
+  margin-top: calc(-1 * var(--band-skew));
 }
 .band-up {
-  clip-path: polygon(0 0, 100% 46px, 100% 100%, 0 100%);
-  margin-top: -46px;
+  clip-path: polygon(0 0, 100% var(--band-skew), 100% 100%, 0 100%);
+  margin-top: calc(-1 * var(--band-skew));
 }
 
 /* Partner logos forced to ink when the marquee rides the gold band. */
