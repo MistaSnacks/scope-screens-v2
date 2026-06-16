@@ -1,5 +1,6 @@
 import { FOUNDER } from "@/lib/festival";
 import { Reveal } from "@/components/motion/reveal";
+import { Parallax } from "@/components/motion/parallax";
 
 const FOUNDER_QUOTE =
   "A lot of my peers never had the chance to see their work on a big screen. I built this for access, for collaboration, and to break down the barriers placed in front of Black, brown, and tan creatives.";
@@ -17,6 +18,7 @@ export function FounderBand({ eyebrow = "Chapter Two" }: { eyebrow?: string }) {
       <Reveal className="w-full md:w-[520px] md:shrink-0">
         {/* The founder as a director's-monitor credential — gold frame, a REC
             header, and a film-still pulled from the Wix media library. */}
+        <Parallax distance={22}>
         <figure className="rounded-lg bg-ink p-3 ring-1 ring-rust/70 shadow-[0_0_0_1px_rgba(255,187,0,0.12),0_30px_60px_-22px_rgba(0,0,0,0.85)] md:p-4">
           <div className="flex items-center justify-between px-1 pb-2.5">
             <span className="font-display text-[18px] uppercase leading-none tracking-[0.1em] text-rust md:text-[21px]">
@@ -46,6 +48,7 @@ export function FounderBand({ eyebrow = "Chapter Two" }: { eyebrow?: string }) {
             </figcaption>
           </div>
         </figure>
+        </Parallax>
       </Reveal>
 
       <Reveal delay={0.1} className="flex flex-col items-start justify-center gap-6">
