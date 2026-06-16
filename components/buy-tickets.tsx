@@ -2,6 +2,8 @@
 
 import { SEASON_PASS, VENUE, nextScreening, reserveUrl, ticketUrl } from "@/lib/festival";
 import { useCheckout } from "@/components/checkout/checkout-context";
+import { Reveal } from "@/components/motion/reveal";
+import { Stagger, StaggerItem } from "@/components/motion/stagger";
 import type { CheckoutTarget } from "@/lib/wix-checkout";
 
 const INK_BARCODE =
@@ -209,7 +211,7 @@ export function BuyTickets({
   return (
     <section className="flex flex-col items-center gap-14 overflow-hidden border-t border-hairline bg-bg px-5 py-24 md:px-[90px]">
       {/* Heading on top — like the Program section */}
-      <div className="flex max-w-[640px] flex-col items-center gap-4 text-center">
+      <Reveal className="flex max-w-[640px] flex-col items-center gap-4 text-center">
         <div className="flex items-center gap-3">
           <span className="h-px w-10 bg-curtain" />
           <span className="font-body text-[12px] font-bold uppercase tracking-[0.3em] text-label">Chapter One</span>
@@ -221,17 +223,21 @@ export function BuyTickets({
           house in the Central District — doors at 7:00, lights down at 7:30. Go for the night, or go
           all season.
         </p>
-      </div>
+      </Reveal>
 
       {/* Ticket + lanyard underneath — scaled so neither overpowers the other */}
-      <div className="flex w-full flex-col items-center justify-center gap-6 md:flex-row md:items-center md:gap-14">
-        <div className="origin-center scale-[0.58] sm:scale-75 md:scale-[0.9]">
-          <NightTicket target={nextShow} />
-        </div>
-        <div className="origin-center md:scale-[1.12]">
-          <SeasonPassLanyard target={seasonPass} />
-        </div>
-      </div>
+      <Stagger className="flex w-full flex-col items-center justify-center gap-6 md:flex-row md:items-center md:gap-14">
+        <StaggerItem>
+          <div className="origin-center scale-[0.58] sm:scale-75 md:scale-[0.9]">
+            <NightTicket target={nextShow} />
+          </div>
+        </StaggerItem>
+        <StaggerItem>
+          <div className="origin-center md:scale-[1.12]">
+            <SeasonPassLanyard target={seasonPass} />
+          </div>
+        </StaggerItem>
+      </Stagger>
     </section>
   );
 }

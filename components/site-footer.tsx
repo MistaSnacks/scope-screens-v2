@@ -1,4 +1,5 @@
 import { CONTACT_EMAIL, SOCIALS, VENUE } from "@/lib/festival";
+import { Stagger, StaggerItem } from "@/components/motion/stagger";
 
 const COLUMNS = [
   { head: "Festival", links: ["About", "The Films", "Schedule", "Venues"] },
@@ -39,15 +40,15 @@ export function SiteFooter() {
       </div>
 
       {/* Columns */}
-      <div className="grid grid-cols-2 gap-10 border-b border-cream/10 py-11 md:grid-cols-4">
-        <div className="flex flex-col gap-3">
+      <Stagger className="grid grid-cols-2 gap-10 border-b border-cream/10 py-11 md:grid-cols-4">
+        <StaggerItem className="flex flex-col gap-3">
           <span className="font-marquee text-[18px] uppercase text-cream">Scope Screenings</span>
           <p className="max-w-[28ch] font-body text-[14px] leading-relaxed text-smoke">
             Seattle&rsquo;s underground film festival. We put the fun back in film fests.
           </p>
-        </div>
+        </StaggerItem>
         {COLUMNS.map((col) => (
-          <div key={col.head} className="flex flex-col gap-2.5">
+          <StaggerItem key={col.head} className="flex flex-col gap-2.5">
             <span className="font-body text-[12px] font-bold uppercase tracking-[0.16em] text-rust">
               {col.head}
             </span>
@@ -56,9 +57,9 @@ export function SiteFooter() {
                 {l}
               </a>
             ))}
-          </div>
+          </StaggerItem>
         ))}
-      </div>
+      </Stagger>
 
       {/* Legal */}
       <div className="flex flex-col gap-2 pt-6 md:flex-row md:items-center md:justify-between">
