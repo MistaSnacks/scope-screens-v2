@@ -124,7 +124,7 @@ export function CurtainCreditsHero() {
   const scrollCueRef = useRef<HTMLDivElement>(null);
   const reelVideoRef = useRef<HTMLVideoElement>(null);
   const progressRef = useRef({ value: 0 });
-  const openFactorRef = useRef(0.62); // how far the velvet parts (framed, not off)
+  const openFactorRef = useRef(0.86); // how far the velvet parts; overwritten in useGSAP (0.86 desktop / 0.92 mobile)
   const curtainsRef = useRef<CurtainsLike | null>(null);
 
   const { theme } = useTheme();
