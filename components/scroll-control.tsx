@@ -64,7 +64,7 @@ export function ScrollControl() {
         past ? "opacity-100" : "pointer-events-none translate-y-3 opacity-0"
       }`}
     >
-      <span className="font-mono text-[11px] font-bold uppercase tracking-[0.22em] text-rust">
+      <span className="font-mono text-[0.6875rem] font-bold uppercase tracking-[0.22em] text-rust">
         Return to top
       </span>
       <Chevron dir="up" />
