@@ -18,7 +18,7 @@ function ChapterLabel({ n, center = false }: { n: string; center?: boolean }) {
   return (
     <div className={`flex items-center gap-3 ${center ? "justify-center" : ""}`}>
       <span className="h-px w-10 bg-curtain" />
-      <span className="font-body text-[12px] font-bold uppercase tracking-[0.3em] text-label">{n}</span>
+      <span className="font-body text-[0.75rem] font-bold uppercase tracking-[0.3em] text-label">{n}</span>
       {center ? <span className="h-px w-10 bg-curtain" /> : null}
     </div>
   );
@@ -33,11 +33,11 @@ export default async function Home() {
       <CurtainCreditsHero />
       <Marquee />
 
-      <div id="tickets" className="scroll-mt-[120px]">
+      <div id="tickets" className="scroll-mt-[7.5rem]">
         <BuyTickets nextShow={nextShow} seasonPass={seasonPass} />
       </div>
 
-      <div id="about" className="scroll-mt-[120px]">
+      <div id="about" className="scroll-mt-[7.5rem]">
         <WhatIs />
       </div>
 
@@ -45,15 +45,15 @@ export default async function Home() {
       <FounderBand />
 
       {/* Chapter Three — Scope Screenings Magic (moments from the floor) */}
-      <section className="band-up bg-bg-alt px-5 py-24 md:px-[90px]">
+      <section className="band-up bg-bg-alt px-5 py-24 md:shell-x">
         <Reveal className="flex flex-col items-center gap-4 text-center">
           <ChapterLabel n="Chapter Three" center />
           <KineticText
             as="h2"
-            className="pulp font-display text-[56px] uppercase leading-[0.94] md:text-[80px]"
+            className="pulp font-display text-[3.5rem] uppercase leading-[0.94] md:text-[5rem]"
             text={"Scope Screenings\nMagic"}
           />
-          <p className="max-w-[44ch] font-body text-[17px] leading-relaxed text-fg/70">
+          <p className="max-w-[44ch] font-body text-[1.0625rem] leading-relaxed text-fg/70">
             Every last Tuesday the Central District turns into a cinema — ten films, ten directors,
             and the best room in the city.
           </p>
@@ -66,40 +66,40 @@ export default async function Home() {
             href="https://instagram.com/scopescreenings"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 border-b-2 border-rust pb-1.5 font-body text-[13px] font-extrabold uppercase tracking-[0.14em] text-fg transition-colors hover:text-rust"
+            className="flex items-center gap-2 border-b-2 border-rust pb-1.5 font-body text-[0.8125rem] font-extrabold uppercase tracking-[0.14em] text-fg transition-colors hover:text-rust"
           >
             See more from the floor <span className="text-rust">›</span>
           </a>
         </div>
       </section>
 
-      <div id="submit" className="scroll-mt-[120px]">
+      <div id="submit" className="scroll-mt-[7.5rem]">
         <Submissions />
       </div>
 
-      <div id="schedule" className="scroll-mt-[120px]">
+      <div id="schedule" className="scroll-mt-[7.5rem]">
         <ScheduleSection />
       </div>
 
       <PartnersMarquee band />
 
-      <div id="support" className="scroll-mt-[120px]">
+      <div id="support" className="scroll-mt-[7.5rem]">
         <SupportPress />
       </div>
 
       {/* Chapter Four — The Archives */}
       <section
         id="films"
-        className="band-down scroll-mt-[120px] bg-rust text-ink px-5 py-24 md:px-[90px]"
+        className="band-down scroll-mt-[7.5rem] bg-rust text-ink px-5 py-24 md:shell-x"
       >
         <Reveal className="flex flex-col items-center gap-4 text-center">
-          <div className="flex items-center justify-center gap-3"><span className="h-px w-10 bg-ink/40" /><span className="font-body text-[12px] font-bold uppercase tracking-[0.3em] text-ink/70">Chapter Four</span><span className="h-px w-10 bg-ink/40" /></div>
+          <div className="flex items-center justify-center gap-3"><span className="h-px w-10 bg-ink/40" /><span className="font-body text-[0.75rem] font-bold uppercase tracking-[0.3em] text-ink/70">Chapter Four</span><span className="h-px w-10 bg-ink/40" /></div>
           <KineticText
             as="h2"
-            className="pulp-on-gold font-display text-[56px] uppercase leading-[0.94] md:text-[80px]"
+            className="pulp-on-gold font-display text-[3.5rem] uppercase leading-[0.94] md:text-[5rem]"
             text="The Archives"
           />
-          <p className="max-w-[44ch] font-body text-[17px] leading-relaxed text-ink/70">
+          <p className="max-w-[44ch] font-body text-[1.0625rem] leading-relaxed text-ink/70">
             Shorts, music videos, docs, animation, experiments. Every film twenty minutes or
             less, every filmmaker in the room.
           </p>
@@ -110,7 +110,7 @@ export default async function Home() {
         <div className="mt-14 flex justify-center">
           <a
             href="/schedule"
-            className="flex items-center gap-2 border-b-2 border-ink pb-1.5 font-body text-[13px] font-extrabold uppercase tracking-[0.14em] text-ink transition-colors hover:text-curtain"
+            className="flex items-center gap-2 border-b-2 border-ink pb-1.5 font-body text-[0.8125rem] font-extrabold uppercase tracking-[0.14em] text-ink transition-colors hover:text-curtain"
           >
             Browse all 200+ films <span className="text-curtain">›</span>
           </a>
