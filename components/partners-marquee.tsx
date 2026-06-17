@@ -33,7 +33,7 @@ export function PartnersMarquee({ band = false }: { band?: boolean } = {}) {
       <Reveal className="mb-10 flex items-center justify-center gap-3">
         <span className="h-px w-8 bg-curtain" />
         <span
-          className={`font-body text-[12px] font-bold uppercase tracking-[0.28em] ${band ? "text-ink" : "text-rust"}`}
+          className={`font-body text-[0.75rem] font-bold uppercase tracking-[0.28em] ${band ? "text-ink" : "text-rust"}`}
         >
           In Good Company
         </span>
@@ -76,7 +76,7 @@ export function PartnersMarquee({ band = false }: { band?: boolean } = {}) {
                 // Bound by BOTH height and width so wide wordmarks (shunpike,
                 // converge) get capped instead of dwarfing the compact marks.
                 // h-auto/w-auto keeps the aspect ratio while fitting the box.
-                className={`h-auto w-auto max-h-8 max-w-[104px] md:max-h-9 md:max-w-[120px] ${band ? "partner-logo--ink" : "partner-logo"}`}
+                className={`h-auto w-auto max-h-8 max-w-[6.5rem] md:max-h-9 md:max-w-[7.5rem] ${band ? "partner-logo--ink" : "partner-logo"}`}
               />
             </a>
             );
