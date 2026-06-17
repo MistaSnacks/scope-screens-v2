@@ -25,25 +25,25 @@ export default function AboutPage() {
       />
 
       {/* (b) What Is Scope Screenings */}
-      <section className="mt-16 border-t border-hairline bg-bg-alt px-5 py-24 md:px-[90px]">
+      <section className="mt-16 border-t border-hairline bg-bg-alt px-5 py-24 md:shell-x">
         <div className="md:flex md:gap-16">
           {/* Left column */}
-          <Reveal className="md:w-[360px] md:shrink-0">
+          <Reveal className="md:w-[22.5rem] md:shrink-0">
             <div className="flex items-center gap-3">
               <span className="h-px w-10 bg-curtain" />
-              <span className="font-mono text-[12px] font-bold uppercase tracking-[0.3em] text-label">
+              <span className="font-mono text-[0.75rem] font-bold uppercase tracking-[0.3em] text-label">
                 The short version
               </span>
             </div>
             <KineticText
               as="h2"
-              className="pulp font-display text-[44px] uppercase leading-[0.95] md:text-[56px] mt-5"
+              className="pulp font-display text-[2.75rem] uppercase leading-[0.95] md:text-[3.5rem] mt-5"
               text="What Is Scope Screenings"
             />
           </Reveal>
 
           {/* Right column */}
-          <Reveal delay={0.1} className="max-w-[60ch] space-y-6 font-credits text-[18px] leading-relaxed text-fg/85 md:text-[19px]">
+          <Reveal delay={0.1} className="max-w-[60ch] space-y-6 font-credits text-[1.125rem] leading-relaxed text-fg/85 md:text-[1.1875rem]">
             <p>
               Founded in June 2022, Scope Screenings is a live short-film festival that runs the
               last Tuesday of every month, June through December, at the Langston Hughes Performing
@@ -64,10 +64,10 @@ export default function AboutPage() {
         <Stagger className="mt-16 flex flex-wrap gap-x-12 gap-y-8">
           {ABOUT_STATS.map((s) => (
             <StaggerItem key={s.l}>
-              <span className="font-marquee text-[40px] leading-none text-rust md:text-[48px]">
+              <span className="font-marquee text-[2.5rem] leading-none text-rust md:text-[3rem]">
                 {s.n}
               </span>
-              <span className="mt-1 block font-mono text-[11px] uppercase tracking-[0.16em] text-muted">
+              <span className="mt-1 block font-mono text-[0.6875rem] uppercase tracking-[0.16em] text-muted">
                 {s.l}
               </span>
             </StaggerItem>
@@ -82,17 +82,17 @@ export default function AboutPage() {
       <PartnersMarquee />
 
       {/* (e) How We Got Here — Timeline */}
-      <section className="border-t border-hairline bg-bg px-5 py-24 md:px-[90px]">
+      <section className="border-t border-hairline bg-bg px-5 py-24 md:shell-x">
         <Reveal>
           <div className="flex items-center gap-3">
             <span className="h-px w-10 bg-curtain" />
-            <span className="font-mono text-[12px] font-bold uppercase tracking-[0.3em] text-label">
+            <span className="font-mono text-[0.75rem] font-bold uppercase tracking-[0.3em] text-label">
               The story
             </span>
           </div>
           <KineticText
             as="h2"
-            className="pulp font-display text-[44px] uppercase leading-[0.95] md:text-[64px] mt-5 mb-12"
+            className="pulp font-display text-[2.75rem] uppercase leading-[0.95] md:text-[4rem] mt-5 mb-12"
             text="How We Got Here"
           />
         </Reveal>
@@ -102,12 +102,12 @@ export default function AboutPage() {
               key={t.year}
               className="flex flex-col gap-2 border-t border-hairline py-8 md:flex-row md:gap-10"
             >
-              <span className="font-marquee text-[40px] leading-none text-rust md:w-[200px] md:shrink-0 md:text-[52px]">
+              <span className="font-marquee text-[2.5rem] leading-none text-rust md:w-[12.5rem] md:shrink-0 md:text-[3.25rem]">
                 {t.year}
               </span>
               <div className="max-w-[60ch]">
-                <h3 className="font-body text-[20px] font-extrabold text-fg">{t.title}</h3>
-                <p className="mt-2 font-credits text-[17px] leading-relaxed text-muted md:text-[18px]">
+                <h3 className="font-body text-[1.25rem] font-extrabold text-fg">{t.title}</h3>
+                <p className="mt-2 font-credits text-[1.0625rem] leading-relaxed text-muted md:text-[1.125rem]">
                   {t.blurb}
                 </p>
               </div>
@@ -117,17 +117,17 @@ export default function AboutPage() {
       </section>
 
       {/* (f) The Houses */}
-      <section className="border-t border-hairline bg-bg-alt px-5 py-24 md:px-[90px]">
+      <section className="border-t border-hairline bg-bg-alt px-5 py-24 md:shell-x">
         <Reveal>
           <div className="flex items-center gap-3">
             <span className="h-px w-10 bg-curtain" />
-            <span className="font-mono text-[12px] font-bold uppercase tracking-[0.3em] text-label">
+            <span className="font-mono text-[0.75rem] font-bold uppercase tracking-[0.3em] text-label">
               The houses
             </span>
           </div>
           <KineticText
             as="h2"
-            className="pulp mt-5 font-display text-[44px] uppercase leading-[0.95] md:text-[64px]"
+            className="pulp mt-5 font-display text-[2.75rem] uppercase leading-[0.95] md:text-[4rem]"
             text="The Houses"
           />
         </Reveal>
@@ -135,16 +135,16 @@ export default function AboutPage() {
           {HOUSES.map((h) => (
             <StaggerItem key={h.name}>
               <Hoverable className="h-full rounded-lg border border-hairline bg-card p-7">
-                <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-label">
+                <span className="font-mono text-[0.6875rem] uppercase tracking-[0.2em] text-label">
                   {h.eyebrow}
                 </span>
-                <h3 className="mt-3 font-display text-[24px] uppercase leading-tight text-fg">
+                <h3 className="mt-3 font-display text-[1.5rem] uppercase leading-tight text-fg">
                   {h.name}
                 </h3>
-                <p className="mt-2 font-mono text-[12px] uppercase tracking-[0.1em] text-muted">
+                <p className="mt-2 font-mono text-[0.75rem] uppercase tracking-[0.1em] text-muted">
                   {h.address}
                 </p>
-                <p className="mt-3 font-credits text-[16px] leading-relaxed text-muted">
+                <p className="mt-3 font-credits text-[1rem] leading-relaxed text-muted">
                   {h.blurb}
                 </p>
               </Hoverable>
