@@ -109,6 +109,21 @@ body {
    padding so content clears the diagonal. */
 :root {
   --band-skew: clamp(34px, 5.5vw, 104px);
+  /* Exact slope of the diagonal seam, derived from the skew so content rotated
+     by it sits perfectly parallel to the band's top/bottom edges. */
+  --band-angle: atan2(var(--band-skew), 100vw);
+}
+
+/* Rotate a band's inner content to ride its diagonal instead of looking like a
+   horizontal strip dropped into a slanted box. Up-band edge descends to the
+   right (+angle); down-band edge rises to the right (-angle). */
+.band-content-up {
+  transform: rotate(var(--band-angle));
+  transform-origin: center;
+}
+.band-content-down {
+  transform: rotate(calc(-1 * var(--band-angle)));
+  transform-origin: center;
 }
 .band-down {
   clip-path: polygon(0 var(--band-skew), 100% 0, 100% 100%, 0 100%);

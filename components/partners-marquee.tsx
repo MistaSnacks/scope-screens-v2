@@ -29,6 +29,7 @@ export function PartnersMarquee({ band = false }: { band?: boolean } = {}) {
           : "border-t border-hairline bg-bg px-5 py-16 md:px-9"
       }
     >
+      <div className={band ? "band-content-up" : undefined}>
       <Reveal className="mb-10 flex items-center justify-center gap-3">
         <span className="h-px w-8 bg-curtain" />
         <span
@@ -81,6 +82,7 @@ export function PartnersMarquee({ band = false }: { band?: boolean } = {}) {
             );
           })}
         </div>
+      </div>
       </div>
     </section>
   );
