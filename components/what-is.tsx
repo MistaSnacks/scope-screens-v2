@@ -18,9 +18,9 @@ function Field({ k, v }: { k: string; v: string }) {
 
 export function WhatIs() {
   return (
-    <section className="band-up flex flex-col items-start gap-14 overflow-hidden bg-bg-alt px-5 py-24 md:flex-row md:items-center md:justify-between md:gap-20 md:shell-x">
+    <section className="band-up flex flex-col items-start gap-14 bg-bg-alt px-5 py-24 md:shell-x lg:flex-row lg:items-center lg:justify-between lg:gap-20">
       {/* Left: editorial copy */}
-      <Reveal className="flex w-full flex-col gap-6 md:w-[35rem] md:shrink-0">
+      <Reveal className="flex w-full flex-col gap-6 lg:w-[35rem] lg:shrink-0">
         <div className="flex items-center gap-3.5">
           <span className="h-0.5 w-[1.875rem] shrink-0 bg-curtain" />
           <span className="font-mono text-[0.75rem] uppercase tracking-[0.2em] text-curtain">

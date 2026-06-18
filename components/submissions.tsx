@@ -19,7 +19,14 @@ const LEAVES = [
 
 function Laurel({ flip = false }: { flip?: boolean }) {
   return (
-    <svg width="92" height="148" viewBox="0 0 110 168" xmlns="http://www.w3.org/2000/svg" className="shrink-0" aria-hidden>
+    <svg
+      width="92"
+      height="148"
+      viewBox="0 0 110 168"
+      xmlns="http://www.w3.org/2000/svg"
+      className="hidden shrink-0 sm:block"
+      aria-hidden
+    >
       <g transform={flip ? "translate(110,0) scale(-1,1)" : undefined}>
         <path
           d="M86 158 C60 128 50 96 54 58 C56 38 66 22 82 10"

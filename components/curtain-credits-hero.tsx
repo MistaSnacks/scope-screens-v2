@@ -36,17 +36,22 @@ void main() {
   // Pin top & bottom edges so the billow swells in/out, never fans up.
   float vEnv = smoothstep(0.0, 0.2, v) * smoothstep(1.0, 0.8, v);
 
-  // Pin the OUTER margin (u -> 1) flat against the screen edge so the billow
-  // never recedes there and exposes the screen behind the curtain. The sway is
-  // free in the interior and at the inner seam; it just tapers to 0 at the edge.
-  float uEnv = smoothstep(1.0, 0.7, u);
+  // Pin BOTH the inner seam (u -> 0, the visible parting/lit edge) AND the outer
+  // margin (u -> 1, against the frame) so the billow only breathes in the BODY
+  // of the drape. Previously only the outer edge was pinned and the inner seam
+  // swung free: that swept the visible leading edge through z, and perspective
+  // peeled it into an unnatural convex bulge right at the lit fold (and let the
+  // closed seam bow past its partner). Pinning the seam — as the proven
+  // persistent-curtains build does — keeps the lit edge flat and lets only the
+  // interior swell in and out, which reads as fabric rather than a dome.
+  float uEnv = smoothstep(0.0, 0.18, u) * smoothstep(1.0, 0.7, u);
 
   // Low-frequency sway of the whole folded sheet (a soft draft, not a ripple).
   float fold1 = sin(u * 3.0 - uTime * 1.0);
   float fold2 = sin(u * 5.5 - uTime * 1.6);
   float billow = fold1 * 0.6 + fold2 * 0.4;
 
-  float ripple = billow * 0.06 * vEnv * uEnv;
+  float ripple = billow * 0.045 * vEnv * uEnv; // gentle depth, matching the reference drape
   pos.z += ripple;
 
   vTextureCoord = aTextureCoord;
@@ -79,8 +84,26 @@ void main() {
   float rippleLight = clamp(1.0 + vRipple * 1.9, 0.35, 1.6);
   base.rgb *= rippleLight;
 
-  float seamShadow = smoothstep(0.0, 0.16, u);
-  base.rgb *= mix(0.32, 1.0, seamShadow);
+  // Inner-edge shading — a lit vertical gather at the leading edge: a bright
+  // crest catching the stage spot with a shadow valley tucked just behind it,
+  // so the edge reads as a rounded velvet fold against the dark screen. Closed,
+  // the center is a soft overlap shadow (the two drapes meeting); as they PART
+  // it rolls into the lit fold. That reveal ramps with uProgress (as in the
+  // first iteration) but caps at EDGE_MAX, so the fully-open look settles at the
+  // dialed-back reference brightness instead of the old too-hot full crest.
+  float EDGE_MAX = 0.7;                              // open-edge brightness (1.0 was too hot)
+  float edgeReveal = EDGE_MAX * smoothstep(0.05, 0.35, uProgress);
+
+  float seamShadow = smoothstep(0.0, 0.16, u);     // soft drape-overlap base shadow
+  float closedShade = mix(0.32, 1.0, seamShadow);
+
+  float lip = smoothstep(0.014, 0.0, u);           // thin shadow terminator at the very edge
+  float crest = smoothstep(0.05, 0.014, u) * smoothstep(0.0, 0.014, u); // lit roll just inboard of the lip
+  float valley = smoothstep(0.0, 0.07, u) * smoothstep(0.22, 0.09, u);
+  float openShade = mix(1.0, 0.34, valley) * mix(1.0, 0.55, lip);       // valley + edge shadow
+
+  base.rgb *= mix(closedShade, openShade, edgeReveal);
+  base.rgb += vec3(0.30, 0.10, 0.045) * crest * edgeReveal; // warm crest catch, dialed to the reference
 
   base.rgb *= mix(0.7, 1.0, smoothstep(0.0, 0.18, uv.y));
   base.rgb *= mix(0.88, 1.0, smoothstep(0.95, 0.6, uv.y));
@@ -102,6 +125,9 @@ interface PlaneLike {
 interface CurtainsLike {
   dispose: () => void;
   resize: () => void;
+  renderer?: {
+    gl?: unknown;
+  };
 }
 
 // The 2025 sizzle reel "SS × AMC 2" (landscape, 0:55) from the Wix media library —
@@ -122,6 +148,8 @@ export function CurtainCreditsHero() {
   const rightPlaneEl = useRef<HTMLDivElement>(null);
   const logoOpeningRef = useRef<HTMLDivElement>(null);
   const reelVideoRef = useRef<HTMLVideoElement>(null);
+  const titleRef = useRef<HTMLDivElement>(null);
+  const creditsRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef({ value: 0 });
   const openFactorRef = useRef(0.86); // how far the velvet parts; overwritten in useGSAP (0.86 desktop / 0.92 mobile)
   const curtainsRef = useRef<CurtainsLike | null>(null);
@@ -145,7 +173,8 @@ export function CurtainCreditsHero() {
   // The original procedural velvet remains the single visual source for the
   // valance, first-paint panels, and animated WebGL curtains.
   useEffect(() => {
-    setVelvetSrc(getVelvetDataUrl());
+    const frame = window.requestAnimationFrame(() => setVelvetSrc(getVelvetDataUrl()));
+    return () => window.cancelAnimationFrame(frame);
   }, [theme]);
 
   // WebGL velvet: two curtains.js planes textured with the procedural velvet.
@@ -189,6 +218,12 @@ export function CurtainCreditsHero() {
           watchScroll: false,
         });
         curtainsRef.current = curtains;
+        if (!curtains.renderer?.gl) {
+          setCurtainsReady(true);
+          curtains.dispose();
+          curtainsRef.current = null;
+          return;
+        }
 
         const commonParams = {
           widthSegments: 24,
@@ -287,11 +322,30 @@ export function CurtainCreditsHero() {
             progressRef.current.value = 1;
             gsap.set(spotRef.current, { opacity: 1 });
             gsap.set(logoOpeningRef.current, { opacity: 0 });
+            gsap.set(titleRef.current, { opacity: 1, y: 0 });
+            gsap.set(creditsRef.current, { opacity: 1, y: 0, pointerEvents: "auto" });
+            // No scroll choreography to trigger it, so roll the reel now.
+            reelVideoRef.current?.play().catch(() => {});
             return;
           }
 
           // Logo opening starts visible on the closed curtain.
           gsap.set(logoOpeningRef.current, { opacity: 1, y: 0 });
+
+          // Title + credits fade in tracking the curtain progress DIRECTLY, so
+          // the reveal is fully reversible — scrub the curtains back toward
+          // closed and the title/credits fade back out with them. (Deliberately
+          // unlike the main build, which latches them in once revealed.) The
+          // title's fade is keyed to begin as the popcorn logo lifts away
+          // (~0.25), then resolves as the curtains finish opening (~0.9) — a
+          // picture-esque handoff, not a quick pop; the credits follow a beat
+          // later.
+          gsap.set(titleRef.current, { opacity: 0, y: 16 });
+          gsap.set(creditsRef.current, { opacity: 0, y: 12, pointerEvents: "none" });
+
+          const titleEase = gsap.parseEase("sine.inOut");
+          const ctaEase = gsap.parseEase("power2.out");
+          let videoStarted = false; // reel rolls once when the curtains hit full open
 
           // Progress starts at 0 (closed); scroll scrubs it to 1 (framed), then
           // the pinned hero holds before it scrolls away.
@@ -305,6 +359,39 @@ export function CurtainCreditsHero() {
                 scrub: 0.6,
                 anticipatePin: 1,
                 invalidateOnRefresh: true,
+              },
+              // Drives the reversible hero reveal + the one-shot reel start.
+              // Runs every tick (incl. the scrub settle) so the fades track the
+              // curtains BOTH ways and full-open is caught even after scroll
+              // stops.
+              onUpdate: () => {
+                const p = progressRef.current.value;
+
+                // Keyed off p directly (not a latched max), so scrubbing the
+                // curtains back toward closed fades the title/credits back out
+                // with them. The title begins as the popcorn logo finishes
+                // lifting away (~0.25) and resolves across the rest of the open
+                // (~0.9); the credits follow a beat later.
+                const titleO = titleEase(Math.min(1, Math.max(0, (p - 0.25) / 0.65)));
+                const ctaO = ctaEase(Math.min(1, Math.max(0, (p - 0.45) / 0.5)));
+                gsap.set(titleRef.current, { opacity: titleO, y: 16 * (1 - titleO) });
+                gsap.set(creditsRef.current, {
+                  opacity: ctaO,
+                  y: 12 * (1 - ctaO),
+                  // Clickable only while essentially fully revealed.
+                  pointerEvents: ctaO > 0.95 ? "auto" : "none",
+                });
+
+                // Roll the sizzle reel the instant the curtains hit full open,
+                // so the reveal lands on a moving picture rather than a frozen
+                // poster. Once started it keeps playing even if the curtains
+                // scrub shut (it's hidden behind them anyway) — only a fade, not
+                // the reel, reverses.
+                const v = reelVideoRef.current;
+                if (v && !videoStarted && p >= 0.999) {
+                  videoStarted = true;
+                  v.play().catch(() => {});
+                }
               },
             })
             .to(progressRef.current, { value: 1, ease: "none", duration: 1 }, 0)
@@ -378,10 +465,10 @@ export function CurtainCreditsHero() {
           <video
             ref={reelVideoRef}
             className={styles.frameVideo}
-            autoPlay
             muted
             loop
             playsInline
+            preload="auto"
             poster={SIZZLE_REEL_POSTER}
             aria-hidden
           >
@@ -394,7 +481,7 @@ export function CurtainCreditsHero() {
           <div className={styles.frameScrim} aria-hidden />
 
           {/* The headline, on the screen — the marquee title over the reel. */}
-          <div className={styles.screenTitle}>
+          <div ref={titleRef} className={styles.screenTitle}>
             <span className={styles.screenEyebrow}>Feature Presentation</span>
             <h1 className={styles.screenWordmark}>
               Scope
@@ -432,7 +519,7 @@ export function CurtainCreditsHero() {
         </div>
 
         {/* Nav as credits — two primary actions + one secondary line. */}
-        <div className={styles.creditsUnder}>
+        <div ref={creditsRef} className={styles.creditsUnder}>
           <div className={styles.creditsPrimary}>
             {PRIMARY_CREDITS.map((c, i) => (
               <a
@@ -478,12 +565,16 @@ export function CurtainCreditsHero() {
 
       {/* WebGL velvet curtain planes. The <img> is the texture sampler only. */}
       <div ref={leftPlaneEl} aria-hidden className={`${styles.plane} ${styles.planeL}`}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={velvetSrc} alt="" data-sampler="velvetTexture" style={{ display: "none" }} />
+        {velvetSrc ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={velvetSrc} alt="" data-sampler="velvetTexture" style={{ display: "none" }} />
+        ) : null}
       </div>
       <div ref={rightPlaneEl} aria-hidden className={`${styles.plane} ${styles.planeR}`}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={velvetSrc} alt="" data-sampler="velvetTexture" style={{ display: "none" }} />
+        {velvetSrc ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={velvetSrc} alt="" data-sampler="velvetTexture" style={{ display: "none" }} />
+        ) : null}
       </div>
       <div ref={canvasContainerRef} aria-hidden className={styles.glCanvas} />
 

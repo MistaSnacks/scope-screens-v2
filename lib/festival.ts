@@ -2,7 +2,7 @@
 // Seeded from the live Wix Events site ("scope", id 5e0eaedc-6847-4c06-bb37-34cb6ff143b5).
 // Ticketing runs through Wix Events — Reserve links point at the real event pages.
 
-export const NAV_ITEMS = ["Watch", "Schedule", "Submit", "About", "Support"] as const;
+export const NAV_ITEMS = ["Watch", "Tickets", "Schedule", "Submit", "About", "Support"] as const;
 export type NavItem = (typeof NAV_ITEMS)[number];
 
 export const TICKET_BASE_URL = "https://www.lexscopefilms.com/event-details/";
@@ -232,13 +232,6 @@ export const SOCIALS: Social[] = [
 export const CONTACT_EMAIL = "hello@scopescreenings.com";
 
 // --- About page ---
-export const ABOUT_STATS = [
-  { n: "Last Tue", l: "Monthly · June–December" },
-  { n: "~300", l: "In the room each night" },
-  { n: "10", l: "Directors a night" },
-  { n: "≤20 min", l: "Every film, every genre" },
-] as const;
-
 export interface TimelineEntry { year: string; title: string; blurb: string; }
 export const TIMELINE: TimelineEntry[] = [
   { year: "2022", title: "It starts in June", blurb: "Lex Scope launches Scope Screenings in Seattle — one night, a handful of directors, and a simple idea: get overlooked filmmakers onto a real screen, in front of a real crowd." },
@@ -274,11 +267,6 @@ export const SUBMIT_STEPS = [
 ] as const;
 
 // --- Support page ---
-export const SUPPORT_STATS = [
-  { n: "$0", l: "Cost barrier", blurb: "Fee waivers keep submissions open to everyone. Your gift covers the gap." },
-  { n: "300+", l: "Seats a night", blurb: "A full house every month means real audiences for first-time filmmakers." },
-  { n: "100%", l: "To the work", blurb: "Every dollar goes to venue, gear, and filmmaker stipends — not overhead." },
-] as const;
 export interface GivingLevel { name: string; amount: string; cadence: string; perks: string[]; featured?: boolean; }
 export const GIVING_LEVELS: GivingLevel[] = [
   { name: "Friend", amount: "$50", cadence: "once", perks: ["Name on the season funder wall", "Our eternal gratitude"] },

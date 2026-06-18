@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/page-header";
 import { FounderBand } from "@/components/founder-band";
 import { PartnersMarquee } from "@/components/partners-marquee";
-import { ABOUT_STATS, TIMELINE, HOUSES } from "@/lib/festival";
+import { TIMELINE, HOUSES } from "@/lib/festival";
 import { Reveal } from "@/components/motion/reveal";
 import { Stagger, StaggerItem } from "@/components/motion/stagger";
 import { Hoverable } from "@/components/motion/hoverable";
@@ -26,9 +26,9 @@ export default function AboutPage() {
 
       {/* (b) What Is Scope Screenings */}
       <section className="mt-16 border-t border-hairline bg-bg-alt px-5 py-24 md:shell-x">
-        <div className="md:flex md:gap-16">
+        <div className="lg:flex lg:gap-16">
           {/* Left column */}
-          <Reveal className="md:w-[22.5rem] md:shrink-0">
+          <Reveal className="lg:w-[25rem] lg:shrink-0">
             <div className="flex items-center gap-3">
               <span className="h-px w-10 bg-curtain" />
               <span className="font-mono text-[0.75rem] font-bold uppercase tracking-[0.3em] text-label">
@@ -38,12 +38,12 @@ export default function AboutPage() {
             <KineticText
               as="h2"
               className="pulp font-display text-[2.75rem] uppercase leading-[0.95] md:text-[3.5rem] mt-5"
-              text="What Is Scope Screenings"
+              text={"What Is\nScope Screenings"}
             />
           </Reveal>
 
           {/* Right column */}
-          <Reveal delay={0.1} className="max-w-[60ch] space-y-6 font-credits text-[1.125rem] leading-relaxed text-fg/85 md:text-[1.1875rem]">
+          <Reveal delay={0.1} className="mt-8 max-w-[60ch] space-y-6 font-credits text-[1.125rem] leading-relaxed text-fg/85 md:text-[1.1875rem] lg:mt-0">
             <p>
               Founded in June 2022, Scope Screenings is a live short-film festival that runs the
               last Tuesday of every month, June through December, at the Langston Hughes Performing
@@ -59,20 +59,6 @@ export default function AboutPage() {
             </p>
           </Reveal>
         </div>
-
-        {/* 4-up stat row */}
-        <Stagger className="mt-16 flex flex-wrap gap-x-12 gap-y-8">
-          {ABOUT_STATS.map((s) => (
-            <StaggerItem key={s.l}>
-              <span className="font-marquee text-[2.5rem] leading-none text-rust md:text-[3rem]">
-                {s.n}
-              </span>
-              <span className="mt-1 block font-mono text-[0.6875rem] uppercase tracking-[0.16em] text-muted">
-                {s.l}
-              </span>
-            </StaggerItem>
-          ))}
-        </Stagger>
       </section>
 
       {/* (c) Founder — red band */}
@@ -117,7 +103,9 @@ export default function AboutPage() {
       </section>
 
       {/* (f) The Houses */}
-      <section className="border-t border-hairline bg-bg-alt px-5 py-24 md:shell-x">
+      {/* scroll-mt = nav clearance (7.5rem) minus py-24 (6rem) so the footer
+          "Venues" → /about#houses link lands the eyebrow just below the nav. */}
+      <section id="houses" className="scroll-mt-[1.5rem] border-t border-hairline bg-bg-alt px-5 py-24 md:shell-x">
         <Reveal>
           <div className="flex items-center gap-3">
             <span className="h-px w-10 bg-curtain" />

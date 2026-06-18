@@ -205,26 +205,31 @@ function SeasonPassLanyard({ target }: { target: CheckoutTarget | null }) {
 export function BuyTickets({
   nextShow,
   seasonPass,
+  headless = false,
 }: {
   nextShow: CheckoutTarget | null;
   seasonPass: CheckoutTarget | null;
+  /** Drop the internal eyebrow/title block when a page already supplies one. */
+  headless?: boolean;
 }) {
   return (
     <section className="flex flex-col items-center gap-14 overflow-hidden border-t border-hairline bg-bg px-5 py-24 md:shell-x">
       {/* Heading on top — like the Program section */}
-      <Reveal className="flex max-w-[40rem] flex-col items-center gap-4 text-center">
-        <div className="flex items-center gap-3">
-          <span className="h-px w-10 bg-curtain" />
-          <span className="font-body text-[0.75rem] font-bold uppercase tracking-[0.3em] text-label">Chapter One</span>
-          <span className="h-px w-10 bg-curtain" />
-        </div>
-        <KineticText as="h2" className="pulp font-display text-[3.5rem] uppercase leading-[0.94] md:text-[5rem]" text="The Next Show" />
-        <p className="font-body text-[1.0625rem] leading-relaxed text-fg/70">
-          Last Tuesday of the month, June through December. Ten directors, ten films, one packed
-          house in the Central District — doors at 7:00, lights down at 7:30. Go for the night, or go
-          all season.
-        </p>
-      </Reveal>
+      {!headless && (
+        <Reveal className="flex max-w-[40rem] flex-col items-center gap-4 text-center">
+          <div className="flex items-center gap-3">
+            <span className="h-px w-10 bg-curtain" />
+            <span className="font-body text-[0.75rem] font-bold uppercase tracking-[0.3em] text-label">Chapter One</span>
+            <span className="h-px w-10 bg-curtain" />
+          </div>
+          <KineticText as="h2" className="pulp font-display text-[3.5rem] uppercase leading-[0.94] md:text-[5rem]" text="The Next Show" />
+          <p className="font-body text-[1.0625rem] leading-relaxed text-fg/70">
+            Last Tuesday of the month, June through December. Ten directors, ten films, one packed
+            house in the Central District — doors at 7:00, lights down at 7:30. Go for the night, or go
+            all season.
+          </p>
+        </Reveal>
+      )}
 
       {/* Ticket + lanyard underneath — scaled so neither overpowers the other */}
       <Stagger className="flex w-full flex-col items-center justify-center gap-6 md:flex-row md:items-center md:gap-14">

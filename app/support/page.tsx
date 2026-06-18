@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SUPPORT_STATS, GIVING_LEVELS, DONATE_URL } from "@/lib/festival";
+import { GIVING_LEVELS, DONATE_URL } from "@/lib/festival";
 import { PartnersMarquee } from "@/components/partners-marquee";
 import { Reveal } from "@/components/motion/reveal";
 import { Stagger, StaggerItem } from "@/components/motion/stagger";
@@ -62,44 +62,7 @@ export default function SupportPage() {
         </div>
       </section>
 
-      {/* (b) "Where It Goes" — stats */}
-      <section className="mt-16 border-t border-hairline bg-bg px-5 py-24 md:shell-x">
-        <Reveal>
-          <div className="flex items-center gap-3">
-            <span className="h-px w-10 bg-curtain" />
-            <span className="font-mono text-[0.75rem] font-bold uppercase tracking-[0.3em] text-label">
-              Why give
-            </span>
-          </div>
-          <KineticText
-            as="h2"
-            className="pulp mt-5 font-display text-[2.75rem] uppercase leading-[0.95] md:text-[4rem]"
-            text="Where It Goes"
-          />
-          <p className="mt-5 max-w-[60ch] font-credits text-[1.125rem] leading-relaxed text-fg/80 md:text-[1.1875rem]">
-            We were built to break down the barriers placed in front of Black,
-            brown, and tan creatives. Funding is how that promise stays real — no
-            filmmaker turned away over cost, ever.
-          </p>
-        </Reveal>
-        <Stagger className="mt-14 grid gap-10 md:grid-cols-3">
-          {SUPPORT_STATS.map((s) => (
-            <StaggerItem key={s.l}>
-              <span className="font-marquee text-[2.75rem] leading-none text-rust md:text-[3.25rem]">
-                {s.n}
-              </span>
-              <p className="mt-1 font-mono text-[0.6875rem] uppercase tracking-[0.16em] text-muted">
-                {s.l}
-              </p>
-              <p className="mt-3 font-credits text-[1rem] leading-relaxed text-muted">
-                {s.blurb}
-              </p>
-            </StaggerItem>
-          ))}
-        </Stagger>
-      </section>
-
-      {/* (c) "Pick Your Level" — 4 tiers */}
+      {/* (b) "Pick Your Level" — 4 tiers */}
       <section className="border-t border-hairline bg-bg-alt px-5 py-24 md:shell-x">
         <Reveal>
           <div className="flex items-center gap-3">
@@ -156,7 +119,7 @@ export default function SupportPage() {
         </Stagger>
       </section>
 
-      {/* (d) 501(c)(3) note */}
+      {/* (c) 501(c)(3) note */}
       <section className="bg-bg-alt px-5 pb-24 md:shell-x">
         <Reveal className="flex flex-col gap-4 rounded-lg bg-card p-7 md:flex-row md:items-center md:gap-8">
           <span className="font-marquee text-[1.75rem] leading-none text-rust md:shrink-0">
@@ -171,7 +134,7 @@ export default function SupportPage() {
         </Reveal>
       </section>
 
-      {/* (e) "Two Ways To Back Us" */}
+      {/* (d) "Two Ways To Back Us" */}
       <section className="border-t border-hairline bg-bg px-5 py-24 md:shell-x">
         <Reveal>
           <div className="flex items-center gap-3">
@@ -235,7 +198,7 @@ export default function SupportPage() {
         </Stagger>
       </section>
 
-      {/* (f) Partners + closing CTA */}
+      {/* (e) Partners + closing CTA */}
       <section className="border-t border-hairline bg-bg px-5 py-24 md:shell-x">
         <div className="flex items-center justify-center gap-3">
           <span className="h-px w-10 bg-curtain" />

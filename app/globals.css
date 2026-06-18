@@ -128,15 +128,28 @@ body {
 
 /* Angled section seams — a diagonal clip plus a matching negative overlap, so
    each band's top edge cuts into the one above it (matches the artboard zigzag).
-   Depth is a fraction of viewport width (--band-skew) so the angle reads the
-   same on any screen instead of flattening out on wide desktops. Alternate
-   .band-up / .band-down down the page; sections pair with ≥band-skew top
-   padding so content clears the diagonal. */
+   Alternate .band-up / .band-down down the page; sections pair with ≥band-skew
+   top padding so content clears the diagonal.
+
+   Seam DEPTH rides the rem zoom (4.95rem ≈ the old 5.5vw at the 1440px
+   reference) instead of raw vw, so it scales in lockstep with the rest of the
+   design and — critically — holds at the SAME cap. Raw vw kept growing past the
+   zoom cap (wide monitors) while the capped content stopped, so the band drifted
+   out of proportion on large displays; rem tracks the capped root, so the band
+   now reads identically across desktop widths. The bands are full-bleed (100vw),
+   so the seam slope is skew/100vw and the content rotation must stay keyed to
+   100vw to sit parallel to the clipped edge. */
 :root {
-  --band-skew: clamp(34px, 5.5vw, 104px);
-  /* Exact slope of the diagonal seam, derived from the skew so content rotated
-     by it sits perfectly parallel to the band's top/bottom edges. */
+  --band-skew: 4.95rem;
   --band-angle: atan2(var(--band-skew), 100vw);
+}
+/* Below the desktop zoom engine (≤1023px the root font is fixed at 16px, so a
+   rem skew would freeze at an over-steep ~79px), keep the original
+   viewport-proportional depth so phones/tablets are unchanged. */
+@media (max-width: 1023px) {
+  :root {
+    --band-skew: clamp(34px, 5.5vw, 56px);
+  }
 }
 
 /* Rotate a band's inner content to ride its diagonal instead of looking like a
@@ -150,13 +163,47 @@ body {
   transform: rotate(calc(-1 * var(--band-angle)));
   transform-origin: center;
 }
+.band-up,
 .band-down {
-  clip-path: polygon(0 var(--band-skew), 100% 0, 100% 100%, 0 100%);
+  position: relative;
+  isolation: isolate;
   margin-top: calc(-1 * var(--band-skew));
+  background-color: transparent !important;
 }
-.band-up {
+.band-up::before,
+.band-down::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--band-bg, var(--color-bg));
+}
+.band-down::before {
+  clip-path: polygon(0 var(--band-skew), 100% 0, 100% 100%, 0 100%);
+}
+.band-up::before {
   clip-path: polygon(0 0, 100% var(--band-skew), 100% 100%, 0 100%);
-  margin-top: calc(-1 * var(--band-skew));
+}
+.band-up.bg-bg,
+.band-down.bg-bg {
+  --band-bg: var(--color-bg);
+}
+.band-up.bg-bg-alt,
+.band-down.bg-bg-alt {
+  --band-bg: var(--color-bg-alt);
+}
+.band-up.bg-bg-deep,
+.band-down.bg-bg-deep {
+  --band-bg: var(--color-bg-deep);
+}
+.band-up.bg-curtain,
+.band-down.bg-curtain {
+  --band-bg: var(--color-curtain);
+}
+.band-up.bg-rust,
+.band-down.bg-rust {
+  --band-bg: var(--color-rust);
 }
 
 /* Partner logos forced to ink when the marquee rides the gold band. */
@@ -276,4 +323,3 @@ html {
   filter: brightness(0);
 }
 /* card surface token */
-

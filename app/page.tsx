@@ -33,7 +33,10 @@ export default async function Home() {
       <CurtainCreditsHero />
       <Marquee />
 
-      <div id="tickets" className="scroll-mt-[7.5rem]">
+      {/* scroll-mt = nav clearance (7.5rem) minus the section's own py-24 (6rem)
+          top pad, so jumping to #tickets lands the "Chapter One" eyebrow just
+          below the nav instead of 6rem of dead padding. */}
+      <div id="tickets" className="scroll-mt-[1.5rem]">
         <BuyTickets nextShow={nextShow} seasonPass={seasonPass} />
       </div>
 

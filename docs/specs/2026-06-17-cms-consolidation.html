@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scope Screenings — CMS Consolidation Plan</title>
+<style>
+:root{
+  --bg:#0e1116; --panel:#161b22; --panel-2:#1f2630; --border:#2d3441;
+  --ink:#e6edf3; --ink-dim:#9aa4b1; --accent:#58a6ff;
+  --green:#3fb950; --amber:#d29922; --red:#f85149; --purple:#a371f7;
+  --curtain:#7a1f2b; --rust:#d98324;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  line-height:1.55;font-size:15px}
+.wrap{max-width:1080px;margin:0 auto;padding:40px 28px 90px}
+h1{font-size:30px;margin:0 0 4px}
+h2{font-size:21px;margin:44px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+h3{font-size:16px;margin:0 0 10px}
+.sub{color:var(--ink-dim);font-size:14px;margin-bottom:8px}
+a{color:var(--accent);text-decoration:none}
+p{margin:10px 0}
+code{font-family:var(--mono);background:#0a0d12;
+  border:1px solid var(--border);border-radius:5px;padding:1px 6px;font-size:13px}
+.lead{background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--green);
+  border-radius:10px;padding:16px 20px;margin:20px 0}
+.pill{display:inline-block;font-size:11px;font-weight:600;padding:2px 9px;border-radius:10px;
+  text-transform:uppercase;letter-spacing:.04em;vertical-align:middle}
+.p-fold{background:rgba(248,81,73,.14);color:var(--red)}
+.p-keep{background:rgba(63,185,80,.13);color:var(--green)}
+.p-done{background:rgba(155,164,177,.16);color:var(--ink-dim)}
+.p-into{background:rgba(88,166,255,.14);color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
+th,td{border:1px solid var(--border);padding:7px 11px;text-align:left;vertical-align:top}
+th{background:var(--panel-2);text-transform:uppercase;font-size:11px;letter-spacing:.05em;color:var(--ink-dim)}
+td.num{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--mono)}
+.grid{display:grid;gap:16px;grid-template-columns:1fr 1fr;margin:16px 0}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px 18px}
+.card.wide{grid-column:1/-1}
+.meta{color:var(--ink-dim);font-size:13px;margin:-4px 0 12px}
+.form{font-family:var(--mono);font-size:12.5px;background:#0a0d12;border:1px solid var(--border);
+  border-radius:8px;overflow:hidden}
+.form .row{display:flex;justify-content:space-between;gap:14px;padding:6px 12px;border-bottom:1px solid #161b22}
+.form .row:last-child{border-bottom:0}
+.form .k{color:var(--ink-dim)}
+.form .v{color:var(--ink);text-align:right}
+.form .row.new{background:rgba(88,166,255,.06)}
+.form .row.new .k{color:var(--accent)}
+.form .hd{background:var(--panel-2);color:var(--ink-dim);text-transform:uppercase;letter-spacing:.05em;
+  font-size:10.5px;padding:7px 12px;border-bottom:1px solid var(--border)}
+.divider{padding:5px 12px;background:#11151c;color:var(--rust);font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid #161b22;border-top:1px solid #161b22}
+.note{font-size:13px;color:var(--ink-dim);margin-top:10px}
+.warn{border-left:3px solid var(--amber);background:rgba(210,153,34,.06);padding:12px 16px;border-radius:8px;margin:14px 0;font-size:14px}
+.ok{border-left:3px solid var(--green);background:rgba(63,185,80,.06);padding:12px 16px;border-radius:8px;margin:14px 0;font-size:14px}
+ul{margin:10px 0;padding-left:22px}
+li{margin:5px 0}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--ink-dim);margin:8px 0 0}
+s{color:var(--ink-dim)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>CMS Consolidation Plan</h1>
+<div class="sub">Scope Screenings · main-SPA Wix headless CMS · updated 2026-06-18 · <strong style="color:var(--green)">EXECUTED — folds done (13 collections); editor guide regenerated</strong></div>
+
+<div class="lead">
+<strong>Goal:</strong> shrink the Content Manager sidebar by folding small, fixed, single-section lists into their parent section record — like the Built&nbsp;For&nbsp;Access trial. Image-bearing or genuinely list-shaped data stays its own collection.
+<br><br>
+<strong>Result:</strong> <code>17 → 13</code> managed collections. <span class="pill p-done">Stats already removed</span>
+</div>
+
+<div class="ok">
+<strong>Your decisions locked in:</strong>
+<ol style="margin:8px 0 0">
+  <li><strong>PressKit stays a table</strong> — it has a real file/URL per row, so Support only gains the Giving tiers.</li>
+  <li><strong>Code sync deferred</strong> — this is a <em>CMS-only</em> restructure for now; we wire <code>main</code> when ready.</li>
+  <li><strong>Clapboard → WhatIs</strong> (confirmed: <code>what-is.tsx</code> renders the tilted clapperboard), not SiteSettings.</li>
+</ol>
+</div>
+
+<h2 id="principle">The rule of thumb</h2>
+<div class="grid">
+  <div class="card">
+    <h3><span class="pill p-fold">Fold in</span></h3>
+    <div class="meta">Becomes fields on the parent section record</div>
+    <ul>
+      <li><strong>Small</strong> — roughly 3–5 entries</li>
+      <li><strong>Fixed</strong> — count rarely changes</li>
+      <li><strong>Belongs to one section</strong> — not global</li>
+      <li><strong>Text only</strong> — no per-row image/file upload</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3><span class="pill p-keep">Stay a collection</span></h3>
+    <div class="meta">Keeps the spreadsheet / add-rows workflow</div>
+    <ul>
+      <li><strong>Variable length</strong> — editors add/remove often</li>
+      <li><strong>Media or file per row</strong> — image / URL / download</li>
+      <li><strong>Reused</strong> across more than one place</li>
+    </ul>
+  </div>
+</div>
+
+<h2 id="overview">What moves where</h2>
+<table>
+<thead><tr><th>Collection</th><th>Rows</th><th>Action</th><th>Lands in</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td>Stats</td><td class="num">4</td><td><span class="pill p-done">Deleted</span></td><td>—</td><td>Static numbers; no edit need. Done.</td></tr>
+<tr><td>Socials</td><td class="num">3</td><td><span class="pill p-fold">Fold</span></td><td><span class="pill p-into">Footer</span></td><td>Social links render in the footer.</td></tr>
+<tr><td>Clapboard</td><td class="num">5</td><td><span class="pill p-fold">Fold</span></td><td><span class="pill p-into">WhatIs</span></td><td>The clapperboard slate lives in the What&nbsp;Is band.</td></tr>
+<tr><td>SubmissionChips</td><td class="num">4</td><td><span class="pill p-fold">Fold</span></td><td><span class="pill p-into">Submissions</span></td><td>Chips sit inside the Submissions band.</td></tr>
+<tr><td>GivingTiers</td><td class="num">4</td><td><span class="pill p-fold">Fold</span></td><td><span class="pill p-into">Support</span></td><td>Tier labels in the funder block.</td></tr>
+<tr><td>PressKit</td><td class="num">3</td><td><span class="pill p-keep">Keep</span></td><td>—</td><td>File/URL per row — your call to keep as a table.</td></tr>
+<tr><td>Marquee</td><td class="num">4</td><td><span class="pill p-keep">Keep</span></td><td>—</td><td>Ticker phrases; you add/remove these often.</td></tr>
+<tr><td>Partners</td><td class="num">6</td><td><span class="pill p-keep">Keep</span></td><td>—</td><td>Logo image + link per row, variable count.</td></tr>
+<tr><td>Moments</td><td class="num">6</td><td><span class="pill p-keep">Keep</span></td><td>—</td><td>Image + metadata per row, variable count.</td></tr>
+</tbody>
+</table>
+<div class="legend">
+  <span><span class="pill p-fold">Fold</span> remove collection, add fields to parent</span>
+  <span><span class="pill p-keep">Keep</span> stays as its own table</span>
+</div>
+
+<h2 id="counts">Sidebar: before &amp; after</h2>
+<table>
+<thead><tr><th>Before (17)</th><th>After (13)</th></tr></thead>
+<tbody>
+<tr>
+<td>Hero · WhatIs · BuiltForAccess · MagicGallery · Submissions · Archives · Support · Footer · SiteSettings · Marquee · Partners · Moments · PressKit · <s>Socials</s> · <s>Clapboard</s> · <s>SubmissionChips</s> · <s>GivingTiers</s></td>
+<td>Hero · <strong>WhatIs⁺</strong> · BuiltForAccess · MagicGallery · <strong>Submissions⁺</strong> · Archives · <strong>Support⁺</strong> · <strong>Footer⁺</strong> · SiteSettings · Marquee · Partners · Moments · PressKit</td>
+</tr>
+</tbody>
+</table>
+<p class="note">⁺ = gains the folded fields. Four collections disappear from the sidebar (Stats already gone made five total removed this round).</p>
+
+<h2 id="layouts">How each consolidated record will look</h2>
+<p>Mockups of the Content Manager edit form for each parent record. <span style="color:var(--accent)">Blue rows</span> are the newly folded-in fields, appended <em>after</em> the existing content (same arrangement you liked on Built&nbsp;For&nbsp;Access).</p>
+
+<div class="grid">
+
+  <!-- WHATIS -->
+  <div class="card">
+    <h3>WhatIs <span class="pill p-into">+ Clapboard</span></h3>
+    <div class="meta">4 existing + 10 new = 14 fields</div>
+    <div class="form">
+      <div class="hd">WhatIs · single record</div>
+      <div class="row"><span class="k">eyebrow</span><span class="v">Chapter One</span></div>
+      <div class="row"><span class="k">title</span><span class="v">What Is Scope?</span></div>
+      <div class="row"><span class="k">body</span><span class="v">Seattle's underground…</span></div>
+      <div class="row"><span class="k">motto</span><span class="v">Watch. Meet. Have fun.</span></div>
+      <div class="divider">Clapboard (label / value)</div>
+      <div class="row new"><span class="k">clap1</span><span class="v">Production · Scope Screenings</span></div>
+      <div class="row new"><span class="k">clap2</span><span class="v">Director · Lex Scope</span></div>
+      <div class="row new"><span class="k">clap3</span><span class="v">Location · Seattle, WA</span></div>
+      <div class="row new"><span class="k">clap4</span><span class="v">Est. · June 2022</span></div>
+      <div class="row new"><span class="k">clap5</span><span class="v">Runs · Last Tue · Monthly</span></div>
+    </div>
+    <p class="note">Each clap row is two fields (<code>clapNLabel</code>, <code>clapNValue</code>), paired here for brevity.</p>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="card">
+    <h3>Footer <span class="pill p-into">+ Socials</span></h3>
+    <div class="meta">5 existing + 6 new = 11 fields</div>
+    <div class="form">
+      <div class="hd">Footer · single record</div>
+      <div class="row"><span class="k">signoff</span><span class="v">That's a wrap.</span></div>
+      <div class="row"><span class="k">tagline</span><span class="v">Watch. Meet. …</span></div>
+      <div class="row"><span class="k">newsletterHeading</span><span class="v">Get the call sheet</span></div>
+      <div class="row"><span class="k">copyright</span><span class="v">© Scope Screenings</span></div>
+      <div class="row"><span class="k">contactEmail</span><span class="v">hi@…</span></div>
+      <div class="divider">Socials (label / url)</div>
+      <div class="row new"><span class="k">social1</span><span class="v">Instagram · ↗</span></div>
+      <div class="row new"><span class="k">social2</span><span class="v">TikTok · ↗</span></div>
+      <div class="row new"><span class="k">social3</span><span class="v">YouTube · ↗</span></div>
+    </div>
+  </div>
+
+  <!-- SUBMISSIONS -->
+  <div class="card">
+    <h3>Submissions <span class="pill p-into">+ Chips</span></h3>
+    <div class="meta">5 existing + 8 new = 13 fields</div>
+    <div class="form">
+      <div class="hd">Submissions · single record</div>
+      <div class="row"><span class="k">eyebrow</span><span class="v">Chapter …</span></div>
+      <div class="row"><span class="k">title</span><span class="v">Submit Your Film</span></div>
+      <div class="row"><span class="k">intro</span><span class="v">Shorts, docs…</span></div>
+      <div class="row"><span class="k">ctaLabel / ctaUrl</span><span class="v">Submit · ↗</span></div>
+      <div class="divider">Chips (label / accent)</div>
+      <div class="row new"><span class="k">chip1</span><span class="v">≤ 20 MIN · curtain</span></div>
+      <div class="row new"><span class="k">chip2</span><span class="v">6 CATEGORIES · rust</span></div>
+      <div class="row new"><span class="k">chip3</span><span class="v">JUDGED AWARDS · curtain</span></div>
+      <div class="row new"><span class="k">chip4</span><span class="v">JUNE–DECEMBER · rust</span></div>
+    </div>
+    <p class="note"><code>accent</code> stays a small enum (<code>curtain</code> / <code>rust</code>).</p>
+  </div>
+
+  <!-- SUPPORT -->
+  <div class="card">
+    <h3>Support <span class="pill p-into">+ Giving tiers</span></h3>
+    <div class="meta">10 existing + 8 new = 18 fields</div>
+    <div class="form">
+      <div class="hd">Support · single record</div>
+      <div class="row"><span class="k">eyebrow … pressEmail</span><span class="v">10 existing fields</span></div>
+      <div class="divider">Giving tiers (label / featured)</div>
+      <div class="row new"><span class="k">givingTier1</span><span class="v">Friend $50 · ☐</span></div>
+      <div class="row new"><span class="k">givingTier2</span><span class="v">Patron $250 · ☐</span></div>
+      <div class="row new"><span class="k">givingTier3</span><span class="v">Producer $1,000 · ☐</span></div>
+      <div class="row new"><span class="k">givingTier4</span><span class="v">Title Partner · ☑ featured</span></div>
+    </div>
+    <p class="note">PressKit is <em>not</em> folded in — it stays its own table, so Support keeps to 18 fields.</p>
+  </div>
+
+</div>
+
+<h2 id="stays">Staying as collections</h2>
+<div class="grid">
+  <div class="card"><h3>PressKit <span class="pill p-keep">Keep</span></h3><div class="meta">label · format · url · order</div>A download/URL per row — exactly what a table is good at.</div>
+  <div class="card"><h3>Partners <span class="pill p-keep">Keep</span></h3><div class="meta">name · logo (image) · url · tier · order</div>Logo upload + link per row; count grows as sponsors join.</div>
+  <div class="card"><h3>Moments <span class="pill p-keep">Keep</span></h3><div class="meta">image · badge · tone · title · subtitle · order</div>Image per row; gallery grows over time.</div>
+  <div class="card"><h3>Marquee <span class="pill p-keep">Keep</span></h3><div class="meta">phrase · order</div>A true running list you add to — keeping it a table beats hard-coding phrase fields.</div>
+</div>
+
+<h2 id="exec">Execution (per folded collection)</h2>
+<p>Mirrors the Built&nbsp;For&nbsp;Access trial, for each of <strong>Socials, Clapboard, SubmissionChips, GivingTiers</strong>:</p>
+<ol>
+  <li>Add the new fields to the parent record (<code>create-field</code>).</li>
+  <li>Copy current values from the source collection into the parent record.</li>
+  <li>Reorder so the folded fields sit at the bottom of the form.</li>
+  <li>Delete the now-empty source collection.</li>
+</ol>
+
+<div class="warn">
+<strong>CMS-only for now (your call #2).</strong> These collections are read by <code>main</code>'s <code>lib/site-content.ts</code> + components; you're on <code>ALT</code>. After the fold, <code>main</code>'s sections will fall back to their hard-coded defaults until we wire them to the new fields (e.g. read <code>support.givingTier1Label</code> instead of the <code>GivingTiers</code> list). We'll do that wiring together when you're ready. Values are copied into the parent record before any delete, so nothing is lost.
+</div>
+
+<h2 id="next">Status: done ✓</h2>
+<p>All four folds executed CMS-only on 2026-06-18 — <strong>Socials → Footer</strong>, <strong>Clapboard → WhatIs</strong>, <strong>SubmissionChips → Submissions</strong>, <strong>GivingTiers → Support</strong>. Values were copied into each parent record before the source collections were deleted. Collection count is now <strong>13</strong>. The editor guide (<code>docs/Scope-Screenings-CMS-Guide.docx</code> on <code>main</code>) was regenerated to match. Still pending (when you're ready): wiring <code>main</code>'s <code>site-content.ts</code> + components to read the new fields.</p>
+
+</div>
+</body>
+</html>

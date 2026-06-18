@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 /** Pure: choose the most-visible section id, else keep current. */
 export function pickActiveSection(
@@ -20,8 +20,11 @@ export function pickActiveSection(
 /** Track which of the given section ids is most in view. */
 export function useScrollSpy(ids: string[], initial: string): string {
   const [active, setActive] = useState(initial);
+  const idsKey = useMemo(() => ids.join(","), [ids]);
+
   useEffect(() => {
-    const nodes = ids
+    const sectionIds = idsKey.split(",").filter(Boolean);
+    const nodes = sectionIds
       .map((id) => document.getElementById(id))
       .filter((n): n is HTMLElement => n !== null);
     if (nodes.length === 0) return;
@@ -35,6 +38,6 @@ export function useScrollSpy(ids: string[], initial: string): string {
     );
     nodes.forEach((n) => io.observe(n));
     return () => io.disconnect();
-  }, [ids.join(",")]);
+  }, [idsKey]);
   return active;
 }

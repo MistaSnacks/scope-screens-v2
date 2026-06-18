@@ -6,17 +6,10 @@ import { KineticText } from "@/components/motion/kinetic-text";
 const FOUNDER_QUOTE =
   "A lot of my peers never had the chance to see their work on a big screen. I built this for access, for collaboration, and to break down the barriers placed in front of Black, brown, and tan creatives.";
 
-const stat = [
-  { n: "200+", l: "Films" },
-  { n: "150+", l: "Filmmakers" },
-  { n: "20+", l: "Screenings" },
-  { n: "6+", l: "Theaters" },
-];
-
 export function FounderBand({ eyebrow = "Chapter Two" }: { eyebrow?: string }) {
   return (
-    <section className="band-down flex flex-col items-stretch gap-14 bg-curtain text-cream px-5 py-24 md:flex-row md:shell-x">
-      <Reveal className="w-full md:w-[32.5rem] md:shrink-0">
+    <section className="band-down flex flex-col items-stretch gap-14 bg-curtain text-cream px-5 py-24 md:shell-x lg:flex-row">
+      <Reveal className="w-full lg:w-[32.5rem] lg:shrink-0">
         {/* The founder as a director's-monitor credential — gold frame, a REC
             header, and a film-still pulled from the Wix media library. */}
         <Parallax distance={22}>
@@ -67,14 +60,6 @@ export function FounderBand({ eyebrow = "Chapter Two" }: { eyebrow?: string }) {
           <span className="font-body text-[0.875rem] text-cream/65">
             {FOUNDER.title} · {FOUNDER.credential}
           </span>
-        </div>
-        <div className="flex flex-wrap gap-10 pt-2">
-          {stat.map((s) => (
-            <div key={s.l} className="flex flex-col">
-              <span className="font-marquee text-[2.5rem] leading-none text-rust">{s.n}</span>
-              <span className="font-body text-[0.75rem] font-semibold uppercase tracking-[0.12em] text-cream/65">{s.l}</span>
-            </div>
-          ))}
         </div>
       </Reveal>
     </section>
