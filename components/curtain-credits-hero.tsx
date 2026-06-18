@@ -149,6 +149,7 @@ export function CurtainCreditsHero() {
   const logoOpeningRef = useRef<HTMLDivElement>(null);
   const reelVideoRef = useRef<HTMLVideoElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
+  const frameScrimRef = useRef<HTMLDivElement>(null);
   const creditsRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef({ value: 0 });
   const openFactorRef = useRef(0.86); // how far the velvet parts; overwritten in useGSAP (0.86 desktop / 0.92 mobile)
@@ -176,11 +177,13 @@ export function CurtainCreditsHero() {
 
   const toggleText = useCallback(() => setTextHidden((t) => !t), []);
 
-  // "Hide text" toggle: fade the title + credits out (and back) so the reel
-  // plays clean, and flip the ref the reveal checks so it stops re-driving them.
+  // "Hide text" toggle: fade out ONLY what sits on the reel screen — the marquee
+  // headline and its legibility scrim — so the reel plays clean. The "Now
+  // Showing" nav credits live BELOW the framed reel (off the screen), so they
+  // stay put. Flips the ref the reveal checks so it stops re-driving the title.
   useEffect(() => {
     textHiddenRef.current = textHidden;
-    const targets = [titleRef.current, creditsRef.current].filter(Boolean);
+    const targets = [titleRef.current, frameScrimRef.current].filter(Boolean);
     if (!targets.length) return;
     gsap.to(targets, {
       opacity: textHidden ? 0 : 1,
@@ -394,18 +397,23 @@ export function CurtainCreditsHero() {
                 // with them. The title begins as the popcorn logo finishes
                 // lifting away (~0.25) and resolves across the rest of the open
                 // (~0.9); the credits follow a beat later.
-                // While "Hide text" is on, leave the title + credits faded out
-                // where the toggle parked them instead of re-driving them here.
+                const ctaO = ctaEase(Math.min(1, Math.max(0, (p - 0.45) / 0.5)));
+                // The "Now Showing" nav credits sit below the framed reel, not on
+                // the screen, so "Hide text" never touches them — always track the
+                // reveal so they stay visible and clickable while the reel plays.
+                gsap.set(creditsRef.current, {
+                  opacity: ctaO,
+                  y: 12 * (1 - ctaO),
+                  // Clickable only while essentially fully revealed.
+                  pointerEvents: ctaO > 0.95 ? "auto" : "none",
+                });
+
+                // The on-screen marquee headline is the only thing "Hide text"
+                // drops; while it's on, leave it where the toggle parked it
+                // instead of re-driving it here.
                 if (!textHiddenRef.current) {
                   const titleO = titleEase(Math.min(1, Math.max(0, (p - 0.25) / 0.65)));
-                  const ctaO = ctaEase(Math.min(1, Math.max(0, (p - 0.45) / 0.5)));
                   gsap.set(titleRef.current, { opacity: titleO, y: 16 * (1 - titleO) });
-                  gsap.set(creditsRef.current, {
-                    opacity: ctaO,
-                    y: 12 * (1 - ctaO),
-                    // Clickable only while essentially fully revealed.
-                    pointerEvents: ctaO > 0.95 ? "auto" : "none",
-                  });
                 }
 
                 // Roll the sizzle reel the instant the curtains hit full open,
@@ -503,8 +511,9 @@ export function CurtainCreditsHero() {
 
           <div className={styles.projectorGlow} aria-hidden />
 
-          {/* Legibility scrim under the headline. */}
-          <div className={styles.frameScrim} aria-hidden />
+          {/* Legibility scrim under the headline. Fades with the headline on
+              "Hide text" so the reel underneath plays genuinely clean. */}
+          <div ref={frameScrimRef} className={styles.frameScrim} aria-hidden />
 
           {/* The headline, on the screen — the marquee title over the reel. */}
           <div ref={titleRef} className={styles.screenTitle}>
@@ -527,8 +536,9 @@ export function CurtainCreditsHero() {
             REEL 01 / 01
           </div>
 
-          {/* Hide Text (left) drops the marquee title + credits so the reel
-              plays clean; Sound (right) unmutes it. */}
+          {/* Hide Text (left) drops the on-screen marquee headline (and its
+              scrim) so the reel plays clean — the nav credits below the frame
+              stay put; Sound (right) unmutes it. */}
           <button
             type="button"
             onClick={toggleText}
