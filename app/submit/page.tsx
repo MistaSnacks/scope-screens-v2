@@ -7,8 +7,11 @@ import {
 } from "@/lib/festival";
 import { Reveal } from "@/components/motion/reveal";
 import { Stagger, StaggerItem } from "@/components/motion/stagger";
-import { Hoverable } from "@/components/motion/hoverable";
 import { KineticText } from "@/components/motion/kinetic-text";
+import { PageHero } from "@/components/page-hero";
+import { SectionEyebrow } from "@/components/section-eyebrow";
+import { ClosingBand } from "@/components/closing-band";
+import { PartnersMarquee } from "@/components/partners-marquee";
 
 export const metadata: Metadata = {
   title: "Submit — Scope Screenings",
@@ -20,83 +23,44 @@ export default function SubmitPage() {
   return (
     <main className="min-h-screen bg-bg">
       {/* (a) Hero with open-call card */}
-      <section className="px-5 pt-[7.5rem] md:shell-x md:pt-[9.375rem]">
-        <div className="md:flex md:items-start md:justify-between md:gap-12">
-          <Reveal className="md:max-w-[60%]">
-            {/* Eyebrow */}
-            <div className="flex items-center gap-3">
-              <span className="h-px w-10 bg-curtain" />
-              <span className="font-mono text-[0.75rem] font-bold uppercase tracking-[0.3em] text-label">
-                Open call · via FilmFreeway
-              </span>
-            </div>
-            <KineticText
-              as="h1"
-              className="pulp mt-5 font-display text-[4rem] uppercase leading-[0.9] md:text-[5.5rem]"
-              text="Submit Your Film"
-            />
-            <p className="mt-5 max-w-[44ch] font-credits text-[1.25rem] leading-relaxed text-fg/75 md:text-[1.375rem]">
-              We&rsquo;re built to put underrepresented filmmakers on a big
-              screen in front of a packed, loving house. Twenty minutes or less,
-              any genre. If it&rsquo;s bold and it&rsquo;s yours, send it.
-            </p>
-          </Reveal>
-
-          {/* Open-call card */}
-          <Reveal as="aside" delay={0.12} className="mt-10 w-full rounded-lg border border-hairline bg-card p-7 md:mt-2 md:w-[21.25rem] md:shrink-0">
+      <PageHero
+        eyebrow="Open call · via FilmFreeway"
+        title="Submit Your Film"
+        lede="We're built to put underrepresented filmmakers on a big screen in front of a packed, loving house. Twenty minutes or less, any genre. If it's bold and it's yours, send it."
+        logo
+        card={
+          <div className="card">
             <div className="flex items-center justify-between">
-              <span className="font-mono text-[0.75rem] font-bold uppercase tracking-[0.2em] text-label">
-                Open Call
-              </span>
-              <span className="font-mono text-[0.6875rem] uppercase tracking-[0.2em] text-muted">
-                2026 Season
-              </span>
+              <span className="font-mono text-[0.75rem] font-bold uppercase tracking-[0.2em] text-label">Open Call</span>
+              <span className="font-mono text-[0.6875rem] uppercase tracking-[0.2em] text-muted">2026 Season</span>
             </div>
-            <p className="mt-5 font-mono text-[0.6875rem] uppercase tracking-[0.2em] text-muted">
-              Regular deadline
-            </p>
-            <p className="font-display text-[2.75rem] uppercase leading-none text-fg">
-              Aug 31
-            </p>
+            <p className="mt-5 font-mono text-[0.6875rem] uppercase tracking-[0.2em] text-muted">Regular deadline</p>
+            <p className="font-display text-[2.75rem] uppercase leading-none text-fg">Aug 31</p>
             <div className="mt-5 flex gap-8 border-t border-hairline pt-4">
               <div>
-                <p className="font-mono text-[0.6875rem] uppercase tracking-[0.16em] text-muted">
-                  Entry from
-                </p>
+                <p className="font-mono text-[0.6875rem] uppercase tracking-[0.16em] text-muted">Entry from</p>
                 <p className="font-display text-[1.25rem] text-fg">$15</p>
               </div>
               <div>
-                <p className="font-mono text-[0.6875rem] uppercase tracking-[0.16em] text-muted">
-                  Runtime
-                </p>
+                <p className="font-mono text-[0.6875rem] uppercase tracking-[0.16em] text-muted">Runtime</p>
                 <p className="font-display text-[1.25rem] text-fg">20 min or less</p>
               </div>
             </div>
-            <a
-              href={SUBMIT_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-6 flex items-center justify-center gap-2 bg-curtain px-4 py-3 font-mono text-[0.75rem] font-bold uppercase tracking-[0.14em] text-cream transition-colors hover:bg-curtain-bright"
-            >
+            <a href={SUBMIT_URL} target="_blank" rel="noopener noreferrer" className="btn-primary mt-6 w-full">
               Submit on FilmFreeway ›
             </a>
-          </Reveal>
-        </div>
-      </section>
+          </div>
+        }
+      />
 
       {/* (b) "What We're After" — 3-up */}
       <section className="mt-16 border-t border-hairline bg-bg px-5 py-24 md:shell-x">
         <Reveal>
-          <div className="flex items-center gap-3">
-            <span className="h-px w-10 bg-curtain" />
-            <span className="font-mono text-[0.75rem] font-bold uppercase tracking-[0.3em] text-label">
-              What we look for
-            </span>
-          </div>
+          <SectionEyebrow label="What we look for" />
           <KineticText
             as="h2"
             className="pulp mt-5 font-display text-[2.75rem] uppercase leading-[0.95] md:text-[4rem]"
-            text="What We’re After"
+            text="What We're After"
           />
           <p className="mt-5 max-w-[60ch] font-credits text-[1.125rem] leading-relaxed text-fg/80 md:text-[1.1875rem]">
             Scope Screenings exists to break down the barriers placed in front of
@@ -122,12 +86,7 @@ export default function SubmitPage() {
       {/* (c) "Mark Your Calendar" — deadlines table */}
       <section className="border-t border-hairline bg-bg-alt px-5 py-24 md:shell-x">
         <Reveal>
-          <div className="flex items-center gap-3">
-            <span className="h-px w-10 bg-curtain" />
-            <span className="font-mono text-[0.75rem] font-bold uppercase tracking-[0.3em] text-label">
-              Deadlines &amp; fees
-            </span>
-          </div>
+          <SectionEyebrow label="Deadlines & fees" />
           <KineticText
             as="h2"
             className="pulp mt-5 font-display text-[2.75rem] uppercase leading-[0.95] md:text-[4rem]"
@@ -178,15 +137,10 @@ export default function SubmitPage() {
         </p>
       </section>
 
-      {/* (d) "Three Steps In" + closing CTA */}
+      {/* (d) "Three Steps In" */}
       <section className="border-t border-hairline bg-bg px-5 py-24 md:shell-x">
         <Reveal>
-          <div className="flex items-center gap-3">
-            <span className="h-px w-10 bg-curtain" />
-            <span className="font-mono text-[0.75rem] font-bold uppercase tracking-[0.3em] text-label">
-              How to enter
-            </span>
-          </div>
+          <SectionEyebrow label="How to enter" />
           <KineticText
             as="h2"
             className="pulp mt-5 font-display text-[2.75rem] uppercase leading-[0.95] md:text-[4rem]"
@@ -210,28 +164,19 @@ export default function SubmitPage() {
         </Stagger>
       </section>
 
-      {/* Closing CTA band */}
-      <Reveal as="section" className="border-t border-hairline bg-bg-deep px-5 py-28 text-center md:shell-x">
-        <KineticText
-          as="h2"
-          className="pulp font-display text-[3rem] uppercase leading-[0.95] md:text-[4.5rem]"
-          text="Got A Film? Send It."
-        />
-        <p className="mx-auto mt-5 max-w-[48ch] font-credits text-[1.125rem] text-fg/75">
-          Submissions run on FilmFreeway. It takes about ten minutes — and we
-          read every single one.
-        </p>
-        <Hoverable magnetic strength={0.35} className="mt-8 inline-block">
-          <a
-            href={SUBMIT_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-curtain px-7 py-4 font-mono text-[0.8125rem] font-bold uppercase tracking-[0.14em] text-cream transition-colors hover:bg-curtain-bright"
-          >
-            Submit on FilmFreeway ›
-          </a>
-        </Hoverable>
-      </Reveal>
+      {/* (e) Partner marquee */}
+      <section className="border-t border-hairline bg-bg px-5 py-24 md:shell-x">
+        <SectionEyebrow label="Our festival partners" centered />
+        <PartnersMarquee />
+      </section>
+
+      {/* Closing band */}
+      <ClosingBand
+        title="Got A Film? Send It."
+        body="Submissions run on FilmFreeway. It takes about ten minutes — and we read every single one."
+        href={SUBMIT_URL}
+        cta="Submit on FilmFreeway ›"
+      />
     </main>
   );
 }
