@@ -81,7 +81,7 @@ function NightTicket({ target }: { target: CheckoutTarget | null }) {
     </>
   );
   const className =
-    "ticket relative flex w-[34.25rem] max-w-full shrink-0 -rotate-[1.5deg] [filter:drop-shadow(0_28px_55px_rgba(0,0,0,0.45))]";
+    "ticket relative flex w-[34.25rem] max-w-full shrink-0 -rotate-[1.5deg] shadow-prop";
   return target ? (
     <button
       type="button"
@@ -107,7 +107,7 @@ function NightTicket({ target }: { target: CheckoutTarget | null }) {
 function SeasonPassLanyard({ target }: { target: CheckoutTarget | null }) {
   const { openCheckout } = useCheckout();
   const lanyardClassName =
-    "lanyard relative flex w-[15.5rem] shrink-0 flex-col items-center [filter:drop-shadow(0_24px_42px_rgba(0,0,0,0.5))]";
+    "lanyard relative flex w-[15.5rem] shrink-0 flex-col items-center shadow-prop";
   const body = (
     <>
       {/* Strap V + clip — woven black with the repeating wordmark */}
