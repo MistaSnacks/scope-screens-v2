@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { PageHero } from "@/components/page-hero";
 import { SectionEyebrow } from "@/components/section-eyebrow";
 import { FounderBand } from "@/components/founder-band";
@@ -8,6 +9,8 @@ import { Reveal } from "@/components/motion/reveal";
 import { Stagger, StaggerItem } from "@/components/motion/stagger";
 import { Hoverable } from "@/components/motion/hoverable";
 import { KineticText } from "@/components/motion/kinetic-text";
+import { getSiteContent } from "@/lib/site-content";
+import { isPageHidden } from "@/lib/nav";
 
 export const metadata: Metadata = {
   title: "About — Scope Screenings",
@@ -15,14 +18,26 @@ export const metadata: Metadata = {
     "Seattle’s underground film festival — a live, monthly short-film night built for the filmmakers the industry tends to overlook.",
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const content = await getSiteContent();
+  if (isPageHidden(content, "about")) notFound();
+  const page = content.aboutPage;
+
+  const timeline = content.timeline?.length
+    ? content.timeline.map((t) => ({ year: t.year ?? "", title: t.title ?? "", blurb: t.blurb ?? "" }))
+    : TIMELINE;
+
+  const houses = content.houses?.length
+    ? content.houses.map((h) => ({ name: h.name ?? "", eyebrow: h.eyebrow ?? "", address: h.address ?? "", blurb: h.blurb ?? "" }))
+    : HOUSES;
+
   return (
     <main className="min-h-screen bg-bg">
       {/* (a) Header */}
       <PageHero
-        eyebrow="About the Festival"
-        title={"We Put The Fun\nBack In Film Fests"}
-        lede="Scope Screenings is Seattle’s underground film festival — a live, monthly short-film night built for the filmmakers the industry tends to overlook. Tropical, wavy energy meets the illest shorts in the PNW."
+        eyebrow={page?.eyebrow ?? "About the Festival"}
+        title={page?.title ?? "We Put The Fun\nBack In Film Fests"}
+        lede={page?.lede ?? "Scope Screenings is Seattle’s underground film festival — a live, monthly short-film night built for the filmmakers the industry tends to overlook. Tropical, wavy energy meets the illest shorts in the PNW."}
         logo
       />
 
@@ -75,9 +90,9 @@ export default function AboutPage() {
           />
         </Reveal>
         <Stagger>
-          {TIMELINE.map((t) => (
+          {timeline.map((t) => (
             <StaggerItem
-              key={t.year}
+              key={`${t.year}-${t.title}`}
               className="flex flex-col gap-2 border-t border-hairline py-8 md:flex-row md:gap-10"
             >
               <span className="font-marquee text-[2.5rem] leading-none text-rust md:w-[12.5rem] md:shrink-0 md:text-[3.25rem]">
@@ -107,7 +122,7 @@ export default function AboutPage() {
           />
         </Reveal>
         <Stagger className="mt-12 grid gap-[var(--gap-card)] md:grid-cols-3">
-          {HOUSES.map((h) => (
+          {houses.map((h) => (
             <StaggerItem key={h.name}>
               <Hoverable className="h-full rounded-lg border border-hairline bg-card p-7">
                 <span className="font-mono text-[0.6875rem] uppercase tracking-[0.2em] text-label">

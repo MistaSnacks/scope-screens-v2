@@ -17,8 +17,8 @@ export interface SupportPageCopy extends PageCopy { cardLabel?: string; cardBody
 
 // --- ALT list collections ---
 export interface NavItem { label?: string; href?: string; order?: number; hidden?: boolean }
-export interface CmsHouse { name?: string; neighborhood?: string; blurb?: string; order?: number }
-export interface CmsTimeline { year?: string; event?: string; order?: number }
+export interface CmsHouse { name?: string; eyebrow?: string; address?: string; blurb?: string; order?: number }
+export interface CmsTimeline { year?: string; title?: string; blurb?: string; order?: number }
 export interface CmsTier { name?: string; price?: string; amount?: string; cadence?: string; perks?: string; featured?: boolean; order?: number }
 export interface CmsNumbered { n?: string; title?: string; blurb?: string; order?: number }
 export interface CmsDeadline { name?: string; closes?: string; fee?: string; order?: number }

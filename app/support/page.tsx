@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { GIVING_LEVELS, DONATE_URL } from "@/lib/festival";
+import { getSiteContent } from "@/lib/site-content";
+import { isPageHidden } from "@/lib/nav";
 import { PartnersMarquee } from "@/components/partners-marquee";
 import { Reveal } from "@/components/motion/reveal";
 import { Stagger, StaggerItem } from "@/components/motion/stagger";
@@ -15,25 +18,32 @@ export const metadata: Metadata = {
     "Three hundred seats, ten directors, every last Tuesday — none of it is free. Keep the screen lit.",
 };
 
-export default function SupportPage() {
+export default async function SupportPage() {
+  const content = await getSiteContent();
+  if (isPageHidden(content, "support")) notFound();
+  const page = content.supportPage;
+
+  const tiers = content.givingTiers?.length
+    ? content.givingTiers.map((g) => ({ name: g.name ?? "", amount: g.amount ?? "", cadence: g.cadence ?? "", perks: g.perks?.split("\n").filter(Boolean) ?? [], featured: g.featured }))
+    : GIVING_LEVELS;
+
   return (
     <main className="min-h-screen bg-bg">
       {/* (a) Hero + give card */}
       <PageHero
-        eyebrow="Funders & philanthropy"
-        title="Keep It Running"
-        lede="Three hundred seats, ten directors, every last Tuesday — none of it is free. Your support keeps the screen lit, the venue booked, and the doors open to filmmakers who’d never get this shot otherwise."
+        eyebrow={page?.eyebrow ?? "Funders & philanthropy"}
+        title={page?.title ?? "Keep It Running"}
+        lede={page?.lede ?? "Three hundred seats, ten directors, every last Tuesday — none of it is free. Your support keeps the screen lit, the venue booked, and the doors open to filmmakers who’d never get this shot otherwise."}
         logo
         card={
           <div className="card">
             <span className="font-mono text-[0.75rem] font-bold uppercase tracking-[0.2em] text-label">
-              Give Today
+              {page?.cardLabel ?? "Give Today"}
             </span>
             <p className="mt-4 font-credits text-[1rem] leading-relaxed text-muted">
-              Every dollar goes straight to access — venue, gear, and filmmaker
-              stipends.
+              {page?.cardBody ?? "Every dollar goes straight to access — venue, gear, and filmmaker stipends."}
             </p>
-            <a href={DONATE_URL} target="_blank" rel="noopener noreferrer" className="btn-secondary mt-6 w-full">
+            <a href={page?.donateUrl ?? DONATE_URL} target="_blank" rel="noopener noreferrer" className="btn-secondary mt-6 w-full">
               Donate Now ›
             </a>
             <p className="mt-4 font-mono text-[0.625rem] uppercase tracking-[0.16em] text-muted">
@@ -54,7 +64,7 @@ export default function SupportPage() {
           />
         </Reveal>
         <Stagger className="mt-12 grid gap-5 md:grid-cols-4">
-          {GIVING_LEVELS.map((g) => (
+          {tiers.map((g) => (
             <StaggerItem
               key={g.name}
               className={`flex h-full flex-col rounded-lg border bg-card p-6 ${
@@ -83,7 +93,7 @@ export default function SupportPage() {
                 ))}
               </ul>
               <a
-                href={DONATE_URL}
+                href={page?.donateUrl ?? DONATE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-link mt-5"
@@ -174,10 +184,10 @@ export default function SupportPage() {
 
       {/* Closing band */}
       <ClosingBand
-        title="Keep The Screen Lit"
-        body="Any amount keeps a filmmaker’s work on a big screen in front of a full house. Give once, give monthly, or back the whole season."
-        href={DONATE_URL}
-        cta="Donate Now ›"
+        title={page?.closingTitle ?? "Keep The Screen Lit"}
+        body={page?.closingBody ?? "Any amount keeps a filmmaker’s work on a big screen in front of a full house. Give once, give monthly, or back the whole season."}
+        href={page?.closingHref ?? DONATE_URL}
+        cta={page?.closingCta ?? "Donate Now ›"}
         variant="secondary"
       />
     </main>
