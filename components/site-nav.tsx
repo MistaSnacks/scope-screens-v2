@@ -4,12 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { NAV_ITEMS } from "@/lib/festival";
+import { navHrefFor } from "@/lib/nav-href";
 import { ThemeToggle } from "./theme-toggle";
 import { Hoverable } from "@/components/motion/hoverable";
 
-export function navHrefFor(item: string) {
-  return item === "Watch" ? "/" : `/${item.toLowerCase()}`;
-}
+export { navHrefFor };
 
 export function navActiveFor(pathname: string): string {
   const hit = NAV_ITEMS.find((i) => navHrefFor(i) === pathname);
@@ -19,9 +18,12 @@ export function navActiveFor(pathname: string): string {
 // Persistent header — fixed, rides the whole page. Desktop shows the inline
 // anchor nav; below `lg` it collapses to a hamburger that opens a dropdown so
 // the section nav still works on mobile.
-export function SiteNav() {
+export function SiteNav({ items }: { items?: { label: string; href: string }[] } = {}) {
   const [open, setOpen] = useState(false);
-  const active = navActiveFor(usePathname());
+  const pathname = usePathname();
+  const links = items ?? NAV_ITEMS.map((l) => ({ label: l, href: navHrefFor(l) }));
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(href + "/");
 
   return (
     <nav className="fixed left-5 right-5 top-2 z-[60] flex items-center justify-between md:left-[6.25rem] md:right-[6.25rem] lg:grid lg:grid-cols-[1fr_auto_1fr]">
@@ -37,15 +39,15 @@ export function SiteNav() {
       {/* Desktop inline nav — center column of the bar grid (truly centered,
           and physically can't overlap the controls the way absolute did) */}
       <div className="hidden items-center justify-center gap-9 lg:flex">
-        {NAV_ITEMS.map((item) => (
+        {links.map((link) => (
           <Link
-            key={item}
-            href={navHrefFor(item)}
+            key={link.href}
+            href={link.href}
             className={`font-mono text-[0.75rem] uppercase tracking-[0.14em] transition-colors hover:text-rust ${
-              item === active ? "text-rust" : "text-cream"
+              isActive(link.href) ? "text-rust" : "text-cream"
             }`}
           >
-            {item}
+            {link.label}
           </Link>
         ))}
       </div>
@@ -96,16 +98,16 @@ export function SiteNav() {
       {/* Mobile dropdown */}
       {open && (
         <div className="absolute right-0 top-[calc(100%+10px)] flex w-52 flex-col overflow-hidden rounded-md border border-cream/15 bg-ink/95 backdrop-blur-md lg:hidden">
-          {NAV_ITEMS.map((item) => (
+          {links.map((link) => (
             <Link
-              key={item}
-              href={navHrefFor(item)}
+              key={link.href}
+              href={link.href}
               onClick={() => setOpen(false)}
               className={`border-b border-cream/10 px-5 py-3.5 font-mono text-[0.8125rem] uppercase tracking-[0.14em] transition-colors last:border-b-0 hover:bg-curtain/10 hover:text-rust ${
-                item === active ? "text-rust" : "text-cream"
+                isActive(link.href) ? "text-rust" : "text-cream"
               }`}
             >
-              {item}
+              {link.label}
             </Link>
           ))}
         </div>

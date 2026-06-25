@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { CheckoutProvider } from "@/components/checkout/checkout-context";
 import { PersistentValance } from "@/components/persistent-valance";
 import { SiteNav } from "@/components/site-nav";
+import { getNav } from "@/lib/nav";
 import { SiteFooter } from "@/components/site-footer";
 import { CursorField } from "@/components/motion/cursor-field";
 import "./globals.css";
@@ -29,9 +30,10 @@ export const metadata: Metadata = {
 // so there's no flash of the wrong mode. OS preference is intentionally ignored.
 const themeScript = `(function(){try{var t=localStorage.getItem('scope-theme');if(t!=='house'&&t!=='movie')t='movie';document.documentElement.dataset.theme=t;}catch(e){document.documentElement.dataset.theme='movie';}})();`;
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const navLinks = await getNav();
   return (
     <html
       lang="en"
@@ -44,7 +46,7 @@ export default function RootLayout({
           <CursorField />
           <GrainOverlay />
           <PersistentValance />
-          <SiteNav />
+          <SiteNav items={navLinks} />
           <CheckoutProvider>{children}</CheckoutProvider>
           <SiteFooter />
         </ThemeProvider>
