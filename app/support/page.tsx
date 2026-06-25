@@ -5,6 +5,9 @@ import { Reveal } from "@/components/motion/reveal";
 import { Stagger, StaggerItem } from "@/components/motion/stagger";
 import { Hoverable } from "@/components/motion/hoverable";
 import { KineticText } from "@/components/motion/kinetic-text";
+import { PageHero } from "@/components/page-hero";
+import { SectionEyebrow } from "@/components/section-eyebrow";
+import { ClosingBand } from "@/components/closing-band";
 
 export const metadata: Metadata = {
   title: "Support — Scope Screenings",
@@ -16,30 +19,13 @@ export default function SupportPage() {
   return (
     <main className="min-h-screen bg-bg">
       {/* (a) Hero + give card */}
-      <section className="px-5 pt-[7.5rem] md:shell-x md:pt-[9.375rem]">
-        <div className="md:flex md:items-start md:justify-between md:gap-12">
-          <Reveal className="md:max-w-[60%]">
-            {/* Eyebrow */}
-            <div className="flex items-center gap-3">
-              <span className="h-px w-10 bg-curtain" />
-              <span className="font-mono text-[0.75rem] font-bold uppercase tracking-[0.3em] text-label">
-                Funders &amp; philanthropy
-              </span>
-            </div>
-            <KineticText
-              as="h1"
-              className="pulp mt-5 font-display text-[4rem] uppercase leading-[0.9] md:text-[5.5rem]"
-              text="Keep It Running"
-            />
-            <p className="mt-5 max-w-[46ch] font-credits text-[1.25rem] leading-relaxed text-fg/75 md:text-[1.375rem]">
-              Three hundred seats, ten directors, every last Tuesday — none of
-              it is free. Your support keeps the screen lit, the venue booked,
-              and the doors open to filmmakers who&rsquo;d never get this shot
-              otherwise.
-            </p>
-          </Reveal>
-
-          <Reveal as="aside" delay={0.12} className="mt-10 w-full rounded-lg border border-hairline bg-card p-7 md:mt-2 md:w-[21.25rem] md:shrink-0">
+      <PageHero
+        eyebrow="Funders & philanthropy"
+        title="Keep It Running"
+        lede="Three hundred seats, ten directors, every last Tuesday — none of it is free. Your support keeps the screen lit, the venue booked, and the doors open to filmmakers who'd never get this shot otherwise."
+        logo
+        card={
+          <div className="card">
             <span className="font-mono text-[0.75rem] font-bold uppercase tracking-[0.2em] text-label">
               Give Today
             </span>
@@ -47,30 +33,20 @@ export default function SupportPage() {
               Every dollar goes straight to access — venue, gear, and filmmaker
               stipends.
             </p>
-            <a
-              href={DONATE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-6 flex items-center justify-center gap-2 bg-rust px-4 py-3 font-mono text-[0.75rem] font-bold uppercase tracking-[0.14em] text-ink transition-opacity hover:opacity-90"
-            >
+            <a href={DONATE_URL} target="_blank" rel="noopener noreferrer" className="btn-secondary mt-6 w-full">
               Donate Now ›
             </a>
             <p className="mt-4 font-mono text-[0.625rem] uppercase tracking-[0.16em] text-muted">
               Tax-deductible via Shunpike 501(c)(3)
             </p>
-          </Reveal>
-        </div>
-      </section>
+          </div>
+        }
+      />
 
       {/* (b) "Pick Your Level" — 4 tiers */}
       <section className="border-t border-hairline bg-bg-alt px-5 py-24 md:shell-x">
         <Reveal>
-          <div className="flex items-center gap-3">
-            <span className="h-px w-10 bg-curtain" />
-            <span className="font-mono text-[0.75rem] font-bold uppercase tracking-[0.3em] text-label">
-              Giving levels
-            </span>
-          </div>
+          <SectionEyebrow label="Giving levels" />
           <KineticText
             as="h2"
             className="pulp mt-5 font-display text-[2.75rem] uppercase leading-[0.95] md:text-[4rem]"
@@ -110,7 +86,7 @@ export default function SupportPage() {
                 href={DONATE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-5 font-mono text-[0.75rem] font-bold uppercase tracking-[0.14em] text-curtain hover:text-rust"
+                className="btn-link mt-5"
               >
                 Give ›
               </a>
@@ -137,12 +113,7 @@ export default function SupportPage() {
       {/* (d) "Two Ways To Back Us" */}
       <section className="border-t border-hairline bg-bg px-5 py-24 md:shell-x">
         <Reveal>
-          <div className="flex items-center gap-3">
-            <span className="h-px w-10 bg-curtain" />
-            <span className="font-mono text-[0.75rem] font-bold uppercase tracking-[0.3em] text-label">
-              Partner with us
-            </span>
-          </div>
+          <SectionEyebrow label="Partner with us" />
           <KineticText
             as="h2"
             className="pulp mt-5 font-display text-[2.75rem] uppercase leading-[0.95] md:text-[4rem]"
@@ -166,7 +137,7 @@ export default function SupportPage() {
             </p>
             <a
               href="mailto:hello@scopescreenings.com"
-              className="mt-5 inline-block font-mono text-[0.75rem] font-bold uppercase tracking-[0.14em] text-curtain hover:text-rust"
+              className="btn-link mt-5 inline-block"
             >
               Talk to us ›
             </a>
@@ -189,7 +160,7 @@ export default function SupportPage() {
             </p>
             <a
               href="mailto:hello@scopescreenings.com"
-              className="mt-5 inline-block font-mono text-[0.75rem] font-bold uppercase tracking-[0.14em] text-curtain hover:text-rust"
+              className="btn-link mt-5 inline-block"
             >
               Get the deck ›
             </a>
@@ -200,38 +171,18 @@ export default function SupportPage() {
 
       {/* (e) Partners + closing CTA */}
       <section className="border-t border-hairline bg-bg px-5 py-24 md:shell-x">
-        <div className="flex items-center justify-center gap-3">
-          <span className="h-px w-10 bg-curtain" />
-          <span className="font-mono text-[0.75rem] font-bold uppercase tracking-[0.3em] text-label">
-            Our funders &amp; partners
-          </span>
-          <span className="h-px w-10 bg-curtain" />
-        </div>
+        <SectionEyebrow label="Our funders & partners" centered />
         <PartnersMarquee />
       </section>
 
       {/* Closing band */}
-      <Reveal as="section" className="border-t border-hairline bg-bg-deep px-5 py-28 text-center md:shell-x">
-        <KineticText
-          as="h2"
-          className="pulp font-display text-[3rem] uppercase leading-[0.95] md:text-[4.5rem]"
-          text="Keep The Screen Lit"
-        />
-        <p className="mx-auto mt-5 max-w-[48ch] font-credits text-[1.125rem] text-fg/75">
-          Any amount keeps a filmmaker&rsquo;s work on a big screen in front of
-          a full house. Give once, give monthly, or back the whole season.
-        </p>
-        <Hoverable magnetic strength={0.35} className="mt-8 inline-block">
-          <a
-            href={DONATE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-rust px-7 py-4 font-mono text-[0.8125rem] font-bold uppercase tracking-[0.14em] text-ink transition-opacity hover:opacity-90"
-          >
-            Donate Now ›
-          </a>
-        </Hoverable>
-      </Reveal>
+      <ClosingBand
+        title="Keep The Screen Lit"
+        body="Any amount keeps a filmmaker's work on a big screen in front of a full house. Give once, give monthly, or back the whole season."
+        href={DONATE_URL}
+        cta="Donate Now ›"
+        variant="secondary"
+      />
     </main>
   );
 }
