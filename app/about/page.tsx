@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { PageHeader } from "@/components/page-header";
+import { PageHero } from "@/components/page-hero";
+import { SectionEyebrow } from "@/components/section-eyebrow";
 import { FounderBand } from "@/components/founder-band";
 import { PartnersMarquee } from "@/components/partners-marquee";
 import { TIMELINE, HOUSES } from "@/lib/festival";
@@ -18,10 +19,11 @@ export default function AboutPage() {
   return (
     <main className="min-h-screen bg-bg">
       {/* (a) Header */}
-      <PageHeader
+      <PageHero
         eyebrow="About the Festival"
         title={"We Put The Fun\nBack In Film Fests"}
         lede="Scope Screenings is Seattle's underground film festival — a live, monthly short-film night built for the filmmakers the industry tends to overlook. Tropical, wavy energy meets the illest shorts in the PNW."
+        logo
       />
 
       {/* (b) What Is Scope Screenings */}
@@ -29,12 +31,7 @@ export default function AboutPage() {
         <div className="lg:flex lg:gap-16">
           {/* Left column */}
           <Reveal className="lg:w-[25rem] lg:shrink-0">
-            <div className="flex items-center gap-3">
-              <span className="h-px w-10 bg-curtain" />
-              <span className="font-mono text-[0.75rem] font-bold uppercase tracking-[0.3em] text-label">
-                The short version
-              </span>
-            </div>
+            <SectionEyebrow label="The short version" />
             <KineticText
               as="h2"
               className="pulp font-display text-[2.75rem] uppercase leading-[0.95] md:text-[3.5rem] mt-5"
@@ -70,12 +67,7 @@ export default function AboutPage() {
       {/* (e) How We Got Here — Timeline */}
       <section className="border-t border-hairline bg-bg px-5 py-24 md:shell-x">
         <Reveal>
-          <div className="flex items-center gap-3">
-            <span className="h-px w-10 bg-curtain" />
-            <span className="font-mono text-[0.75rem] font-bold uppercase tracking-[0.3em] text-label">
-              The story
-            </span>
-          </div>
+          <SectionEyebrow label="The story" />
           <KineticText
             as="h2"
             className="pulp font-display text-[2.75rem] uppercase leading-[0.95] md:text-[4rem] mt-5 mb-12"
@@ -107,19 +99,14 @@ export default function AboutPage() {
           "Venues" → /about#houses link lands the eyebrow just below the nav. */}
       <section id="houses" className="scroll-mt-[1.5rem] border-t border-hairline bg-bg-alt px-5 py-24 md:shell-x">
         <Reveal>
-          <div className="flex items-center gap-3">
-            <span className="h-px w-10 bg-curtain" />
-            <span className="font-mono text-[0.75rem] font-bold uppercase tracking-[0.3em] text-label">
-              The houses
-            </span>
-          </div>
+          <SectionEyebrow label="The houses" />
           <KineticText
             as="h2"
             className="pulp mt-5 font-display text-[2.75rem] uppercase leading-[0.95] md:text-[4rem]"
             text="The Houses"
           />
         </Reveal>
-        <Stagger className="mt-12 grid gap-6 md:grid-cols-3">
+        <Stagger className="mt-12 grid gap-[var(--gap-card)] md:grid-cols-3">
           {HOUSES.map((h) => (
             <StaggerItem key={h.name}>
               <Hoverable className="h-full rounded-lg border border-hairline bg-card p-7">
