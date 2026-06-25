@@ -17,10 +17,9 @@ export const metadata: Metadata = {
 };
 
 export default async function TicketsPage() {
-  const content = await getSiteContent();
+  const [{ nextShow, seasonPass }, content] = await Promise.all([getPurchasableTargets(), getSiteContent()]);
   if (isPageHidden(content, "tickets")) notFound();
   const page = content.ticketsPage;
-  const { nextShow, seasonPass } = await getPurchasableTargets();
   return (
     <main className="min-h-screen bg-bg">
       <PageHero
@@ -40,7 +39,7 @@ export default async function TicketsPage() {
       <PartnersMarquee />
       <ClosingBand
         title={page?.closingTitle ?? "See You In The Dark"}
-        body={page?.closingBody ?? "Doors at 6:30, screen at 7:30. Grab a pass and we'll save you a seat."}
+        body={page?.closingBody ?? "Doors at 6:30, screen at 7:30. Grab a pass and we’ll save you a seat."}
         href={page?.closingHref ?? "/schedule"}
         cta={page?.closingCta ?? "View The Schedule ›"}
       />

@@ -19,7 +19,7 @@ import { PartnersMarquee } from "@/components/partners-marquee";
 export const metadata: Metadata = {
   title: "Submit — Scope Screenings",
   description:
-    "Open call via FilmFreeway. Twenty minutes or less, any genre. If it's bold and it's yours, send it.",
+    "Open call via FilmFreeway. Twenty minutes or less, any genre. If it’s bold and it’s yours, send it.",
 };
 
 export default async function SubmitPage() {
@@ -43,7 +43,7 @@ export default async function SubmitPage() {
       <PageHero
         eyebrow={page?.eyebrow ?? "Open call · via FilmFreeway"}
         title={page?.title ?? "Submit Your Film"}
-        lede={page?.lede ?? "We're built to put underrepresented filmmakers on a big screen in front of a packed, loving house. Twenty minutes or less, any genre. If it's bold and it's yours, send it."}
+        lede={page?.lede ?? "We’re built to put underrepresented filmmakers on a big screen in front of a packed, loving house. Twenty minutes or less, any genre. If it’s bold and it’s yours, send it."}
         logo
         card={
           <div className="card">
@@ -70,14 +70,14 @@ export default async function SubmitPage() {
         }
       />
 
-      {/* (b) "What We're After" — 3-up */}
+      {/* (b) "What We’re After" — 3-up */}
       <section className="mt-16 border-t border-hairline bg-bg px-5 py-24 md:shell-x">
         <Reveal>
           <SectionEyebrow label="What we look for" />
           <KineticText
             as="h2"
             className="pulp mt-5 font-display text-[2.75rem] uppercase leading-[0.95] md:text-[4rem]"
-            text="What We're After"
+            text="What We’re After"
           />
           <p className="mt-5 max-w-[60ch] font-credits text-[1.125rem] leading-relaxed text-fg/80 md:text-[1.1875rem]">
             Scope Screenings exists to break down the barriers placed in front of
@@ -86,8 +86,8 @@ export default async function SubmitPage() {
           </p>
         </Reveal>
         <Stagger className="mt-14 grid gap-10 md:grid-cols-3">
-          {criteria.map((c) => (
-            <StaggerItem key={c.n}>
+          {criteria.map((c, i) => (
+            <StaggerItem key={c.n || String(i)}>
               <span className="font-marquee text-[1.75rem] text-curtain">{c.n}</span>
               <h3 className="mt-2 font-display text-[1.375rem] uppercase text-fg">
                 {c.title}
@@ -165,8 +165,8 @@ export default async function SubmitPage() {
           />
         </Reveal>
         <Stagger className="mt-14 grid gap-10 md:grid-cols-3">
-          {steps.map((s) => (
-            <StaggerItem key={s.n}>
+          {steps.map((s, i) => (
+            <StaggerItem key={s.n || String(i)}>
               <span className="font-marquee text-[3.5rem] leading-none text-curtain">
                 {s.n}
               </span>
