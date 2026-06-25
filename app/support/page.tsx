@@ -170,10 +170,7 @@ export default function SupportPage() {
       </section>
 
       {/* (e) Partners + closing CTA */}
-      <section className="border-t border-hairline bg-bg px-5 py-24 md:shell-x">
-        <SectionEyebrow label="Our funders & partners" centered />
-        <PartnersMarquee />
-      </section>
+      <PartnersMarquee />
 
       {/* Closing band */}
       <ClosingBand

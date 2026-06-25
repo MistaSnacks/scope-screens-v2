@@ -31,10 +31,7 @@ export default async function TicketsPage() {
         </p>
       </section>
       <BuyTickets nextShow={nextShow} seasonPass={seasonPass} headless />
-      <section className="border-t border-hairline bg-bg px-5 py-24 md:shell-x">
-        <SectionEyebrow label="Presented with" centered />
-        <PartnersMarquee />
-      </section>
+      <PartnersMarquee />
       <ClosingBand
         title="See You In The Dark"
         body="Doors at 6:30, screen at 7:30. Grab a pass and we’ll save you a seat."

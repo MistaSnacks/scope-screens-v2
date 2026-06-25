@@ -9,7 +9,6 @@ export function PageHero({
   title,
   lede,
   card,
-  media,
   logo = false,
 }: {
   eyebrow: string;
@@ -17,7 +16,6 @@ export function PageHero({
   title: string;
   lede?: string;
   card?: ReactNode;
-  media?: { poster?: string };
   logo?: boolean;
 }) {
   return (
@@ -47,12 +45,6 @@ export function PageHero({
               <p className="mt-5 max-w-[44ch] font-credits text-[1.25rem] leading-relaxed text-fg/75 md:text-[1.375rem]">
                 {lede}
               </p>
-            </Reveal>
-          ) : null}
-          {media?.poster ? (
-            <Reveal delay={0.18} className="mt-8 overflow-hidden rounded-lg border border-hairline">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={media.poster} alt="" className="w-full" />
             </Reveal>
           ) : null}
         </Reveal>

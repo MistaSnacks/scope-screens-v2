@@ -1,6 +1,5 @@
 import { PageHero } from "@/components/page-hero";
 import { ScheduleSection } from "@/components/schedule-section";
-import { SectionEyebrow } from "@/components/section-eyebrow";
 import { PartnersMarquee } from "@/components/partners-marquee";
 import { ClosingBand } from "@/components/closing-band";
 import type { Metadata } from "next";
@@ -20,10 +19,7 @@ export default function SchedulePage() {
         logo
       />
       <ScheduleSection headless />
-      <section className="border-t border-hairline bg-bg px-5 py-24 md:shell-x">
-        <SectionEyebrow label="In good company" centered />
-        <PartnersMarquee />
-      </section>
+      <PartnersMarquee />
       <ClosingBand
         title="Get Your Seat"
         body="Seven nights, ten directors a night, one room that leans all the way in. Lock your spot before the house fills."

@@ -165,10 +165,7 @@ export default function SubmitPage() {
       </section>
 
       {/* (e) Partner marquee */}
-      <section className="border-t border-hairline bg-bg px-5 py-24 md:shell-x">
-        <SectionEyebrow label="Our festival partners" centered />
-        <PartnersMarquee />
-      </section>
+      <PartnersMarquee />
 
       {/* Closing band */}
       <ClosingBand

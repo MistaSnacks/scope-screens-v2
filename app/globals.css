@@ -389,11 +389,9 @@ html {
   padding: 1.75rem;
 }
 
-/* Section gap rhythm tokens — use via inline style or arbitrary gap. */
+/* Section gap rhythm token — use via arbitrary gap: gap-[var(--gap-card)]. */
 :root {
-  --gap-tight: 1.5rem;   /* dense rows / 4-up tier cards */
   --gap-card: 2.5rem;    /* 3-up card grids */
-  --gap-section: 3.5rem; /* between a heading block and its content */
 }
 
 /* card surface token */

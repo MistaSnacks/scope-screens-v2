@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { KineticText } from "@/components/motion/kinetic-text";
 import { Hoverable } from "@/components/motion/hoverable";
 
@@ -25,14 +26,20 @@ export function ClosingBand({
         {body}
       </p>
       <Hoverable magnetic strength={0.35} className="mt-8 inline-block">
-        <a
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={variant === "secondary" ? "btn-secondary" : "btn-primary"}
-        >
-          {cta}
-        </a>
+        {href.startsWith("/") ? (
+          <Link href={href} className={variant === "secondary" ? "btn-secondary" : "btn-primary"}>
+            {cta}
+          </Link>
+        ) : (
+          <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={variant === "secondary" ? "btn-secondary" : "btn-primary"}
+          >
+            {cta}
+          </a>
+        )}
       </Hoverable>
     </section>
   );
