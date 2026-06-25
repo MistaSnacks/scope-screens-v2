@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import {
   SUBMIT_URL,
   SUBMISSION_ROUNDS,
   SUBMIT_CRITERIA,
   SUBMIT_STEPS,
 } from "@/lib/festival";
+import { getSiteContent } from "@/lib/site-content";
+import { isPageHidden } from "@/lib/nav";
 import { Reveal } from "@/components/motion/reveal";
 import { Stagger, StaggerItem } from "@/components/motion/stagger";
 import { KineticText } from "@/components/motion/kinetic-text";
@@ -16,17 +19,31 @@ import { PartnersMarquee } from "@/components/partners-marquee";
 export const metadata: Metadata = {
   title: "Submit — Scope Screenings",
   description:
-    "Open call via FilmFreeway. Twenty minutes or less, any genre. If it’s bold and it’s yours, send it.",
+    "Open call via FilmFreeway. Twenty minutes or less, any genre. If it's bold and it's yours, send it.",
 };
 
-export default function SubmitPage() {
+export default async function SubmitPage() {
+  const content = await getSiteContent();
+  if (isPageHidden(content, "submit")) notFound();
+  const page = content.submitPage;
+
+  const criteria = content.submitCriteria?.length
+    ? content.submitCriteria.map((c) => ({ n: c.n ?? "", title: c.title ?? "", blurb: c.blurb ?? "" }))
+    : SUBMIT_CRITERIA;
+  const steps = content.submitSteps?.length
+    ? content.submitSteps.map((s) => ({ n: s.n ?? "", title: s.title ?? "", blurb: s.blurb ?? "" }))
+    : SUBMIT_STEPS;
+  const rounds = content.submitDeadlines?.length
+    ? content.submitDeadlines.map((r) => ({ name: r.name ?? "", closes: r.closes ?? "", fee: r.fee ?? "" }))
+    : SUBMISSION_ROUNDS;
+
   return (
     <main className="min-h-screen bg-bg">
       {/* (a) Hero with open-call card */}
       <PageHero
-        eyebrow="Open call · via FilmFreeway"
-        title="Submit Your Film"
-        lede="We’re built to put underrepresented filmmakers on a big screen in front of a packed, loving house. Twenty minutes or less, any genre. If it’s bold and it’s yours, send it."
+        eyebrow={page?.eyebrow ?? "Open call · via FilmFreeway"}
+        title={page?.title ?? "Submit Your Film"}
+        lede={page?.lede ?? "We're built to put underrepresented filmmakers on a big screen in front of a packed, loving house. Twenty minutes or less, any genre. If it's bold and it's yours, send it."}
         logo
         card={
           <div className="card">
@@ -60,7 +77,7 @@ export default function SubmitPage() {
           <KineticText
             as="h2"
             className="pulp mt-5 font-display text-[2.75rem] uppercase leading-[0.95] md:text-[4rem]"
-            text="What We’re After"
+            text="What We're After"
           />
           <p className="mt-5 max-w-[60ch] font-credits text-[1.125rem] leading-relaxed text-fg/80 md:text-[1.1875rem]">
             Scope Screenings exists to break down the barriers placed in front of
@@ -69,7 +86,7 @@ export default function SubmitPage() {
           </p>
         </Reveal>
         <Stagger className="mt-14 grid gap-10 md:grid-cols-3">
-          {SUBMIT_CRITERIA.map((c) => (
+          {criteria.map((c) => (
             <StaggerItem key={c.n}>
               <span className="font-marquee text-[1.75rem] text-curtain">{c.n}</span>
               <h3 className="mt-2 font-display text-[1.375rem] uppercase text-fg">
@@ -109,7 +126,7 @@ export default function SubmitPage() {
 
         {/* Rows */}
         <Stagger>
-          {SUBMISSION_ROUNDS.map((r, i) => (
+          {rounds.map((r, i) => (
             <StaggerItem
               key={r.name}
               className="grid grid-cols-[1fr_2fr_auto] gap-4 border-t border-hairline py-5"
@@ -148,7 +165,7 @@ export default function SubmitPage() {
           />
         </Reveal>
         <Stagger className="mt-14 grid gap-10 md:grid-cols-3">
-          {SUBMIT_STEPS.map((s) => (
+          {steps.map((s) => (
             <StaggerItem key={s.n}>
               <span className="font-marquee text-[3.5rem] leading-none text-curtain">
                 {s.n}
@@ -169,10 +186,10 @@ export default function SubmitPage() {
 
       {/* Closing band */}
       <ClosingBand
-        title="Got A Film? Send It."
-        body="Submissions run on FilmFreeway. It takes about ten minutes — and we read every single one."
-        href={SUBMIT_URL}
-        cta="Submit on FilmFreeway ›"
+        title={page?.closingTitle ?? "Got A Film? Send It."}
+        body={page?.closingBody ?? "Submissions run on FilmFreeway. It takes about ten minutes — and we read every single one."}
+        href={page?.closingHref ?? SUBMIT_URL}
+        cta={page?.closingCta ?? "Submit on FilmFreeway ›"}
       />
     </main>
   );
