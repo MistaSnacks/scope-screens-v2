@@ -37,7 +37,7 @@ export default async function TicketsPage() {
       </section>
       <ClosingBand
         title="See You In The Dark"
-        body="Doors at 6:30, screen at 7:30. Grab a pass and we'll save you a seat."
+        body="Doors at 6:30, screen at 7:30. Grab a pass and we’ll save you a seat."
         href="/schedule"
         cta="View The Schedule ›"
       />

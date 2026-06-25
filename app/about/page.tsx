@@ -12,7 +12,7 @@ import { KineticText } from "@/components/motion/kinetic-text";
 export const metadata: Metadata = {
   title: "About — Scope Screenings",
   description:
-    "Seattle's underground film festival — a live, monthly short-film night built for the filmmakers the industry tends to overlook.",
+    "Seattle’s underground film festival — a live, monthly short-film night built for the filmmakers the industry tends to overlook.",
 };
 
 export default function AboutPage() {
@@ -22,7 +22,7 @@ export default function AboutPage() {
       <PageHero
         eyebrow="About the Festival"
         title={"We Put The Fun\nBack In Film Fests"}
-        lede="Scope Screenings is Seattle's underground film festival — a live, monthly short-film night built for the filmmakers the industry tends to overlook. Tropical, wavy energy meets the illest shorts in the PNW."
+        lede="Scope Screenings is Seattle’s underground film festival — a live, monthly short-film night built for the filmmakers the industry tends to overlook. Tropical, wavy energy meets the illest shorts in the PNW."
         logo
       />
 

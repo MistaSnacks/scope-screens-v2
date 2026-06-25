@@ -16,7 +16,7 @@ import { PartnersMarquee } from "@/components/partners-marquee";
 export const metadata: Metadata = {
   title: "Submit — Scope Screenings",
   description:
-    "Open call via FilmFreeway. Twenty minutes or less, any genre. If it's bold and it's yours, send it.",
+    "Open call via FilmFreeway. Twenty minutes or less, any genre. If it’s bold and it’s yours, send it.",
 };
 
 export default function SubmitPage() {
@@ -26,7 +26,7 @@ export default function SubmitPage() {
       <PageHero
         eyebrow="Open call · via FilmFreeway"
         title="Submit Your Film"
-        lede="We're built to put underrepresented filmmakers on a big screen in front of a packed, loving house. Twenty minutes or less, any genre. If it's bold and it's yours, send it."
+        lede="We’re built to put underrepresented filmmakers on a big screen in front of a packed, loving house. Twenty minutes or less, any genre. If it’s bold and it’s yours, send it."
         logo
         card={
           <div className="card">
@@ -60,7 +60,7 @@ export default function SubmitPage() {
           <KineticText
             as="h2"
             className="pulp mt-5 font-display text-[2.75rem] uppercase leading-[0.95] md:text-[4rem]"
-            text="What We're After"
+            text="What We’re After"
           />
           <p className="mt-5 max-w-[60ch] font-credits text-[1.125rem] leading-relaxed text-fg/80 md:text-[1.1875rem]">
             Scope Screenings exists to break down the barriers placed in front of

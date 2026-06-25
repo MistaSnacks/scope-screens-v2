@@ -22,7 +22,7 @@ export default function SupportPage() {
       <PageHero
         eyebrow="Funders & philanthropy"
         title="Keep It Running"
-        lede="Three hundred seats, ten directors, every last Tuesday — none of it is free. Your support keeps the screen lit, the venue booked, and the doors open to filmmakers who'd never get this shot otherwise."
+        lede="Three hundred seats, ten directors, every last Tuesday — none of it is free. Your support keeps the screen lit, the venue booked, and the doors open to filmmakers who’d never get this shot otherwise."
         logo
         card={
           <div className="card">
@@ -178,7 +178,7 @@ export default function SupportPage() {
       {/* Closing band */}
       <ClosingBand
         title="Keep The Screen Lit"
-        body="Any amount keeps a filmmaker's work on a big screen in front of a full house. Give once, give monthly, or back the whole season."
+        body="Any amount keeps a filmmaker’s work on a big screen in front of a full house. Give once, give monthly, or back the whole season."
         href={DONATE_URL}
         cta="Donate Now ›"
         variant="secondary"
