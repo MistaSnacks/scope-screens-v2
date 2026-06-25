@@ -2,15 +2,27 @@ import { FOUNDER } from "@/lib/festival";
 import { Reveal } from "@/components/motion/reveal";
 import { Parallax } from "@/components/motion/parallax";
 import { KineticText } from "@/components/motion/kinetic-text";
+import { getSiteContent } from "@/lib/site-content";
+import { wixImageUrl } from "@/lib/wix-media";
 
 const FOUNDER_QUOTE =
   "A lot of my peers never had the chance to see their work on a big screen. I built this for access, for collaboration, and to break down the barriers placed in front of Black, brown, and tan creatives.";
 
-export function FounderBand({ eyebrow = "Chapter Two" }: { eyebrow?: string }) {
+export async function FounderBand({ eyebrow = "Chapter Two" }: { eyebrow?: string }) {
+  const content = await getSiteContent();
+  const a = content.builtForAccess;
+
+  const name = a?.founderName ?? FOUNDER.name;
+  const title = a?.founderTitle ?? FOUNDER.title;
+  const credential = a?.founderCredential ?? FOUNDER.credential;
+  const quote = a?.quote ?? FOUNDER_QUOTE;
+  const photoSrc = wixImageUrl(a?.photo) ?? "/founder-lex.jpg";
+  const sectionTitle = a?.title ?? "Built For\nAccess";
+
   return (
     <section className="band-down flex flex-col items-stretch gap-14 bg-curtain text-cream px-5 py-24 md:shell-x lg:flex-row">
       <Reveal className="w-full lg:w-[32.5rem] lg:shrink-0">
-        {/* The founder as a director's-monitor credential — gold frame, a REC
+        {/* The founder as a director’s-monitor credential — gold frame, a REC
             header, and a film-still pulled from the Wix media library. */}
         <Parallax distance={22}>
         <figure className="rounded-lg bg-ink p-3 ring-1 ring-rust/70 shadow-[0_0_0_1px_rgba(255,187,0,0.12),0_30px_60px_-22px_rgba(0,0,0,0.85)] md:p-4">
@@ -27,17 +39,17 @@ export function FounderBand({ eyebrow = "Chapter Two" }: { eyebrow?: string }) {
           <div className="relative mt-3 overflow-hidden rounded-[0.1875rem] ring-1 ring-rust/40">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/founder-lex.jpg"
+              src={photoSrc}
               alt="Lex Scope watching a film at a Scope Screenings night"
               className="h-[28.75rem] w-full object-cover object-[42%_center] md:h-[38.75rem]"
             />
             <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-ink via-ink/65 to-transparent" />
             <figcaption className="absolute inset-x-0 bottom-0 p-5">
               <span className="block font-display text-[2.875rem] uppercase leading-[0.88] text-cream md:text-[3.625rem]">
-                {FOUNDER.name}
+                {name}
               </span>
               <span className="mt-2 block font-mono text-[0.6875rem] uppercase tracking-[0.2em] text-smoke md:text-[0.75rem]">
-                {FOUNDER.title} · {FOUNDER.credential}
+                {title} · {credential}
               </span>
             </figcaption>
           </div>
@@ -50,15 +62,15 @@ export function FounderBand({ eyebrow = "Chapter Two" }: { eyebrow?: string }) {
         <KineticText
           as="h2"
           className="pulp-on-red font-display text-[3.5rem] uppercase leading-[0.94] md:text-[4.125rem]"
-          text={"Built For\nAccess"}
+          text={sectionTitle}
         />
         <blockquote className="max-w-[22em] font-credits text-[1.625rem] italic leading-snug text-cream/90 md:text-[1.75rem]">
-          &ldquo;{FOUNDER_QUOTE}&rdquo;
+          &ldquo;{quote}&rdquo;
         </blockquote>
         <div className="flex flex-col gap-0.5">
-          <span className="font-body text-[1rem] font-extrabold text-cream">{FOUNDER.name}</span>
+          <span className="font-body text-[1rem] font-extrabold text-cream">{name}</span>
           <span className="font-body text-[0.875rem] text-cream/65">
-            {FOUNDER.title} · {FOUNDER.credential}
+            {title} · {credential}
           </span>
         </div>
       </Reveal>

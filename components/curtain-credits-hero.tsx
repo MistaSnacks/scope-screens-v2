@@ -140,7 +140,11 @@ const SIZZLE_REEL_POSTER =
   "https://static.wixstatic.com/media/c51492_990803f9c25b4ea491c4180a6eb9a435f003.jpg";
 const POPCORN_LOGO = "/popcorn-logo.png";
 
-export function CurtainCreditsHero() {
+export function CurtainCreditsHero({
+  eyebrow = "Lexscope Presents",
+  posterUrl = SIZZLE_REEL_POSTER,
+  videoUrl = SIZZLE_REEL_MP4,
+}: { eyebrow?: string; posterUrl?: string; videoUrl?: string } = {}) {
   const root = useRef<HTMLElement>(null);
   const spotRef = useRef<HTMLDivElement>(null);
   const canvasContainerRef = useRef<HTMLDivElement>(null);
@@ -503,10 +507,10 @@ export function CurtainCreditsHero() {
             loop
             playsInline
             preload="auto"
-            poster={SIZZLE_REEL_POSTER}
+            poster={posterUrl}
             aria-hidden
           >
-            <source src={SIZZLE_REEL_MP4} type="video/mp4" />
+            <source src={videoUrl} type="video/mp4" />
           </video>
 
           <div className={styles.projectorGlow} aria-hidden />
@@ -600,7 +604,7 @@ export function CurtainCreditsHero() {
       {/* Logo opening (z-30) — glows centered on the closed curtain, with its
           scroll cue directly beneath; lifts away on scroll. */}
       <div ref={logoOpeningRef} className={styles.logoOpening}>
-        <div className={styles.logoTonight}>— Lexscope Presents —</div>
+        <div className={styles.logoTonight}>— {eyebrow} —</div>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={POPCORN_LOGO} alt="Scope Screenings" className={styles.logoImg} />
         <div aria-hidden className={styles.scrollCue}>

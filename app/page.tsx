@@ -13,6 +13,9 @@ import { FounderBand } from "@/components/founder-band";
 import { Reveal } from "@/components/motion/reveal";
 import { KineticText } from "@/components/motion/kinetic-text";
 import { getPurchasableTargets } from "@/lib/wix-checkout";
+import { getSiteContent } from "@/lib/site-content";
+import { wixImageUrl } from "@/lib/wix-media";
+import { wixVideoUrl } from "@/lib/wix-video";
 
 function ChapterLabel({ n, center = false }: { n: string; center?: boolean }) {
   return (
@@ -25,12 +28,20 @@ function ChapterLabel({ n, center = false }: { n: string; center?: boolean }) {
 }
 
 export default async function Home() {
-  const { nextShow, seasonPass } = await getPurchasableTargets();
+  const [{ nextShow, seasonPass }, content] = await Promise.all([
+    getPurchasableTargets(),
+    getSiteContent(),
+  ]);
+  const hero = content.hero;
 
   return (
     <main id="top" className="relative bg-bg">
       <ScrollControl />
-      <CurtainCreditsHero />
+      <CurtainCreditsHero
+        eyebrow={hero?.eyebrow ?? undefined}
+        posterUrl={wixImageUrl(hero?.poster) ?? undefined}
+        videoUrl={wixVideoUrl(hero?.video) ?? undefined}
+      />
       <Marquee />
 
       {/* scroll-mt = nav clearance (7.5rem) minus the section's own py-24 (6rem)
