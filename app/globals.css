@@ -322,4 +322,78 @@ html {
 :root[data-theme="house"] .partner-logo {
   filter: brightness(0);
 }
+/* ------------------------------------------------------------------ */
+/*  Shared component utilities — single source for buttons, the prop   */
+/*  shadow, the raised card, and the section gap rhythm. Added in the   */
+/*  ALT V2 deslopify pass so pages stop hand-tuning these per-instance.  */
+/* ------------------------------------------------------------------ */
+
+/* Primary CTA — concession red, cream label. */
+@utility btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--color-curtain);
+  color: var(--color-cream);
+  padding: 0.875rem 1.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  transition: background-color 0.2s ease;
+  &:hover { background-color: var(--color-curtain-bright); }
+}
+
+/* Secondary CTA — marquee gold, ink label. */
+@utility btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--color-rust);
+  color: var(--color-ink);
+  padding: 0.875rem 1.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  transition: opacity 0.2s ease;
+  &:hover { opacity: 0.9; }
+}
+
+/* Tertiary inline link CTA. */
+@utility btn-link {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--color-curtain);
+  transition: color 0.2s ease;
+  &:hover { color: var(--color-rust); }
+}
+
+/* One shadow for the rotated physical props (ticket, lanyard, clapperboard). */
+@utility shadow-prop {
+  filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.48));
+}
+
+/* Standard raised card surface. */
+@utility card {
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-hairline);
+  background-color: var(--color-card);
+  padding: 1.75rem;
+}
+
+/* Section gap rhythm tokens — use via inline style or arbitrary gap. */
+:root {
+  --gap-tight: 1.5rem;   /* dense rows / 4-up tier cards */
+  --gap-card: 2.5rem;    /* 3-up card grids */
+  --gap-section: 3.5rem; /* between a heading block and its content */
+}
+
 /* card surface token */
