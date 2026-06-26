@@ -1,3 +1,4 @@
+import "server-only";
 // Generic reader for Wix Data collections via the headless visitor token.
 // Mirrors the fail-safe contract of lib/wix-events.ts: any miss returns null
 // so callers fall back to lib/festival.ts. Reads are cached hourly.

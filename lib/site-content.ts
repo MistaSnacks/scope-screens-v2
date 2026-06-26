@@ -1,3 +1,4 @@
+import "server-only";
 // lib/site-content.ts — ALT multipage CMS aggregator. Request-deduped via
 // React cache; every read fails to null so a missing collection or blank field
 // never breaks a render (callers fall back to lib/festival.ts at point of use).

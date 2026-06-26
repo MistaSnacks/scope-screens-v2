@@ -43,7 +43,7 @@ export default async function SupportPage() {
             <p className="mt-4 font-credits text-[1rem] leading-relaxed text-muted">
               {page?.cardBody ?? "Every dollar goes straight to access — venue, gear, and filmmaker stipends."}
             </p>
-            <a href={page?.donateUrl ?? DONATE_URL} target="_blank" rel="noopener noreferrer" className="btn-secondary mt-6 w-full">
+            <a href={page?.donateUrl || DONATE_URL} target="_blank" rel="noopener noreferrer" className="btn-secondary mt-6 w-full">
               Donate Now ›
             </a>
             <p className="mt-4 font-mono text-[0.625rem] uppercase tracking-[0.16em] text-muted">
@@ -64,9 +64,9 @@ export default async function SupportPage() {
           />
         </Reveal>
         <Stagger className="mt-12 grid gap-5 md:grid-cols-4">
-          {tiers.map((g) => (
+          {tiers.map((g, i) => (
             <StaggerItem
-              key={g.name}
+              key={g.name || String(i)}
               className={`flex h-full flex-col rounded-lg border bg-card p-6 ${
                 g.featured ? "border-rust ring-1 ring-rust" : "border-hairline"
               }`}
@@ -93,7 +93,7 @@ export default async function SupportPage() {
                 ))}
               </ul>
               <a
-                href={page?.donateUrl ?? DONATE_URL}
+                href={page?.donateUrl || DONATE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-link mt-5"
@@ -186,7 +186,7 @@ export default async function SupportPage() {
       <ClosingBand
         title={page?.closingTitle ?? "Keep The Screen Lit"}
         body={page?.closingBody ?? "Any amount keeps a filmmaker’s work on a big screen in front of a full house. Give once, give monthly, or back the whole season."}
-        href={page?.closingHref ?? DONATE_URL}
+        href={page?.closingHref || DONATE_URL}
         cta={page?.closingCta ?? "Donate Now ›"}
         variant="secondary"
       />

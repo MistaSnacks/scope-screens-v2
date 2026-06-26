@@ -128,7 +128,7 @@ export default async function SubmitPage() {
         <Stagger>
           {rounds.map((r, i) => (
             <StaggerItem
-              key={r.name}
+              key={r.name || String(i)}
               className="grid grid-cols-[1fr_2fr_auto] gap-4 border-t border-hairline py-5"
             >
               <span className="font-body text-[1.125rem] font-bold text-fg">
@@ -188,7 +188,7 @@ export default async function SubmitPage() {
       <ClosingBand
         title={page?.closingTitle ?? "Got A Film? Send It."}
         body={page?.closingBody ?? "Submissions run on FilmFreeway. It takes about ten minutes — and we read every single one."}
-        href={page?.closingHref ?? SUBMIT_URL}
+        href={page?.closingHref || SUBMIT_URL}
         cta={page?.closingCta ?? "Submit on FilmFreeway ›"}
       />
     </main>

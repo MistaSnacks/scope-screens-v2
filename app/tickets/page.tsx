@@ -40,7 +40,7 @@ export default async function TicketsPage() {
       <ClosingBand
         title={page?.closingTitle ?? "See You In The Dark"}
         body={page?.closingBody ?? "Doors at 6:30, screen at 7:30. Grab a pass and we’ll save you a seat."}
-        href={page?.closingHref ?? "/schedule"}
+        href={page?.closingHref || "/schedule"}
         cta={page?.closingCta ?? "View The Schedule ›"}
       />
     </main>

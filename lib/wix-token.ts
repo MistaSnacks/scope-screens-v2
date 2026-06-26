@@ -1,3 +1,4 @@
+import "server-only";
 // Anonymous OAuth visitor token for headless reads. Same grant the live
 // schedule already uses (lib/wix-events.ts); extracted so the CMS reader can
 // share it. Returns null on any failure so callers fall back to static data.

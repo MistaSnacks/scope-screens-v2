@@ -90,9 +90,9 @@ export default async function AboutPage() {
           />
         </Reveal>
         <Stagger>
-          {timeline.map((t) => (
+          {timeline.map((t, i) => (
             <StaggerItem
-              key={`${t.year}-${t.title}`}
+              key={`${t.year}-${t.title}-${i}`}
               className="flex flex-col gap-2 border-t border-hairline py-8 md:flex-row md:gap-10"
             >
               <span className="font-marquee text-[2.5rem] leading-none text-rust md:w-[12.5rem] md:shrink-0 md:text-[3.25rem]">
@@ -122,8 +122,8 @@ export default async function AboutPage() {
           />
         </Reveal>
         <Stagger className="mt-12 grid gap-[var(--gap-card)] md:grid-cols-3">
-          {houses.map((h) => (
-            <StaggerItem key={h.name}>
+          {houses.map((h, i) => (
+            <StaggerItem key={h.name || String(i)}>
               <Hoverable className="h-full rounded-lg border border-hairline bg-card p-7">
                 <span className="font-mono text-[0.6875rem] uppercase tracking-[0.2em] text-label">
                   {h.eyebrow}
