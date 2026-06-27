@@ -4,7 +4,7 @@ import { KineticText } from "@/components/motion/kinetic-text";
 import { getSiteContent } from "@/lib/site-content";
 
 const COLUMNS = [
-  { head: "Festival", links: ["About", "The Films", "Schedule", "Venues"] },
+  { head: "Festival", links: ["About", "The Films", "Schedule"] },
   { head: "Attend", links: ["Buy Tickets", "Season Pass", "Accessibility"] },
   { head: "Get Involved", links: ["Submit a Film", "Become a Funder", "Press & Media", "Volunteer"] },
 ];
@@ -13,10 +13,9 @@ const FOOTER_HREFS: Record<string, string> = {
   About: "/about",
   "The Films": "/#films",
   Schedule: "/schedule",
-  Venues: "/about#houses",
   "Buy Tickets": "/#tickets",
   "Season Pass": "/#tickets",
-  Accessibility: `mailto:${CONTACT_EMAIL}?subject=Scope%20Screenings%20Accessibility`,
+  Accessibility: "/accessibility",
   "Submit a Film": "/submit",
   "Become a Funder": "/support",
   "Press & Media": `mailto:${CONTACT_EMAIL}?subject=Scope%20Screenings%20Press%20%26%20Media`,
@@ -108,6 +107,14 @@ export async function SiteFooter() {
           ))}
           <a href={`mailto:${contactEmail}`} className="font-body text-[0.75rem] text-smoke transition-colors hover:text-rust">
             {contactEmail}
+          </a>
+          <a
+            href="https://www.simplemcmathematics.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-body text-[0.75rem] text-smoke transition-colors hover:text-rust"
+          >
+            Powered by SimpleMcMathematics
           </a>
         </div>
       </div>
