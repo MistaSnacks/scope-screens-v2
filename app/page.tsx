@@ -14,6 +14,7 @@ import { Reveal } from "@/components/motion/reveal";
 import { KineticText } from "@/components/motion/kinetic-text";
 import { getPurchasableTargets } from "@/lib/wix-checkout";
 import { getSiteContent } from "@/lib/site-content";
+import { isPressKitHidden, isArchivesHidden } from "@/lib/nav";
 import { wixImageUrl } from "@/lib/wix-media";
 import { wixVideoUrl } from "@/lib/wix-video";
 
@@ -68,7 +69,7 @@ export default async function Home() {
             text={"Scope Screenings\nMagic"}
           />
           <p className="max-w-[44ch] font-body text-[1.0625rem] leading-relaxed text-fg/70">
-            Every last Tuesday the Central District turns into a cinema — ten films, ten directors,
+            Every last Tuesday the Central District turns into a cinema: ten films, ten directors,
             and the best room in the city.
           </p>
         </Reveal>
@@ -98,10 +99,11 @@ export default async function Home() {
       <PartnersMarquee band />
 
       <div id="support" className="scroll-mt-[7.5rem]">
-        <SupportPress />
+        <SupportPress pressHidden={isPressKitHidden(content)} />
       </div>
 
-      {/* Chapter Four — The Archives */}
+      {/* Chapter Four — The Archives (hidden via SiteSettings → archivesHidden) */}
+      {!isArchivesHidden(content) && (
       <section
         id="films"
         className="band-down scroll-mt-[7.5rem] bg-rust text-ink px-5 py-24 md:shell-x"
@@ -130,6 +132,7 @@ export default async function Home() {
           </a>
         </div>
       </section>
+      )}
 
     </main>
   );

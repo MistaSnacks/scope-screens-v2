@@ -495,7 +495,7 @@ export function CurtainCreditsHero({
           Behind the curtains (z-20); hidden until the curtains have painted. */}
       <div className={styles.screen} style={{ visibility: screenVisibility }}>
         <div className={styles.topMarquee} aria-hidden>
-          — A LexScope Production · Scope Screenings —
+          A LexScope Production · Scope Screenings
         </div>
 
         {/* Framed silver screen — the sizzle reel plays here, muted by default. */}
@@ -604,7 +604,7 @@ export function CurtainCreditsHero({
       {/* Logo opening (z-30) — glows centered on the closed curtain, with its
           scroll cue directly beneath; lifts away on scroll. */}
       <div ref={logoOpeningRef} className={styles.logoOpening}>
-        <div className={styles.logoTonight}>— {eyebrow} —</div>
+        <div className={styles.logoTonight}>{eyebrow}</div>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={POPCORN_LOGO} alt="Scope Screenings" className={styles.logoImg} />
         <div aria-hidden className={styles.scrollCue}>

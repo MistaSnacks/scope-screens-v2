@@ -35,7 +35,7 @@ export function WhatIs() {
         <p className="max-w-[36em] font-body text-[1.0625rem] font-medium leading-[1.6875rem] text-muted">
           Seattle&rsquo;s underground film festival. A live, monthly short-film
           showcase built to put filmmakers on a real screen in front of a real,
-          packed house — uplifting Black, brown &amp; tan creators across the PNW.
+          packed house: uplifting Black, brown &amp; tan creators across the PNW.
           Ten directors, one night, every month.
         </p>
         <p className="font-body text-[1.125rem] font-bold italic leading-[1.625rem] text-curtain">

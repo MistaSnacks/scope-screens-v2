@@ -17,7 +17,7 @@ import { ClosingBand } from "@/components/closing-band";
 import { PartnersMarquee } from "@/components/partners-marquee";
 
 export const metadata: Metadata = {
-  title: "Submit — Scope Screenings",
+  title: "Submit · Scope Screenings",
   description:
     "Open call via FilmFreeway. Twenty minutes or less, any genre. If it’s bold and it’s yours, send it.",
 };
@@ -149,7 +149,7 @@ export default async function SubmitPage() {
         {/* Waiver note */}
         <p className="mt-8 flex items-center gap-3 font-credits text-[0.9375rem] text-muted">
           <span className="h-3 w-3 shrink-0 bg-rust" />
-          Fee waivers are available — just reach out. Cost should never be the
+          Fee waivers are available. Just reach out. Cost should never be the
           reason a film doesn&rsquo;t get seen.
         </p>
       </section>
@@ -187,7 +187,7 @@ export default async function SubmitPage() {
       {/* Closing band */}
       <ClosingBand
         title={page?.closingTitle ?? "Got A Film? Send It."}
-        body={page?.closingBody ?? "Submissions run on FilmFreeway. It takes about ten minutes — and we read every single one."}
+        body={page?.closingBody ?? "Submissions run on FilmFreeway. It takes about ten minutes, and we read every single one."}
         href={page?.closingHref || SUBMIT_URL}
         cta={page?.closingCta ?? "Submit on FilmFreeway ›"}
       />

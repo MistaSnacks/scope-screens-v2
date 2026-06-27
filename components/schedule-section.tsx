@@ -46,7 +46,7 @@ export async function ScheduleSection({ headless = false }: { headless?: boolean
               <div className="flex items-center gap-3">
                 <span className="h-px w-10 bg-curtain" />
                 <span className="font-body text-[0.75rem] font-bold uppercase tracking-[0.28em] text-label">
-                  The Season · 2026—27
+                  The Season · 2026-27
                 </span>
               </div>
               <KineticText

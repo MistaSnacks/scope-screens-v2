@@ -13,9 +13,9 @@ import { SectionEyebrow } from "@/components/section-eyebrow";
 import { ClosingBand } from "@/components/closing-band";
 
 export const metadata: Metadata = {
-  title: "Support — Scope Screenings",
+  title: "Support · Scope Screenings",
   description:
-    "Three hundred seats, ten directors, every last Tuesday — none of it is free. Keep the screen lit.",
+    "Three hundred seats, ten directors, every last Tuesday. None of it is free. Keep the screen lit.",
 };
 
 export default async function SupportPage() {
@@ -33,7 +33,7 @@ export default async function SupportPage() {
       <PageHero
         eyebrow={page?.eyebrow ?? "Funders & philanthropy"}
         title={page?.title ?? "Keep It Running"}
-        lede={page?.lede ?? "Three hundred seats, ten directors, every last Tuesday — none of it is free. Your support keeps the screen lit, the venue booked, and the doors open to filmmakers who’d never get this shot otherwise."}
+        lede={page?.lede ?? "Three hundred seats, ten directors, every last Tuesday. None of it is free. Your support keeps the screen lit, the venue booked, and the doors open to filmmakers who’d never get this shot otherwise."}
         logo
         card={
           <div className="card">
@@ -41,7 +41,7 @@ export default async function SupportPage() {
               {page?.cardLabel ?? "Give Today"}
             </span>
             <p className="mt-4 font-credits text-[1rem] leading-relaxed text-muted">
-              {page?.cardBody ?? "Every dollar goes straight to access — venue, gear, and filmmaker stipends."}
+              {page?.cardBody ?? "Every dollar goes straight to access: venue, gear, and filmmaker stipends."}
             </p>
             <a href={page?.donateUrl || DONATE_URL} target="_blank" rel="noopener noreferrer" className="btn-secondary mt-6 w-full">
               Donate Now ›
@@ -142,7 +142,7 @@ export default async function SupportPage() {
             </h3>
             <p className="mt-3 font-credits text-[1rem] leading-relaxed text-muted">
               Grants and major gifts that power access and equity work. We keep
-              funder support proudly distinct from commercial sponsorship — your
+              funder support proudly distinct from commercial sponsorship, your
               name sits with the mission, not the marketing.
             </p>
             <a

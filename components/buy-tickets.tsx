@@ -184,7 +184,7 @@ function SeasonPassLanyard({ target }: { target: CheckoutTarget | null }) {
     <button
       type="button"
       onClick={() => openCheckout(target)}
-      aria-label="Buy a Season Pass — all seven nights"
+      aria-label="Buy a Season Pass, all seven nights"
       className={`${lanyardClassName} cursor-pointer border-0 bg-transparent p-0 text-left`}
     >
       {body}
@@ -195,7 +195,7 @@ function SeasonPassLanyard({ target }: { target: CheckoutTarget | null }) {
       target="_blank"
       rel="noopener noreferrer"
       className={lanyardClassName}
-      aria-label="Buy a Season Pass — all seven nights"
+      aria-label="Buy a Season Pass, all seven nights"
     >
       {body}
     </a>
@@ -225,7 +225,7 @@ export function BuyTickets({
           <KineticText as="h2" className="pulp font-display text-[3.5rem] uppercase leading-[0.94] md:text-[5rem]" text="The Next Show" />
           <p className="font-body text-[1.0625rem] leading-relaxed text-fg/70">
             Last Tuesday of the month, June through December. Ten directors, ten films, one packed
-            house in the Central District — doors at 7:00, lights down at 7:30. Go for the night, or go
+            house in the Central District: doors at 7:00, lights down at 7:30. Go for the night, or go
             all season.
           </p>
         </Reveal>

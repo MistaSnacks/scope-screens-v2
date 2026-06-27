@@ -9,16 +9,23 @@ import { queryCollection, getSingleton } from "./wix-cms";
 export interface HeroContent { eyebrow?: string; title?: string; tagline?: string; poster?: string; video?: string }
 export interface BuiltForAccessContent { eyebrow?: string; title?: string; quote?: string; founderName?: string; founderTitle?: string; founderCredential?: string; photo?: string }
 export interface FooterContent { signoff?: string; tagline?: string; newsletterHeading?: string; copyright?: string; contactEmail?: string }
-export interface SiteSettingsContent { venueName?: string; venueAddress?: string; venueCity?: string; archivesHidden?: boolean; newsletterHidden?: boolean }
+export interface SiteSettingsContent {
+  venueName?: string; venueAddress?: string; venueCity?: string;
+  archivesHidden?: boolean; newsletterHidden?: boolean;
+  // Page on/off switches — all visibility toggles live on this one singleton so
+  // editors flip everything from a single SiteSettings form.
+  aboutHidden?: boolean; scheduleHidden?: boolean; ticketsHidden?: boolean; submitHidden?: boolean; supportHidden?: boolean;
+  // Feature toggles
+  pressKitHidden?: boolean;
+}
 
 // --- ALT page singletons ---
-export interface PageCopy { eyebrow?: string; title?: string; lede?: string; closingTitle?: string; closingBody?: string; closingCta?: string; closingHref?: string; hidden?: boolean }
+export interface PageCopy { eyebrow?: string; title?: string; lede?: string; closingTitle?: string; closingBody?: string; closingCta?: string; closingHref?: string }
 export interface TicketsPageCopy extends PageCopy { whyTitle?: string; whyBody?: string }
 export interface SupportPageCopy extends PageCopy { cardLabel?: string; cardBody?: string; donateUrl?: string }
 
 // --- ALT list collections ---
 export interface NavItem { label?: string; href?: string; order?: number; hidden?: boolean }
-export interface CmsHouse { name?: string; eyebrow?: string; address?: string; blurb?: string; order?: number }
 export interface CmsTimeline { year?: string; title?: string; blurb?: string; order?: number }
 export interface CmsTier { name?: string; price?: string; amount?: string; cadence?: string; perks?: string; featured?: boolean; order?: number }
 export interface CmsNumbered { n?: string; title?: string; blurb?: string; order?: number }
@@ -36,7 +43,6 @@ export interface SiteContent {
   submitPage: PageCopy | null;
   supportPage: SupportPageCopy | null;
   nav: NavItem[] | null;
-  houses: CmsHouse[] | null;
   timeline: CmsTimeline[] | null;
   ticketTiers: CmsTier[] | null;
   givingTiers: CmsTier[] | null;
@@ -53,7 +59,7 @@ export const getSiteContent = cache(async (): Promise<SiteContent> => {
   const [
     hero, builtForAccess, footer, siteSettings, marquee,
     aboutPage, schedulePage, ticketsPage, submitPage, supportPage,
-    nav, houses, timeline, ticketTiers, givingTiers, submitCriteria, submitSteps, submitDeadlines,
+    nav, timeline, ticketTiers, givingTiers, submitCriteria, submitSteps, submitDeadlines,
   ] = await Promise.all([
     getSingleton<HeroContent>("Hero"),
     getSingleton<BuiltForAccessContent>("BuiltForAccess"),
@@ -66,7 +72,6 @@ export const getSiteContent = cache(async (): Promise<SiteContent> => {
     getSingleton<PageCopy>("SubmitPage"),
     getSingleton<SupportPageCopy>("SupportPage"),
     queryCollection<NavItem>("Nav", ASC),
-    queryCollection<CmsHouse>("Houses", ASC),
     queryCollection<CmsTimeline>("Timeline", ASC),
     queryCollection<CmsTier>("TicketTiers", ASC),
     queryCollection<CmsTier>("GivingTiers", ASC),
@@ -79,7 +84,7 @@ export const getSiteContent = cache(async (): Promise<SiteContent> => {
     marquee: sorted(marquee),
     aboutPage, schedulePage, ticketsPage, submitPage, supportPage,
     nav: sorted(nav),
-    houses: sorted(houses), timeline: sorted(timeline),
+    timeline: sorted(timeline),
     ticketTiers: sorted(ticketTiers), givingTiers: sorted(givingTiers),
     submitCriteria: sorted(submitCriteria), submitSteps: sorted(submitSteps), submitDeadlines: sorted(submitDeadlines),
   };

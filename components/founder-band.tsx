@@ -28,7 +28,7 @@ export async function FounderBand({ eyebrow = "Chapter Two" }: { eyebrow?: strin
         <figure className="rounded-lg bg-ink p-3 ring-1 ring-rust/70 shadow-[0_0_0_1px_rgba(255,187,0,0.12),0_30px_60px_-22px_rgba(0,0,0,0.85)] md:p-4">
           <div className="flex items-center justify-between px-1 pb-2.5">
             <span className="font-display text-[1.125rem] uppercase leading-none tracking-[0.1em] text-rust md:text-[1.3125rem]">
-              Scope <span className="text-rust/55">—</span> Founder
+              Scope <span className="text-rust/55">·</span> Founder
             </span>
             <span className="flex items-center gap-2 font-mono text-[0.6875rem] font-medium uppercase tracking-[0.4em] text-smoke md:text-[0.75rem]">
               Rec

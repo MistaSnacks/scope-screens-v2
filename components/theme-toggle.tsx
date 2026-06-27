@@ -17,7 +17,7 @@ export function ThemeToggle() {
       type="button"
       onClick={toggle}
       aria-pressed={movie}
-      aria-label={`Movie Mode ${movie ? "on" : "off"} — switch to ${movie ? "House Lights (light mode)" : "Movie Mode (dark mode)"}`}
+      aria-label={`Movie Mode ${movie ? "on" : "off"}, switch to ${movie ? "House Lights (light mode)" : "Movie Mode (dark mode)"}`}
       title={label}
       className="group flex items-center gap-2 border border-rust px-3 py-2 transition-colors hover:bg-rust md:px-4 md:py-2.5"
     >

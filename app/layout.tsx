@@ -21,7 +21,7 @@ const siteUrl =
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "Scope Screenings — Seattle's Underground Film Festival",
+  title: "Scope Screenings · Seattle's Underground Film Festival",
   description:
     "We put the fun back in film fests. A live, monthly short-film festival uplifting Black, brown, and tan creators in Seattle.",
 };

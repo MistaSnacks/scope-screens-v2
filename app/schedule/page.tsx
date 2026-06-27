@@ -8,8 +8,8 @@ import { isPageHidden } from "@/lib/nav";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Schedule — Scope Screenings",
-  description: "Seven nights a season — the last Tuesday of every month, June through December.",
+  title: "Schedule · Scope Screenings",
+  description: "Seven nights a season: the last Tuesday of every month, June through December.",
 };
 
 export default async function SchedulePage() {

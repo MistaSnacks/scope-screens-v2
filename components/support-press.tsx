@@ -18,7 +18,7 @@ const PRESS_ROWS = [
   { label: "Photo & b-roll library", format: "DRIVE" },
 ];
 
-export function SupportPress() {
+export function SupportPress({ pressHidden = false }: { pressHidden?: boolean } = {}) {
   return (
     <section className="band-up bg-bg px-5 py-24 md:shell-x">
       <Reveal className="mb-14 flex flex-col items-center gap-4 text-center">
@@ -30,7 +30,7 @@ export function SupportPress() {
         <KineticText as="h2" className="pulp font-display text-[3.5rem] uppercase leading-[0.94] md:text-[5rem]" text="Keep It Running" />
       </Reveal>
 
-      <Stagger className="mx-auto grid max-w-[78.75rem] gap-7 md:grid-cols-2">
+      <Stagger className={`mx-auto grid gap-7 ${pressHidden ? "max-w-[40rem]" : "max-w-[78.75rem] md:grid-cols-2"}`}>
         {/* Funders */}
         <StaggerItem className="flex flex-col rounded-xl border border-hairline bg-card p-8 shadow-[0_20px_45px_rgba(11,10,9,0.07)] md:p-10">
           <span className="font-body text-[0.75rem] font-bold uppercase tracking-[0.2em] text-curtain">Funders &amp; Philanthropy</span>
@@ -64,7 +64,8 @@ export function SupportPress() {
           </span>
         </StaggerItem>
 
-        {/* Press */}
+        {/* Press — toggled on/off from the SiteSettings → Press kit switch. */}
+        {!pressHidden && (
         <StaggerItem className="flex flex-col rounded-xl border border-hairline bg-card p-8 shadow-[0_20px_45px_rgba(11,10,9,0.07)] md:p-10">
           <span className="font-body text-[0.75rem] font-bold uppercase tracking-[0.2em] text-label">Media &amp; Press</span>
           <h3 className="mt-3 font-display text-[2.5rem] uppercase leading-none text-fg">Press &amp; Media</h3>
@@ -88,6 +89,7 @@ export function SupportPress() {
           </a>
           <span className="mt-5 font-body text-[0.8125rem] text-muted">Media contact · {PRESS_EMAIL}</span>
         </StaggerItem>
+        )}
       </Stagger>
     </section>
   );

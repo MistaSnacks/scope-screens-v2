@@ -27,7 +27,7 @@ export function SiteNav({ items }: { items?: { label: string; href: string }[] }
 
   return (
     <nav className="fixed left-5 right-5 top-2 z-[60] flex items-center justify-between md:left-[6.25rem] md:right-[6.25rem] lg:grid lg:grid-cols-[1fr_auto_1fr]">
-      <Link href="/" aria-label="Scope Screenings — home" className="flex items-center">
+      <Link href="/" aria-label="Scope Screenings home" className="flex items-center">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/popcorn-logo.png"

@@ -74,7 +74,7 @@ export const FOUNDER = {
   since: 2012,
   quote: "We put the fun back in film fests.",
   origin:
-    "A lot of my peers — shooters, editors, DPs, photographers — have been creating for 5–10 years and never had the opportunity to see their work on a big screen. I built this for access, for collaboration, and to break down the systemic barriers placed in front of Black, brown, and tan creatives.",
+    "A lot of my peers, shooters, editors, DPs, photographers, have been creating for 5–10 years and never had the opportunity to see their work on a big screen. I built this for access, for collaboration, and to break down the systemic barriers placed in front of Black, brown, and tan creatives.",
 } as const;
 
 export type ScreeningStatus = "open" | "soon" | "ended" | "soldout";
@@ -169,10 +169,10 @@ export interface ProgramMood {
 // Emotional strands (BFI model) recommended in the brief.
 export const PROGRAM_MOODS: ProgramMood[] = [
   { name: "HEAT", count: "Premieres", blurb: "Opening night, headliners, the films we couldn't stop talking about." },
-  { name: "PULSE", count: "Narrative", blurb: "Shorts with a story to tell — under 20 minutes, all the way through." },
+  { name: "PULSE", count: "Narrative", blurb: "Shorts with a story to tell, under 20 minutes, all the way through." },
   { name: "FREQUENCY", count: "Music Video", blurb: "Sound and image, PNW artists, the loudest room of the night." },
   { name: "STATIC", count: "Experimental", blurb: "Animated, abstract, and the work that doesn't fit a box. By design." },
-  { name: "LATE SHOW", count: "After Dark", blurb: "Midnight energy — horror, genre, and the deliciously strange." },
+  { name: "LATE SHOW", count: "After Dark", blurb: "Midnight energy: horror, genre, and the deliciously strange." },
 ];
 
 export interface Director {
@@ -201,7 +201,7 @@ export const SPONSOR_TIERS: SponsorTier[] = [
   {
     tier: "TITLE",
     name: "Presenting Sponsor",
-    blurb: "Named in the lockup — “Scope Screenings, presented by…” — on every page, every night.",
+    blurb: "Named in the lockup, “Scope Screenings, presented by…”, on every page, every night.",
     slots: ["Your name here"],
   },
   {
@@ -234,17 +234,10 @@ export const CONTACT_EMAIL = "hello@scopescreenings.com";
 // --- About page ---
 export interface TimelineEntry { year: string; title: string; blurb: string; }
 export const TIMELINE: TimelineEntry[] = [
-  { year: "2022", title: "It starts in June", blurb: "Lex Scope launches Scope Screenings in Seattle — one night, a handful of directors, and a simple idea: get overlooked filmmakers onto a real screen, in front of a real crowd." },
+  { year: "2022", title: "It starts in June", blurb: "Lex Scope launches Scope Screenings in Seattle, one night, a handful of directors, and a simple idea: get overlooked filmmakers onto a real screen, in front of a real crowd." },
   { year: "2023–24", title: "Word gets out", blurb: "Monthly screenings start packing the Langston Hughes Institute. The lineup grows to 200+ films from 150+ filmmakers across 20+ nights and six-plus theaters around the city." },
-  { year: "2025", title: "A seat at the table", blurb: "Lex Scope is appointed to the Seattle Film Commission — carrying the same fight for access into the rooms where the city's film policy gets made." },
-  { year: "2026", title: "Where we are now", blurb: "Seven nights a season, June through December, still the last Tuesday of every month — and still putting the fun back in film fests." },
-];
-
-export interface House { name: string; eyebrow: string; address: string; blurb: string; }
-export const HOUSES: House[] = [
-  { name: "Langston Hughes Institute", eyebrow: "Home venue", address: "104 17th Ave S, Seattle 98144", blurb: "Our monthly home in the Central District." },
-  { name: "Majestic Bay Theatres", eyebrow: "Also screens at", address: "2044 NW Market St, Ballard", blurb: "Special nights and season finales on the big house screen." },
-  { name: "SIFF Cinema Egyptian", eyebrow: "Also screens at", address: "805 E Pine St, Capitol Hill", blurb: "A historic landmark house for our marquee screenings." },
+  { year: "2025", title: "A seat at the table", blurb: "Lex Scope is appointed to the Seattle Film Commission, carrying the same fight for access into the rooms where the city's film policy gets made." },
+  { year: "2026", title: "Where we are now", blurb: "Seven nights a season, June through December, still the last Tuesday of every month, and still putting the fun back in film fests." },
 ];
 
 // --- Submit page ---
@@ -257,13 +250,13 @@ export const SUBMISSION_ROUNDS: SubmissionRound[] = [
 ];
 export const SUBMIT_CRITERIA = [
   { n: "01", title: "A point of view", blurb: "We'll take a rough film with a real voice over a polished one with nothing to say. Show us how you see." },
-  { n: "02", title: "Twenty minutes, max", blurb: "Shorts, music videos, trailers, docs, animation, experiments, skits. Any genre — just make every minute count." },
+  { n: "02", title: "Twenty minutes, max", blurb: "Shorts, music videos, trailers, docs, animation, experiments, skits. Any genre, just make every minute count." },
   { n: "03", title: "Made by you", blurb: "We prioritize PNW and underrepresented filmmakers. First-timers and new names are exactly who we're here for." },
 ] as const;
 export const SUBMIT_STEPS = [
   { n: "1", title: "Cut it to twenty", blurb: "Lock your film at twenty minutes or under and export a screener link or file you're proud of." },
-  { n: "2", title: "Enter on FilmFreeway", blurb: "Add your title, synopsis, stills, and bio, then pay the entry fee — or request a waiver, no questions." },
-  { n: "3", title: "Watch your inbox", blurb: "We watch every submission and reply to every filmmaker — programmed or not. Selections screen that season." },
+  { n: "2", title: "Enter on FilmFreeway", blurb: "Add your title, synopsis, stills, and bio, then pay the entry fee, or request a waiver, no questions." },
+  { n: "3", title: "Watch your inbox", blurb: "We watch every submission and reply to every filmmaker, programmed or not. Selections screen that season." },
 ] as const;
 
 // --- Support page ---
