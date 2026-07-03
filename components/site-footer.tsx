@@ -2,11 +2,13 @@ import { CONTACT_EMAIL, SOCIALS, VENUE } from "@/lib/festival";
 import { Stagger, StaggerItem } from "@/components/motion/stagger";
 import { KineticText } from "@/components/motion/kinetic-text";
 import { getSiteContent } from "@/lib/site-content";
-import { isNewsletterHidden, rerouteHidden } from "@/lib/nav";
+import { isArchivesHidden, isNewsletterHidden, rerouteHidden } from "@/lib/nav";
 import type { ReactNode } from "react";
 
 const COLUMNS = [
-  { head: "Festival", links: ["About", "The Films", "Schedule"] },
+  // "The Films" is kept last so it can drop off cleanly when the Archives
+  // section is toggled OFF (see isArchivesHidden filter in the render).
+  { head: "Festival", links: ["About", "Schedule", "The Films"] },
   { head: "Attend", links: ["Buy Tickets", "Season Pass", "Accessibility"] },
   { head: "Get Involved", links: ["Submit a Film", "Become a Funder", "Press & Media", "Volunteer"] },
 ];
@@ -27,7 +29,7 @@ const FOOTER_HREFS: Record<string, string> = {
   Volunteer: `mailto:${CONTACT_EMAIL}?subject=Scope%20Screenings%20Volunteer`,
 };
 
-// Footer social glyphs (Instagram / TikTok / YouTube), currentColor so they
+// Footer social glyphs (Instagram / TikTok), currentColor so they
 // inherit the smoke→rust hover like the rest of the footer.
 const SOCIAL_ICONS: Record<string, ReactNode> = {
   Instagram: (
@@ -40,12 +42,6 @@ const SOCIAL_ICONS: Record<string, ReactNode> = {
   TikTok: (
     <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5" aria-hidden="true">
       <path d="M16.6 3c.36 2.07 1.65 3.66 3.9 4.06v2.62c-1.43.07-2.78-.34-3.93-1.12v6.42a5.82 5.82 0 1 1-5.82-5.82c.3 0 .6.02.9.07v2.74a3.18 3.18 0 1 0 2.25 3.04V3h2.7z" />
-    </svg>
-  ),
-  YouTube: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" className="h-5 w-5" aria-hidden="true">
-      <rect x="2.5" y="5.5" width="19" height="13" rx="4" />
-      <path d="M10.2 9.3l4.9 2.7-4.9 2.7z" fill="currentColor" stroke="none" />
     </svg>
   ),
 };
@@ -64,6 +60,11 @@ export async function SiteFooter() {
   const f = content.footer;
   const contactEmail = f?.contactEmail ?? CONTACT_EMAIL;
   const hrefFor = (label: string): string => rerouteHidden(content, FOOTER_HREFS[label] ?? "#");
+  // "The Films" points at the homepage Archives section (/#films); drop it from
+  // the footer whenever that section is toggled OFF in the CMS.
+  const archivesHidden = isArchivesHidden(content);
+  const visibleLinks = (links: string[]): string[] =>
+    archivesHidden ? links.filter((l) => l !== "The Films") : links;
 
   return (
     <footer className="bg-stage-deep px-5 pb-9 pt-16 md:shell-x">
@@ -132,7 +133,7 @@ export async function SiteFooter() {
             <span className="font-body text-[0.75rem] font-bold uppercase tracking-[0.16em] text-rust">
               {col.head}
             </span>
-            {col.links.map((l) => (
+            {visibleLinks(col.links).map((l) => (
               <a key={l} href={hrefFor(l)} className="font-body text-[0.875rem] text-cream/80 transition-colors hover:text-rust">
                 {l}
               </a>

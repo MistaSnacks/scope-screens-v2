@@ -226,7 +226,6 @@ export interface Social {
 export const SOCIALS: Social[] = [
   { label: "Instagram", href: "https://instagram.com/scopescreenings" },
   { label: "TikTok", href: "https://tiktok.com/@scopescreenings" },
-  { label: "YouTube", href: "https://youtube.com/@scopescreenings" },
 ];
 
 export const CONTACT_EMAIL = "hello@scopescreenings.com";
