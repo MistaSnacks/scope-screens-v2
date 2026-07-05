@@ -232,14 +232,16 @@ export function BuyTickets({
       )}
 
       {/* Ticket + lanyard underneath — scaled so neither overpowers the other */}
-      <Stagger className="flex w-full flex-col items-center justify-center gap-6 md:flex-row md:items-center md:gap-14">
+      <Stagger className="flex w-full flex-col items-center justify-center gap-10 lg:flex-row lg:items-center lg:gap-14">
         <StaggerItem>
-          <div className="origin-center scale-[0.58] sm:scale-75 md:scale-[0.9]">
+          {/* zoom, not transform scale: it shrinks the layout box too, so the
+              stacked mobile layout has no dead space around the artwork. */}
+          <div className="[zoom:0.58] sm:[zoom:0.75] md:[zoom:0.9]">
             <NightTicket target={nextShow} />
           </div>
         </StaggerItem>
         <StaggerItem>
-          <div className="origin-center md:scale-[1.12]">
+          <div className="lg:[zoom:1.12]">
             <SeasonPassLanyard target={seasonPass} />
           </div>
         </StaggerItem>
