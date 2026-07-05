@@ -38,6 +38,15 @@ describe("POST /api/checkout/reserve", () => {
     );
   });
 
+  it("409s with an off-sale message when Wix rejects a tier as hidden", async () => {
+    mockReserve.mockResolvedValueOnce({ errorCode: "TICKET_DEFINITION_HIDDEN" });
+    const res = await POST(post({ eventSlug: "opening-night", lineItems: [{ ticketDefinitionId: "early", quantity: 1 }] }));
+    expect(res.status).toBe(409);
+    const body = await res.json();
+    expect(body.error).toMatch(/no longer on sale/i);
+    expect(mockRedirect).not.toHaveBeenCalled();
+  });
+
   it("502s when reservation fails", async () => {
     mockReserve.mockResolvedValueOnce(null);
     const res = await POST(post({ eventSlug: "opening-night", lineItems: [{ ticketDefinitionId: "ga", quantity: 1 }] }));

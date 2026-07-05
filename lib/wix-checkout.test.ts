@@ -47,6 +47,26 @@ describe("queryAvailableTickets", () => {
     ]);
   });
 
+  it("filters out tiers whose sale is not currently running", async () => {
+    mockFetchSequence([
+      { json: TOKEN_RES },
+      {
+        json: {
+          definitions: [
+            { id: "ga", name: "General Admission", price: { amount: "22.00", currency: "USD" }, limitPerCheckout: 50, saleStatus: "SALE_STARTED" },
+            { id: "early", name: "Earlybird", price: { amount: "10.00", currency: "USD" }, limitPerCheckout: 50, saleStatus: "SALE_ENDED" },
+            { id: "late", name: "Door Price", price: { amount: "25.00", currency: "USD" }, limitPerCheckout: 50, saleStatus: "SALE_SCHEDULED" },
+            { id: "legacy", name: "No Status", price: { amount: "5.00", currency: "USD" }, limitPerCheckout: 50 },
+          ],
+        },
+      },
+    ]);
+
+    const tiers = await queryAvailableTickets("event-1");
+
+    expect(tiers?.map((t) => t.id)).toEqual(["ga", "legacy"]);
+  });
+
   it("returns null when WIX_CLIENT_ID is missing", async () => {
     vi.unstubAllEnvs();
     const tiers = await queryAvailableTickets("event-1");
@@ -89,6 +109,21 @@ describe("createReservation", () => {
     mockFetchSequence([{ json: TOKEN_RES }, { ok: false, json: {} }]);
     const result = await createReservation([{ ticketDefinitionId: "ga", quantity: 1 }]);
     expect(result).toBeNull();
+  });
+
+  it("returns the Wix error code when the reservation is rejected", async () => {
+    mockFetchSequence([
+      { json: TOKEN_RES },
+      {
+        ok: false,
+        json: {
+          message: "Ticket definition is hidden ID: early",
+          details: { applicationError: { code: "TICKET_DEFINITION_HIDDEN", description: "Ticket definition is hidden ID: early" } },
+        },
+      },
+    ]);
+    const result = await createReservation([{ ticketDefinitionId: "early", quantity: 1 }]);
+    expect(result).toEqual({ errorCode: "TICKET_DEFINITION_HIDDEN" });
   });
 });
 

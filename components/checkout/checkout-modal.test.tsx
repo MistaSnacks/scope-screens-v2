@@ -59,6 +59,37 @@ describe("CheckoutModal", () => {
     expect(await screen.findByRole("link", { name: /buy on lexscopefilms/i })).toBeInTheDocument();
   });
 
+  it("shows the server's error message when the reservation is rejected", async () => {
+    stubFetch({
+      "GET /api/checkout/tickets": {
+        json: { tiers: [{ id: "ga", name: "General Admission", priceAmount: 22, priceLabel: "$22.00", currency: "USD", limit: 5, free: false }] },
+      },
+      "POST /api/checkout/reserve": {
+        status: 409,
+        json: { error: "That ticket is no longer on sale. Close checkout and reopen to see what's available." },
+      },
+    });
+    render(<CheckoutModal target={TARGET} onClose={() => {}} />);
+    await screen.findByText("General Admission");
+    await userEvent.click(screen.getByRole("button", { name: /increase general admission/i }));
+    await userEvent.click(screen.getByRole("button", { name: /reserve & pay/i }));
+    expect(await screen.findByText(/no longer on sale/i)).toBeInTheDocument();
+  });
+
+  it("falls back to a generic error when the reserve response has no message", async () => {
+    stubFetch({
+      "GET /api/checkout/tickets": {
+        json: { tiers: [{ id: "ga", name: "General Admission", priceAmount: 22, priceLabel: "$22.00", currency: "USD", limit: 5, free: false }] },
+      },
+      "POST /api/checkout/reserve": { status: 502, json: { error: "" } },
+    });
+    render(<CheckoutModal target={TARGET} onClose={() => {}} />);
+    await screen.findByText("General Admission");
+    await userEvent.click(screen.getByRole("button", { name: /increase general admission/i }));
+    await userEvent.click(screen.getByRole("button", { name: /reserve & pay/i }));
+    expect(await screen.findByText(/something went wrong starting checkout/i)).toBeInTheDocument();
+  });
+
   it("redirects to the Wix checkout URL on success", async () => {
     stubFetch({
       "GET /api/checkout/tickets": {

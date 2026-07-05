@@ -39,6 +39,7 @@ interface WixDefinition {
   name?: string;
   price?: { amount?: string; currency?: string };
   limitPerCheckout?: number;
+  saleStatus?: string; // SALE_SCHEDULED | SALE_STARTED | SALE_ENDED
 }
 
 export async function queryAvailableTickets(eventId: string): Promise<TicketTier[] | null> {
@@ -54,7 +55,10 @@ export async function queryAvailableTickets(eventId: string): Promise<TicketTier
     if (!res.ok) return null;
     const { definitions } = (await res.json()) as { definitions?: WixDefinition[] };
     if (!definitions) return null;
-    return definitions.map((d) => {
+    // Wix keeps returning tiers whose sale has ended (or not started) unless the
+    // definition is hidden — reserving one fails, so never offer it.
+    const onSale = definitions.filter((d) => (d.saleStatus ?? "SALE_STARTED") === "SALE_STARTED");
+    return onSale.map((d) => {
       const amount = Number(d.price?.amount ?? "0") || 0; // guard against NaN from a bad price string
       const currency = d.price?.currency ?? "USD";
       const free = amount === 0;
@@ -78,9 +82,12 @@ export interface ReservationLineItem {
   quantity: number;
 }
 
-export async function createReservation(
-  lineItems: ReservationLineItem[],
-): Promise<{ reservationId: string; expiresAt: string } | null> {
+export type ReservationResult =
+  | { reservationId: string; expiresAt: string }
+  | { errorCode: string } // Wix applicationError code, e.g. TICKET_DEFINITION_HIDDEN
+  | null;
+
+export async function createReservation(lineItems: ReservationLineItem[]): Promise<ReservationResult> {
   const tickets = lineItems.filter((l) => l.quantity > 0);
   if (tickets.length === 0) return null;
   const token = await getVisitorToken();
@@ -92,7 +99,13 @@ export async function createReservation(
       body: JSON.stringify({ ticketReservation: { tickets } }),
       cache: "no-store",
     });
-    if (!res.ok) return null;
+    if (!res.ok) {
+      const err = (await res.json().catch(() => null)) as
+        | { details?: { applicationError?: { code?: string } } }
+        | null;
+      const code = err?.details?.applicationError?.code;
+      return code ? { errorCode: code } : null;
+    }
     const { ticketReservation } = (await res.json()) as {
       ticketReservation?: { id?: string; expirationDate?: string };
     };

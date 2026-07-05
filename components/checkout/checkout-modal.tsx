@@ -62,17 +62,22 @@ export function CheckoutModal({ target, onClose }: { target: CheckoutTarget; onC
     const lineItems = state.tiers
       .map((t) => ({ ticketDefinitionId: t.id, quantity: quantities[t.id] ?? 0 }))
       .filter((l) => l.quantity > 0);
+    const genericError = "Something went wrong starting checkout. Please try again.";
     try {
       const res = await fetch("/api/checkout/reserve", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ eventSlug: target.eventSlug, lineItems }),
       });
-      if (!res.ok) throw new Error("reserve failed");
-      const { redirectUrl } = (await res.json()) as { redirectUrl: string };
-      window.location.href = redirectUrl;
+      const data = (await res.json().catch(() => ({}))) as { redirectUrl?: string; error?: string };
+      if (!res.ok || !data.redirectUrl) {
+        setSubmitError(data.error || genericError);
+        setSubmitting(false);
+        return;
+      }
+      window.location.href = data.redirectUrl;
     } catch {
-      setSubmitError("Something went wrong starting checkout. Please try again.");
+      setSubmitError(genericError);
       setSubmitting(false);
     }
   }
