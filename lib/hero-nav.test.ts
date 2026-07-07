@@ -6,9 +6,9 @@ describe("hero nav credits", () => {
     expect(PRIMARY_CREDITS.map((c) => c.label)).toEqual(["Buy Tickets", "Submit a Film"]);
   });
 
-  it("points the primary actions at the tickets and submit routes", () => {
+  it("points the primary actions at the tickets and submit homepage sections", () => {
     expect(PRIMARY_CREDITS.find((c) => c.label === "Buy Tickets")?.href).toBe("/#tickets");
-    expect(PRIMARY_CREDITS.find((c) => c.label === "Submit a Film")?.href).toBe("/submit");
+    expect(PRIMARY_CREDITS.find((c) => c.label === "Submit a Film")?.href).toBe("/#submit");
   });
 
   it("keeps a single secondary destination: Become a Funder -> /support", () => {

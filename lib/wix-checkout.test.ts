@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { queryAvailableTickets, createReservation, createPaymentRedirect, getPurchasableTargets } from "./wix-checkout";
+import { queryAvailableTickets, createReservation, createPaymentRedirect, getPurchasableTargets, getEventBySlug } from "./wix-checkout";
 
 const TOKEN_RES = { access_token: "visitor-token-abc" };
 
@@ -164,6 +164,84 @@ describe("createPaymentRedirect", () => {
       postFlowUrl: "https://site.test/",
     });
     expect(url).toBeNull();
+  });
+});
+
+describe("getEventBySlug", () => {
+  const WIX_EVENT = {
+    id: "ev-1",
+    slug: "scope-screenings-opening-night",
+    title: "Scope Screenings: Opening Night",
+    shortDescription: "SEASON OPENER!",
+    detailedDescription: "<p>Ten directors, one night.</p>",
+    mainImage: { url: "https://static.wixstatic.com/media/pic.jpg", width: 1081, height: 1081 },
+    location: {
+      name: "Langston",
+      address: { formattedAddress: "104 17th Ave S, Seattle, WA 98144, USA" },
+    },
+    dateAndTimeSettings: {
+      startDate: "2026-07-29T02:00:00Z",
+      formatted: { startDate: "July 28, 2026", startTime: "7:00 PM" },
+    },
+  };
+
+  it("maps the Wix event into page-ready details", async () => {
+    mockFetchSequence([{ json: TOKEN_RES }, { json: { events: [WIX_EVENT] } }]);
+
+    const details = await getEventBySlug("scope-screenings-opening-night");
+
+    expect(details).toEqual({
+      eventId: "ev-1",
+      slug: "scope-screenings-opening-night",
+      title: "Scope Screenings: Opening Night",
+      shortDescription: "SEASON OPENER!",
+      aboutHtml: "<p>Ten directors, one night.</p>",
+      imageUrl: "https://static.wixstatic.com/media/pic.jpg",
+      venueName: "Langston",
+      address: "104 17th Ave S, Seattle, WA 98144, USA",
+      mapsUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+        "104 17th Ave S, Seattle, WA 98144, USA"
+      )}`,
+      dateLong: "July 28, 2026",
+      startTime: "7:00 PM",
+      startDateIso: "2026-07-29T02:00:00Z",
+      isSeasonPass: false,
+    });
+  });
+
+  it("flags season pass events and tolerates missing date/venue/image", async () => {
+    mockFetchSequence([
+      { json: TOKEN_RES },
+      {
+        json: {
+          events: [
+            {
+              id: "pass-5",
+              slug: "season-pass-for-scope-screenings-season-5",
+              title: "Season Pass for Scope Screenings Season 5",
+            },
+          ],
+        },
+      },
+    ]);
+
+    const details = await getEventBySlug("season-pass-for-scope-screenings-season-5");
+
+    expect(details?.isSeasonPass).toBe(true);
+    expect(details?.imageUrl).toBeNull();
+    expect(details?.address).toBeNull();
+    expect(details?.mapsUrl).toBeNull();
+    expect(details?.dateLong).toBeNull();
+  });
+
+  it("returns null for an unknown slug", async () => {
+    mockFetchSequence([{ json: TOKEN_RES }, { json: { events: [] } }]);
+    expect(await getEventBySlug("nope")).toBeNull();
+  });
+
+  it("returns null when the query fails", async () => {
+    mockFetchSequence([{ json: TOKEN_RES }, { ok: false, json: {} }]);
+    expect(await getEventBySlug("scope-screenings-opening-night")).toBeNull();
   });
 });
 

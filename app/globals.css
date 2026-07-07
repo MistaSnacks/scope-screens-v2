@@ -63,6 +63,10 @@ html,
 body {
   background: var(--color-bg);
   color: var(--color-fg);
+  /* Safety net: always keep a defined system cursor. Guards against an
+     accidental `cursor: none` (and against Chromium's hardware-cursor-over-
+     composited-layer bug leaving the page with no resolved cursor). */
+  cursor: auto;
 }
 
 /* ------------------------------------------------------------------ */

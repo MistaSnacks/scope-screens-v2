@@ -148,10 +148,13 @@ def optional_image(doc, filename, caption=None, missing_note=None):
 SECTIONS = [
     # 1 Hero
     ("Hero", "Hero", "Form: Hero", [
-        ("1", "Eyebrow", "small label above the curtain (e.g. “Lexscope Presents”)."),
+        ("1", "Eyebrow", "the small “tonight” label on the marquee logo card (currently “Feature Presentation”)."),
         ("2", "Video reel area", "the background reel. Poster image and Video are Media-Manager fields — open the Hero form and upload/select there."),
     ], "Also in the Hero form: Poster image (the still shown before the video plays) and Video (the background reel). "
-       "The big “Scope / Screenings” wordmark and tagline are fixed in the design and are not editable here."),
+       "Two things in this area are fixed art and are NOT editable in the CMS: the big “Scope / Screenings” wordmark "
+       "(the Title and Tagline fields in the form do not show on the homepage), and the small “FEATURE PRESENTATION” "
+       "tab at the top of the film frame — that one is baked into the design, even though it happens to read the "
+       "same as the Eyebrow’s current value. The Eyebrow you edit is the one down on the logo card."),
 
     # 2 About -- header
     ("AboutHeader", "About — Page Header", "Form: AboutPage", [
@@ -251,8 +254,12 @@ SECTIONS = [
         ("2", "Newsletter heading", "the text above the email sign-up field."),
         ("3", "Tagline", "the short paragraph under the Scope Screenings name column."),
         ("4", "Copyright", "the small legal line at the very bottom."),
-        ("5", "Contact email", "the contact address shown in the footer links."),
-    ], "The Footer form is shared across every page — edit it once and it updates everywhere."),
+        ("5", "Contact email", "the contact address behind the mail icon in the footer."),
+    ], "The Footer form is shared across every page — edit it once and it updates everywhere. Note: the social "
+       "icons (Instagram, TikTok) are set in the site’s code, not here — the “Social 1/2/3” fields on this form "
+       "are not shown on the live site, so leave them be. The Sign-off and Newsletter heading only appear while "
+       "the newsletter band is switched on (SiteSettings → “Hide newsletter band” unchecked); right now that "
+       "band is off, so those two fields aren’t visible on the live site."),
 
     # 15 Nav
     ("Nav", "Navigation", "List: Nav", [
@@ -322,7 +329,7 @@ def main():
         add_internal_link(p, label, slugify(label))
 
     toc_group("Getting started")
-    for _lbl in ["The one rule", "Opening the CMS", "How it’s organized", "Your collections at a glance"]:
+    for _lbl in ["The one rule", "Right now: your site is one page", "Opening the CMS", "How it’s organized", "Your collections at a glance"]:
         toc_item(_lbl)
     toc_group("Editing each section")
     for _key, _title, *_rest in SECTIONS:
@@ -336,6 +343,25 @@ def main():
     heading(doc, "The one rule")
     para(doc, "Open the CMS in your Wix dashboard → pick the collection for the part of the page you want to "
               "change → edit the fields → click Publish. Your live site updates within about 10 seconds.")
+
+    # Right now: your site is one page  (current launch state — read this first)
+    heading(doc, "Right now: your site is one page")
+    para(doc, "The site launched as a single scrolling homepage. The five sub-pages (About, Schedule, Tickets, "
+              "Submit, Support) are all switched OFF for now, so their menu links scroll to the matching section "
+              "on the homepage instead of opening a separate page. Everything below still works exactly as "
+              "described — but until those pages are switched back on, keep these two things in mind:")
+    bullet(doc, "For each page form (AboutPage, SchedulePage, TicketsPage, SubmitPage, SupportPage), the homepage "
+                "only shows the top of the form — the Eyebrow, Title, and Lede/intro. The extra parts (the closing "
+                "band, the Tickets “why a season pass” block, the Support “give” card body) live on the full pages, "
+                "so they won’t appear on the homepage until that page is switched on.", label="Page forms")
+    bullet(doc, "The list collections that only live on sub-pages — Timeline, SubmitCriteria, SubmitSteps, and "
+                "SubmitDeadlines — are not shown anywhere on the homepage yet. You can edit them now to get ready, "
+                "but the changes stay hidden until the pages are switched on. (GivingTiers and Marquee are the "
+                "exceptions — those two lists DO show on the homepage today.)", label="List collections")
+    para(doc, "What you CAN change on the live homepage today: the Hero, the Marquee ticker, the Founder band "
+              "(BuiltForAccess), the Tickets / About / Schedule / Submit / Support intro copy, the GivingTiers "
+              "levels, the Footer, the Nav menu, and every on/off switch on SiteSettings. To turn a full page back "
+              "on, see “Show or hide a page.”", color=GREY, size=10)
 
     # Opening the CMS
     heading(doc, "Opening the CMS")

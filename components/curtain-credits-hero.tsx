@@ -144,7 +144,8 @@ export function CurtainCreditsHero({
   eyebrow = "Lexscope Presents",
   posterUrl = SIZZLE_REEL_POSTER,
   videoUrl = SIZZLE_REEL_MP4,
-}: { eyebrow?: string; posterUrl?: string; videoUrl?: string } = {}) {
+  ticketsHref = "/#tickets",
+}: { eyebrow?: string; posterUrl?: string; videoUrl?: string; ticketsHref?: string } = {}) {
   const root = useRef<HTMLElement>(null);
   const spotRef = useRef<HTMLDivElement>(null);
   const canvasContainerRef = useRef<HTMLDivElement>(null);
@@ -577,9 +578,10 @@ export function CurtainCreditsHero({
             {PRIMARY_CREDITS.map((c, i) => (
               <a
                 key={c.label}
-                href={c.href}
+                href={i === 0 ? ticketsHref : c.href}
                 className={`${styles.creditPrimary} ${i === 0 ? styles.creditSpot : ""}`}
               >
+                <span className={styles.creditDot} aria-hidden />
                 <span className={styles.creditRole}>{c.role}</span>
                 <span className={styles.creditLabel}>{c.label}</span>
               </a>
@@ -587,6 +589,7 @@ export function CurtainCreditsHero({
           </div>
           {SECONDARY_CREDITS.map((c) => (
             <a key={c.label} href={c.href} className={styles.creditSecondary}>
+              <span className={styles.creditDot} aria-hidden />
               {c.label}
             </a>
           ))}

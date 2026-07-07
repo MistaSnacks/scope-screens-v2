@@ -1,7 +1,7 @@
 "use client";
 
+import Link from "next/link";
 import { SEASON_PASS, VENUE, nextScreening, reserveUrl, ticketUrl } from "@/lib/festival";
-import { useCheckout } from "@/components/checkout/checkout-context";
 import { Reveal } from "@/components/motion/reveal";
 import { Stagger, StaggerItem } from "@/components/motion/stagger";
 import { KineticText } from "@/components/motion/kinetic-text";
@@ -25,7 +25,6 @@ function Perforation() {
 
 function NightTicket({ target }: { target: CheckoutTarget | null }) {
   const next = nextScreening();
-  const { openCheckout } = useCheckout();
   const body = (
     <>
       {/* Body */}
@@ -41,6 +40,9 @@ function NightTicket({ target }: { target: CheckoutTarget | null }) {
           <span className="font-marquee text-[1.4375rem] uppercase leading-none tracking-[0.05em] text-curtain">Admit One</span>
           <span className="font-mono text-[0.6875rem] tracking-[0.16em] text-smoke">NO. 0048</span>
         </div>
+        <span className="-mt-2 w-fit rounded-full bg-rust/15 px-2.5 py-1 font-body text-[0.6875rem] font-extrabold uppercase tracking-[0.14em] text-rust">
+          › Click to buy tickets
+        </span>
         <div className="font-display text-[3.25rem] uppercase leading-[0.9]">{next.label}</div>
         <div className="font-body text-[0.9375rem] font-semibold leading-snug text-ink/80">
           {VENUE.name}
@@ -66,7 +68,7 @@ function NightTicket({ target }: { target: CheckoutTarget | null }) {
           <span className="font-marquee text-[2.875rem] leading-none">$22</span>
           <span className="font-body text-[0.75rem] font-bold tracking-[0.04em] text-cream/90">GEN $22 · EARLY $18</span>
         </div>
-        <span className="flex w-full items-center justify-center rounded-lg bg-cream py-3 font-body text-[0.8125rem] font-extrabold tracking-[0.04em] text-curtain">
+        <span className="flex w-full items-center justify-center gap-1 rounded-lg bg-cream py-3 font-body text-[0.8125rem] font-extrabold tracking-[0.04em] text-curtain shadow-[0_2px_10px_rgba(0,0,0,0.25)] transition-colors group-hover:bg-rust group-hover:text-ink">
           BUY TICKETS ›
         </span>
       </div>
@@ -81,16 +83,15 @@ function NightTicket({ target }: { target: CheckoutTarget | null }) {
     </>
   );
   const className =
-    "ticket relative flex w-[34.25rem] max-w-full shrink-0 -rotate-[1.5deg] shadow-prop";
+    "ticket group relative flex w-[34.25rem] max-w-full shrink-0 -rotate-[1.5deg] cursor-pointer shadow-prop transition-transform duration-300 ease-out hover:-translate-y-1.5 hover:rotate-0";
   return target ? (
-    <button
-      type="button"
-      onClick={() => openCheckout(target)}
+    <Link
+      href={`/events/${target.eventSlug}`}
       aria-label={`Buy tickets for ${target.title}`}
-      className={`${className} cursor-pointer border-0 bg-transparent p-0 text-left`}
+      className={className}
     >
       {body}
-    </button>
+    </Link>
   ) : (
     <a
       href={reserveUrl(next)}
@@ -105,9 +106,8 @@ function NightTicket({ target }: { target: CheckoutTarget | null }) {
 }
 
 function SeasonPassLanyard({ target }: { target: CheckoutTarget | null }) {
-  const { openCheckout } = useCheckout();
   const lanyardClassName =
-    "lanyard relative flex w-[15.5rem] shrink-0 flex-col items-center shadow-prop";
+    "lanyard group relative flex w-[15.5rem] shrink-0 flex-col items-center cursor-pointer shadow-prop transition-transform duration-300 ease-out hover:-translate-y-1.5";
   const body = (
     <>
       {/* Strap V + clip — woven black with the repeating wordmark */}
@@ -131,64 +131,75 @@ function SeasonPassLanyard({ target }: { target: CheckoutTarget | null }) {
         </span>
       </div>
 
-      {/* Credential — B&W documentary collage face */}
+      {/* Credential — brightened B&W documentary collage face (lifted regen of
+          the original; the old heavy scrim read as "greyed out / disabled") */}
       <div
         className="relative flex w-[15.5rem] flex-col overflow-hidden rounded-2xl border border-[#5a5550] bg-ink px-6 pb-5 pt-5"
         style={{
-          backgroundImage: "url(/season-pass-collage.png)",
+          backgroundImage: "url(/season-pass-collage-bright.png)",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
-        {/* scrim for legibility */}
+        {/* Scrim for legibility. NOTE: this is position:absolute, so it paints
+            ABOVE static in-flow content in the same stacking context — the card
+            content therefore lives in its own `relative z-10` layer below so the
+            scrim never covers the text (only the photo). Gentle gradient: enough
+            to settle the collage behind the copy, no more. */}
         <div
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              "linear-gradient(180deg,rgba(11,10,9,0.62) 0%,rgba(11,10,9,0.78) 55%,rgba(11,10,9,0.92) 100%)",
+              "linear-gradient(180deg,rgba(11,10,9,0.20) 0%,rgba(11,10,9,0.30) 34%,rgba(11,10,9,0.58) 58%,rgba(11,10,9,0.74) 100%)",
           }}
           aria-hidden
         />
-        <span className="mx-auto mb-3 h-2.5 w-16 rounded-full border border-[#2a241b] bg-[#15120f]" />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/popcorn-logo.png" alt="Scope Screenings" className="mb-1.5 -ml-0.5 h-12 w-auto self-start" />
-        <div className="mb-1 flex flex-col gap-0.5">
-          <span className="font-marquee text-[0.8125rem] uppercase leading-none tracking-[0.02em] text-cream">Scope Screenings</span>
-          <span className="font-mono text-[0.4375rem] tracking-[0.16em] text-cream/60">live underground film festival</span>
-        </div>
-        <span className="font-mono text-[0.625rem] tracking-[0.24em] text-rust">ALL-ACCESS · 2026</span>
-        <span className="mt-2 w-fit self-start rounded-[2px] bg-curtain px-[0.5625rem] pb-1.5 pt-1 font-marquee text-[1.8125rem] uppercase leading-none tracking-[-0.01em] text-ink">
-          Season Pass
-        </span>
-        <span className="my-3.5 border-t border-[#2a241b]" />
-        <div className="flex items-center justify-between pb-2">
-          <span className="font-mono text-[0.625rem] tracking-[0.16em] text-cream/50">ADMITS</span>
-          <span className="font-body text-[0.875rem] font-bold text-cream">Bearer · All {SEASON_PASS.nights} Nights</span>
-        </div>
-        <div className="flex items-center justify-between">
-          <span className="font-mono text-[0.625rem] tracking-[0.16em] text-cream/50">SEASON</span>
-          <span className="font-body text-[0.875rem] font-bold text-cream">No. 05 · Jun–Dec</span>
-        </div>
-        <div className="flex items-end justify-between pt-3">
-          <div className="flex flex-col">
-            <span className="font-mono text-[0.625rem] tracking-[0.16em] text-rust">SEASON PASS</span>
-            <span className="font-marquee text-[2.375rem] leading-none text-rust">{SEASON_PASS.gaPrice}</span>
+        <div className="relative z-10 flex flex-col">
+          <span className="mx-auto mb-3 h-2.5 w-16 rounded-full border border-[#2a241b] bg-[#15120f]" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/popcorn-logo.png" alt="Scope Screenings" className="mb-1.5 -ml-0.5 h-12 w-auto self-start" />
+          <div className="mb-1 flex flex-col gap-0.5 [text-shadow:0_1px_3px_rgba(0,0,0,0.85)]">
+            <span className="font-marquee text-[0.8125rem] uppercase leading-none tracking-[0.02em] text-cream">Scope Screenings</span>
+            <span className="font-mono text-[0.4375rem] tracking-[0.16em] text-cream/70">live underground film festival</span>
           </div>
-          <div className="mb-1 h-8 w-[5.5rem]" style={{ backgroundImage: CREAM_BARCODE }} aria-hidden />
+          <span className="font-mono text-[0.625rem] tracking-[0.24em] text-brass [text-shadow:0_1px_3px_rgba(0,0,0,0.85)]">ALL-ACCESS · 2026</span>
+          <span className="mt-2 w-fit self-start rounded-[2px] bg-curtain px-[0.5625rem] pb-1.5 pt-1 font-marquee text-[1.8125rem] uppercase leading-none tracking-[-0.01em] text-ink">
+            Season Pass
+          </span>
+          <span className="my-3.5 border-t border-cream/20" />
+          <div className="flex items-center justify-between pb-2 [text-shadow:0_1px_3px_rgba(0,0,0,0.85)]">
+            <span className="font-mono text-[0.625rem] tracking-[0.16em] text-cream/80">ADMITS</span>
+            <span className="font-body text-[0.875rem] font-bold text-cream">Bearer · All {SEASON_PASS.nights} Nights</span>
+          </div>
+          <div className="flex items-center justify-between [text-shadow:0_1px_3px_rgba(0,0,0,0.85)]">
+            <span className="font-mono text-[0.625rem] tracking-[0.16em] text-cream/80">SEASON</span>
+            <span className="font-body text-[0.875rem] font-bold text-cream">No. 05 · Jun–Dec</span>
+          </div>
+          <div className="flex items-end justify-between pt-3">
+            <div className="flex flex-col [text-shadow:0_2px_6px_rgba(0,0,0,0.9)]">
+              <span className="font-mono text-[0.625rem] tracking-[0.16em] text-brass">SEASON PASS</span>
+              <span className="font-marquee text-[2.375rem] leading-none text-brass">{SEASON_PASS.gaPrice}</span>
+            </div>
+            <div className="mb-1 h-8 w-[5.5rem]" style={{ backgroundImage: CREAM_BARCODE }} aria-hidden />
+          </div>
+          <span className="mt-2 font-mono text-[0.625rem] tracking-[0.14em] text-cream/85 [text-shadow:0_1px_3px_rgba(0,0,0,0.9)]">
+            SS-SP-006
+          </span>
+          <span className="mt-2 flex items-center justify-center gap-1 rounded-md bg-brass py-2 font-body text-[0.75rem] font-extrabold uppercase tracking-[0.06em] text-ink shadow-[0_2px_10px_rgba(0,0,0,0.3)] transition-colors group-hover:bg-cream">
+            Tap To Buy ›
+          </span>
         </div>
-        <span className="mt-2 font-mono text-[0.625rem] tracking-[0.14em] text-cream/55">SS-SP-006 · TAP TO BUY ›</span>
       </div>
     </>
   );
   return target ? (
-    <button
-      type="button"
-      onClick={() => openCheckout(target)}
+    <Link
+      href={`/events/${target.eventSlug}`}
       aria-label="Buy a Season Pass, all seven nights"
-      className={`${lanyardClassName} cursor-pointer border-0 bg-transparent p-0 text-left`}
+      className={lanyardClassName}
     >
       {body}
-    </button>
+    </Link>
   ) : (
     <a
       href={ticketUrl(SEASON_PASS.slug)}
@@ -206,41 +217,45 @@ export function BuyTickets({
   nextShow,
   seasonPass,
   headless = false,
+  copy,
 }: {
   nextShow: CheckoutTarget | null;
   seasonPass: CheckoutTarget | null;
   /** Drop the internal eyebrow/title block when a page already supplies one. */
   headless?: boolean;
+  /** CMS TicketsPage copy (same singleton /tickets uses); falls back inline. */
+  copy?: { eyebrow?: string; title?: string; lede?: string };
 }) {
   return (
-    <section className="flex flex-col items-center gap-14 overflow-hidden border-t border-hairline bg-bg px-5 py-24 md:shell-x">
+    <section className="flex flex-col items-center gap-8 overflow-hidden border-t border-hairline bg-bg px-5 py-16 md:gap-14 md:py-24 md:shell-x">
       {/* Heading on top — like the Program section */}
       {!headless && (
         <Reveal className="flex max-w-[40rem] flex-col items-center gap-4 text-center">
           <div className="flex items-center gap-3">
             <span className="h-px w-10 bg-curtain" />
-            <span className="font-body text-[0.75rem] font-bold uppercase tracking-[0.3em] text-label">Chapter One</span>
+            <span className="font-body text-[0.75rem] font-bold uppercase tracking-[0.3em] text-label">{copy?.eyebrow ?? "Chapter One"}</span>
             <span className="h-px w-10 bg-curtain" />
           </div>
-          <KineticText as="h2" className="pulp font-display text-[3.5rem] uppercase leading-[0.94] md:text-[5rem]" text="The Next Show" />
-          <p className="font-body text-[1.0625rem] leading-relaxed text-fg/70">
-            Last Tuesday of the month, June through December. Ten directors, ten films, one packed
-            house in the Central District: doors at 7:00, lights down at 7:30. Go for the night, or go
-            all season.
+          <KineticText as="h2" className="pulp font-display text-[3.5rem] uppercase leading-[0.94] md:text-[5rem]" text={copy?.title ?? "The Next Show"} />
+          <p className="hidden font-body text-[1.0625rem] leading-relaxed text-fg/70 sm:block">
+            {copy?.lede ??
+              "Last Tuesday of the month, June through December. Ten directors, ten films, one packed house in the Central District: doors at 7:00, lights down at 7:30. Go for the night, or go all season."}
           </p>
         </Reveal>
       )}
 
-      {/* Ticket + lanyard underneath — scaled so neither overpowers the other */}
-      <Stagger className="flex w-full flex-col items-center justify-center gap-10 lg:flex-row lg:items-center lg:gap-14">
-        <StaggerItem>
+      {/* Ticket + lanyard — the artwork IS the button. Each is a single tap
+          target with a hover lift + a persistent "buy" cue on the stub, so it
+          reads as clickable without a separate CTA cluttering the section. */}
+      <Stagger className="flex w-full flex-col items-center justify-center gap-10 lg:flex-row lg:items-start lg:gap-14">
+        <StaggerItem className="flex w-full flex-col items-center lg:w-auto">
           {/* zoom, not transform scale: it shrinks the layout box too, so the
               stacked mobile layout has no dead space around the artwork. */}
           <div className="[zoom:0.58] sm:[zoom:0.75] md:[zoom:0.9]">
             <NightTicket target={nextShow} />
           </div>
         </StaggerItem>
-        <StaggerItem>
+        <StaggerItem className="flex w-full flex-col items-center lg:w-auto">
           <div className="lg:[zoom:1.12]">
             <SeasonPassLanyard target={seasonPass} />
           </div>

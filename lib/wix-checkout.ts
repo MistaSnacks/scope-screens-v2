@@ -154,6 +154,78 @@ export interface CheckoutTarget {
   title: string;
 }
 
+// --- Event details page (/events/[slug]) ---
+
+export interface EventDetails {
+  eventId: string;
+  slug: string;
+  title: string;
+  shortDescription: string;
+  /** Client-authored rich text from Wix Events ("About the event"). */
+  aboutHtml: string;
+  imageUrl: string | null;
+  venueName: string | null;
+  address: string | null;
+  mapsUrl: string | null;
+  dateLong: string | null; // "July 28, 2026" — venue-local, preformatted by Wix
+  startTime: string | null; // "7:00 PM"
+  startDateIso: string | null;
+  isSeasonPass: boolean;
+}
+
+interface WixEventFull extends WixEventRow {
+  shortDescription?: string;
+  detailedDescription?: string;
+  mainImage?: { url?: string };
+  location?: { name?: string; address?: { formattedAddress?: string } };
+  dateAndTimeSettings?: {
+    startDate?: string;
+    formatted?: { startDate?: string; startTime?: string };
+  };
+}
+
+/** Full event record for the details page; null on any miss so the route 404s. */
+export async function getEventBySlug(slug: string): Promise<EventDetails | null> {
+  if (!slug) return null;
+  const token = await getVisitorToken();
+  if (!token) return null;
+  try {
+    const res = await fetch(`${API}/events/v3/events/query`, {
+      method: "POST",
+      headers: { Authorization: token, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        query: { filter: { slug: { $eq: slug } }, paging: { limit: 1 } },
+        fields: ["DETAILS", "TEXTS", "REGISTRATION"],
+      }),
+      next: { revalidate: 60 },
+    });
+    if (!res.ok) return null;
+    const { events } = (await res.json()) as { events?: WixEventFull[] };
+    const e = events?.[0];
+    if (!e?.id || !e?.slug) return null;
+    const address = e.location?.address?.formattedAddress ?? null;
+    return {
+      eventId: e.id,
+      slug: e.slug,
+      title: (e.title ?? "").trim() || "Scope Screenings",
+      shortDescription: e.shortDescription ?? "",
+      aboutHtml: e.detailedDescription ?? "",
+      imageUrl: e.mainImage?.url ?? null,
+      venueName: e.location?.name ?? null,
+      address,
+      mapsUrl: address
+        ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`
+        : null,
+      dateLong: e.dateAndTimeSettings?.formatted?.startDate ?? null,
+      startTime: e.dateAndTimeSettings?.formatted?.startTime ?? null,
+      startDateIso: e.dateAndTimeSettings?.startDate ?? null,
+      isSeasonPass: /season pass/i.test(e.title ?? ""),
+    };
+  } catch {
+    return null;
+  }
+}
+
 interface WixEventRow {
   id?: string;
   slug?: string;

@@ -18,7 +18,10 @@ export function navActiveFor(pathname: string): string {
 // Persistent header — fixed, rides the whole page. Desktop shows the inline
 // anchor nav; below `lg` it collapses to a hamburger that opens a dropdown so
 // the section nav still works on mobile.
-export function SiteNav({ items }: { items?: { label: string; href: string }[] } = {}) {
+export function SiteNav({
+  items,
+  ticketsHref = "/#tickets",
+}: { items?: { label: string; href: string }[]; ticketsHref?: string } = {}) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const links = items ?? NAV_ITEMS.map((l) => ({ label: l, href: navHrefFor(l) }));
@@ -57,7 +60,7 @@ export function SiteNav({ items }: { items?: { label: string; href: string }[] }
 
         <Hoverable magnetic strength={0.3} lift={0}>
           <Link
-            href="/#tickets"
+            href={ticketsHref}
             className="group flex items-center gap-2 border border-rust px-3 py-2 transition-colors hover:bg-rust md:px-4 md:py-2.5"
           >
             <span

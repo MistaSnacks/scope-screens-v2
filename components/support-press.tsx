@@ -1,4 +1,5 @@
 import { DONATE_URL } from "@/lib/festival";
+import { getSiteContent } from "@/lib/site-content";
 import { Reveal } from "@/components/motion/reveal";
 import { Stagger, StaggerItem } from "@/components/motion/stagger";
 import { KineticText } from "@/components/motion/kinetic-text";
@@ -18,7 +19,16 @@ const PRESS_ROWS = [
   { label: "Photo & b-roll library", format: "DRIVE" },
 ];
 
-export function SupportPress({ pressHidden = false }: { pressHidden?: boolean } = {}) {
+export async function SupportPress({ pressHidden = false }: { pressHidden?: boolean } = {}) {
+  // Same CMS content the /support page reads (request-deduped).
+  const content = await getSiteContent();
+  const page = content.supportPage;
+  const tiers = content.givingTiers?.length
+    ? content.givingTiers.map((g) => ({
+        label: [g.name, g.amount].filter(Boolean).join(" "),
+        gold: g.featured === true,
+      }))
+    : TIERS;
   return (
     <section className="band-up bg-bg px-5 py-24 md:shell-x">
       <Reveal className="mb-14 flex flex-col items-center gap-4 text-center">
@@ -27,20 +37,20 @@ export function SupportPress({ pressHidden = false }: { pressHidden?: boolean } 
           <span className="font-body text-[0.75rem] font-bold uppercase tracking-[0.3em] text-label">Chapter Four</span>
           <span className="h-px w-10 bg-curtain" />
         </div>
-        <KineticText as="h2" className="pulp font-display text-[3.5rem] uppercase leading-[0.94] md:text-[5rem]" text="Keep It Running" />
+        <KineticText as="h2" className="pulp font-display text-[3.5rem] uppercase leading-[0.94] md:text-[5rem]" text={page?.title ?? "Keep It Running"} />
       </Reveal>
 
       <Stagger className={`mx-auto grid gap-7 ${pressHidden ? "max-w-[40rem]" : "max-w-[78.75rem] md:grid-cols-2"}`}>
         {/* Funders */}
         <StaggerItem className="flex flex-col rounded-xl border border-hairline bg-card p-8 shadow-[0_20px_45px_rgba(11,10,9,0.07)] md:p-10">
-          <span className="font-body text-[0.75rem] font-bold uppercase tracking-[0.2em] text-curtain">Funders &amp; Philanthropy</span>
+          <span className="font-body text-[0.75rem] font-bold uppercase tracking-[0.2em] text-curtain">{page?.eyebrow ?? "Funders & Philanthropy"}</span>
           <h3 className="mt-3 font-display text-[2.5rem] uppercase leading-none text-fg">Become a Funder</h3>
           <p className="mt-4 font-body text-[0.9375rem] leading-relaxed text-fg/70">
-            A fiscally sponsored project of Shunpike, a 501(c)(3). Every dollar puts another
-            underrepresented filmmaker on a big screen.
+            {page?.cardBody ??
+              "A fiscally sponsored project of Shunpike, a 501(c)(3). Every dollar puts another underrepresented filmmaker on a big screen."}
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
-            {TIERS.map((t) => (
+            {tiers.map((t) => (
               <span
                 key={t.label}
                 className={`rounded-full px-4 py-2 font-body text-[0.8125rem] font-semibold ${
@@ -52,7 +62,7 @@ export function SupportPress({ pressHidden = false }: { pressHidden?: boolean } 
             ))}
           </div>
           <a
-            href={DONATE_URL}
+            href={page?.donateUrl || DONATE_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-7 flex items-center justify-center rounded-lg bg-rust py-4 font-body text-[0.9375rem] font-extrabold uppercase tracking-[0.06em] text-ink transition-transform hover:scale-[1.02]"

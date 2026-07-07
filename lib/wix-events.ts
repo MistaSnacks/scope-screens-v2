@@ -11,18 +11,26 @@ export interface ScheduleRow {
   day: string; // "28"
   title: string;
   long: string; // "Tuesday · July 28, 2026"
-  href: string; // event page / reserve URL
+  href: string; // external Wix event page (fallback)
+  /** Wix event slug — when present, link internally to /events/[slug]. */
+  slug?: string;
   reservable: boolean;
 }
 
 interface WixEvent {
   title?: string;
   slug?: string;
-  eventPageUrl?: string;
+  // Events v3 returns the page URL split into { base, path }.
+  eventPageUrl?: { base?: string; path?: string };
   dateAndTimeSettings?: {
     startDate?: string;
     formatted?: { startDate?: string };
   };
+}
+
+/** Join Events v3's { base, path } page URL; null unless both halves exist. */
+function eventPageHref(url?: { base?: string; path?: string }): string | null {
+  return url?.base && url?.path ? `${url.base}${url.path}` : null;
 }
 
 async function getVisitorToken(): Promise<string | null> {
@@ -85,8 +93,9 @@ export async function getLiveSchedule(): Promise<ScheduleRow[] | null> {
           "Scope Screenings",
         long,
         href:
-          ev.eventPageUrl ||
+          eventPageHref(ev.eventPageUrl) ??
           (ev.slug ? `https://www.lexscopefilms.com/event-details/${ev.slug}` : "#"),
+        slug: ev.slug,
         reservable: true,
       });
     }

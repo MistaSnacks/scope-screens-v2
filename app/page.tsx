@@ -1,6 +1,7 @@
 import { BuyTickets } from "@/components/buy-tickets";
 import { WhatIs } from "@/components/what-is";
 import { ScrollControl } from "@/components/scroll-control";
+import { HashScroll } from "@/components/hash-scroll";
 import { CurtainCreditsHero } from "@/components/curtain-credits-hero";
 import { Marquee } from "@/components/marquee";
 import { Filmstrip } from "@/components/filmstrip";
@@ -38,10 +39,12 @@ export default async function Home() {
   return (
     <main id="top" className="relative bg-bg">
       <ScrollControl />
+      <HashScroll />
       <CurtainCreditsHero
         eyebrow={hero?.eyebrow ?? undefined}
         posterUrl={wixImageUrl(hero?.poster) ?? undefined}
         videoUrl={wixVideoUrl(hero?.video) ?? undefined}
+        ticketsHref={nextShow ? `/events/${nextShow.eventSlug}` : "#tickets"}
       />
       <Marquee />
 
@@ -49,7 +52,15 @@ export default async function Home() {
           top pad, so jumping to #tickets lands the "Chapter One" eyebrow just
           below the nav instead of 6rem of dead padding. */}
       <div id="tickets" className="scroll-mt-[1.5rem]">
-        <BuyTickets nextShow={nextShow} seasonPass={seasonPass} />
+        <BuyTickets
+          nextShow={nextShow}
+          seasonPass={seasonPass}
+          copy={{
+            eyebrow: content.ticketsPage?.eyebrow,
+            title: content.ticketsPage?.title,
+            lede: content.ticketsPage?.lede,
+          }}
+        />
       </div>
 
       <div id="about" className="scroll-mt-[7.5rem]">

@@ -5,6 +5,7 @@ import {
   SUBMIT_URL,
   nextSubmissionDeadline,
 } from "@/lib/festival";
+import { getSiteContent } from "@/lib/site-content";
 import { Reveal } from "@/components/motion/reveal";
 import { KineticText } from "@/components/motion/kinetic-text";
 
@@ -50,8 +51,10 @@ const CHIPS = [
   { label: "JUNE–DECEMBER", dot: "bg-rust" },
 ];
 
-export function Submissions() {
+export async function Submissions() {
   const next = nextSubmissionDeadline();
+  // Same CMS singleton the /submit page hero reads (request-deduped).
+  const page = (await getSiteContent()).submitPage;
 
   return (
     <section className="band-up flex flex-col items-center gap-9 bg-bg px-5 py-24 md:shell-x">
@@ -59,7 +62,7 @@ export function Submissions() {
       <div className="flex items-center gap-3">
         <span className="h-px w-9 bg-curtain" />
         <span className="font-mono text-[0.75rem] uppercase tracking-[0.28em] text-curtain">
-          Open Call · {SUBMISSION_SEASON} Submissions
+          {page?.eyebrow ?? `Open Call · ${SUBMISSION_SEASON} Submissions`}
         </span>
         <span className="h-px w-9 bg-curtain" />
       </div>
@@ -69,16 +72,15 @@ export function Submissions() {
         <Laurel />
         <div className="flex flex-col items-center gap-2">
           <span className="font-mono text-[0.8125rem] tracking-[0.34em] text-fg/60">OFFICIAL SELECTION</span>
-          <KineticText as="h2" className="pulp text-center font-display text-[3.25rem] uppercase leading-[0.92] md:text-[3.75rem]" text="Submit Your Film" />
+          <KineticText as="h2" className="pulp text-center font-display text-[3.25rem] uppercase leading-[0.92] md:text-[3.75rem]" text={page?.title ?? "Submit Your Film"} />
           <span className="font-mono text-[0.8125rem] tracking-[0.26em] text-curtain">SCOPE SCREENINGS · 2026</span>
         </div>
         <Laurel flip />
       </Reveal>
 
       <p className="max-w-[60ch] text-center font-body text-[1.0625rem] leading-relaxed text-fg/70">
-        Narrative shorts, documentaries, animation, music videos, commercials, and experimental
-        work &mdash; all under twenty minutes. Screened live on the big screen, June through
-        December, and for the first time {SUBMISSION_SEASON} brings judged awards.
+        {page?.lede ??
+          `Narrative shorts, documentaries, animation, music videos, commercials, and experimental work — all under twenty minutes. Screened live on the big screen, June through December, and for the first time ${SUBMISSION_SEASON} brings judged awards.`}
       </p>
 
       {/* Meta chips */}

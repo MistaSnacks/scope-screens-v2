@@ -13,7 +13,7 @@ export interface HeroCredit {
 
 export const PRIMARY_CREDITS: HeroCredit[] = [
   { role: "General · VIP · Season Pass", label: "Buy Tickets", href: "/#tickets" },
-  { role: "Open Call · FilmFreeway", label: "Submit a Film", href: "/submit" },
+  { role: "Open Call · FilmFreeway", label: "Submit a Film", href: "/#submit" },
 ];
 
 export const SECONDARY_CREDITS: HeroCredit[] = [

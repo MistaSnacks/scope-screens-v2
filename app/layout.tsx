@@ -6,6 +6,7 @@ import { CheckoutProvider } from "@/components/checkout/checkout-context";
 import { PersistentValance } from "@/components/persistent-valance";
 import { SiteNav } from "@/components/site-nav";
 import { getNav } from "@/lib/nav";
+import { getPurchasableTargets } from "@/lib/wix-checkout";
 import { SiteFooter } from "@/components/site-footer";
 import { CursorField } from "@/components/motion/cursor-field";
 import "./globals.css";
@@ -33,7 +34,8 @@ const themeScript = `(function(){try{var t=localStorage.getItem('scope-theme');i
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const navLinks = await getNav();
+  const [navLinks, { nextShow }] = await Promise.all([getNav(), getPurchasableTargets()]);
+  const ticketsHref = nextShow ? `/events/${nextShow.eventSlug}` : "/#tickets";
   return (
     <html
       lang="en"
@@ -46,7 +48,7 @@ export default async function RootLayout({
           <CursorField />
           <GrainOverlay />
           <PersistentValance />
-          <SiteNav items={navLinks} />
+          <SiteNav items={navLinks} ticketsHref={ticketsHref} />
           <CheckoutProvider>{children}</CheckoutProvider>
           <SiteFooter />
         </ThemeProvider>

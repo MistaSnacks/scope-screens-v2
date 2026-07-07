@@ -1,5 +1,7 @@
-import { getLiveSchedule, type ScheduleRow } from "@/lib/wix-events";
-import { SCREENINGS, SEASON_PASS, VENUE, reserveUrl, ticketUrl } from "@/lib/festival";
+import Link from "next/link";
+import { getScheduleRows } from "@/lib/schedule";
+import { SCREENINGS, SEASON_PASS, VENUE } from "@/lib/festival";
+import { getSiteContent } from "@/lib/site-content";
 import { Reveal } from "@/components/motion/reveal";
 import { Stagger, StaggerItem } from "@/components/motion/stagger";
 import { KineticText } from "@/components/motion/kinetic-text";
@@ -9,24 +11,9 @@ export async function ScheduleSection({ headless = false }: { headless?: boolean
   // as a live Wix event becomes reservable (real event link). Nights not yet
   // created in Wix show as "on sale soon". As the client adds events in Wix,
   // they flip to live automatically.
-  const live = (await getLiveSchedule()) ?? [];
-  const liveByMonth = new Map(live.map((r) => [r.month, r]));
-
-  const rows: ScheduleRow[] = SCREENINGS.map(
-    (s) =>
-      liveByMonth.get(s.month) ?? {
-        month: s.month,
-        day: s.day,
-        title: s.title,
-        long: s.long,
-        href: reserveUrl(s),
-        reservable: s.status === "open",
-      }
-  );
-  // Include any live events that fall outside the planned skeleton.
-  for (const r of live) {
-    if (!SCREENINGS.some((s) => s.month === r.month)) rows.push(r);
-  }
+  const rows = await getScheduleRows();
+  // Same CMS singleton the /schedule page hero reads (request-deduped).
+  const page = (await getSiteContent()).schedulePage;
 
   return (
     <section className="border-t border-hairline bg-bg-alt px-5 py-24 md:shell-x">
@@ -46,28 +33,26 @@ export async function ScheduleSection({ headless = false }: { headless?: boolean
               <div className="flex items-center gap-3">
                 <span className="h-px w-10 bg-curtain" />
                 <span className="font-body text-[0.75rem] font-bold uppercase tracking-[0.28em] text-label">
-                  The Season · 2026-27
+                  {page?.eyebrow ?? "The Season · 2026-27"}
                 </span>
               </div>
               <KineticText
                 as="h2"
                 className="pulp font-display text-[3.25rem] uppercase leading-[0.92] md:text-[4.25rem]"
-                text="Seven Nights"
+                text={page?.title ?? "Seven Nights"}
               />
             </>
           )}
           <p className="max-w-[34ch] font-body text-[1rem] leading-relaxed text-fg/65">
-            One screening a month, last Tuesday, {SCREENINGS[0].month} through{" "}
-            {SCREENINGS[SCREENINGS.length - 1].month}. Doors {VENUE.doors}, program {VENUE.program}.
+            {page?.lede ??
+              `One screening a month, last Tuesday, ${SCREENINGS[0].month} through ${SCREENINGS[SCREENINGS.length - 1].month}. Doors ${VENUE.doors}, program ${VENUE.program}.`}
           </p>
-          <a
-            href={ticketUrl(SEASON_PASS.slug)}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href={`/events/${SEASON_PASS.slug}`}
             className="mt-1 flex h-[3.125rem] items-center rounded-full bg-rust px-7 font-body text-[0.875rem] font-extrabold uppercase tracking-[0.05em] text-ink transition-transform hover:-translate-y-px"
           >
             Season Pass · {SEASON_PASS.gaPrice}
-          </a>
+          </Link>
         </Reveal>
 
         {/* Right: the schedule list */}
@@ -94,6 +79,15 @@ export async function ScheduleSection({ headless = false }: { headless?: boolean
               </div>
               <div className="w-[7.5rem] shrink-0 text-right">
                 {s.reservable ? (
+                  s.slug ? (
+                    // On-site event page: full rundown + inline checkout.
+                    <Link
+                      href={`/events/${s.slug}`}
+                      className="font-body text-[0.8125rem] font-extrabold uppercase tracking-[0.08em] text-rust hover:text-fg"
+                    >
+                      Reserve →
+                    </Link>
+                  ) : (
                   <a
                     href={s.href}
                     target="_blank"
@@ -102,6 +96,7 @@ export async function ScheduleSection({ headless = false }: { headless?: boolean
                   >
                     Reserve →
                   </a>
+                  )
                 ) : (
                   <span className="font-body text-[0.75rem] font-semibold uppercase tracking-[0.1em] text-smoke">
                     On sale soon

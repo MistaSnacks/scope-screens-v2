@@ -263,9 +263,9 @@
 }
 .creditsPrimary {
   display: flex;
-  align-items: flex-start;
+  align-items: stretch;
   justify-content: center;
-  gap: 56px;
+  gap: 20px;
 }
 @media (max-width: 767px) {
   .creditsPrimary {
@@ -274,12 +274,17 @@
   }
 }
 
+/* Mobile base: the plain V2 credits — big serif labels, no button chrome, dot
+   hidden. The "Get Tickets" button treatment is layered on at >=768px only. */
 .creditPrimary {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 6px;
   text-decoration: none;
+}
+.creditDot {
+  display: none;
 }
 .creditRole {
   font-family: var(--font-libre), monospace;
@@ -299,15 +304,6 @@
   color: var(--color-cream, #f7f3e6);
   transition: color 0.3s ease, text-shadow 0.3s ease;
 }
-.creditPrimary:hover .creditLabel {
-  color: var(--color-rust, #ffbb00);
-  text-shadow: 0 0 28px rgba(255, 187, 0, 0.45);
-}
-.creditPrimary:hover .creditRole {
-  color: #d9a93b;
-}
-
-/* Buy Tickets — the spotlit primary */
 .creditSpot .creditLabel {
   color: var(--color-rust, #ffbb00);
   text-shadow: 0 0 30px rgba(255, 187, 0, 0.45);
@@ -315,8 +311,10 @@
 .creditSpot .creditRole {
   color: #d9a93b;
 }
-
 .creditSecondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
   font-family: var(--font-libre), monospace;
   font-weight: 600;
   font-size: 12px;
@@ -324,13 +322,71 @@
   text-transform: uppercase;
   color: var(--color-smoke, #8c857a);
   text-decoration: none;
-  border-bottom: 1px solid transparent;
-  padding-bottom: 2px;
-  transition: color 0.3s ease, border-color 0.3s ease;
+  transition: color 0.3s ease;
 }
-.creditSecondary:hover {
-  color: var(--color-cream, #f7f3e6);
-  border-color: var(--color-rust, #ffbb00);
+
+/* Desktop only: nav "Get Tickets" button treatment — bordered box + glowing
+   rust dot, fills rust on hover; Buy Tickets is filled by default. */
+@media (min-width: 768px) {
+  .creditPrimary {
+    gap: 5px;
+    border: 1px solid rgba(212, 169, 59, 0.5);
+    background: rgba(11, 10, 9, 0.35);
+    padding: 14px 34px 16px;
+    transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+  }
+  .creditPrimary:hover {
+    background: var(--color-rust, #ffbb00);
+    border-color: var(--color-rust, #ffbb00);
+    transform: translateY(-2px);
+  }
+  .creditDot {
+    display: block;
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background: var(--color-rust, #ffbb00);
+    box-shadow: 0 0 8px var(--color-rust, #ffbb00);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .creditPrimary:hover .creditDot {
+    background: var(--color-stage, #0d0c0a);
+    box-shadow: none;
+  }
+  .creditRole {
+    font-size: 10px;
+    letter-spacing: 0.28em;
+  }
+  .creditLabel {
+    font-size: clamp(22px, 2.8vw, 30px);
+  }
+  .creditPrimary:hover .creditLabel,
+  .creditPrimary:hover .creditRole {
+    color: var(--color-stage, #0d0c0a);
+    text-shadow: none;
+  }
+  /* Buy Tickets — same outlined box as Submit a Film, but the label keeps its
+     yellow so it stays the obvious primary. Hover fills the box + flips the
+     text to dark via the shared .creditPrimary:hover rules above. */
+  .creditSpot .creditLabel {
+    color: var(--color-rust, #ffbb00);
+    text-shadow: 0 0 24px rgba(255, 187, 0, 0.35);
+  }
+  .creditSecondary {
+    color: var(--color-rust, #ffbb00);
+    border: 1px solid rgba(212, 169, 59, 0.4);
+    padding: 9px 22px;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+  .creditSecondary:hover {
+    background: var(--color-rust, #ffbb00);
+    border-color: var(--color-rust, #ffbb00);
+    color: var(--color-stage, #0d0c0a);
+  }
+  .creditSecondary:hover .creditDot {
+    background: var(--color-stage, #0d0c0a);
+    box-shadow: none;
+  }
 }
 
 /* ---- Logo opening — glows on the closed curtain, lifts away on scroll ---- */
