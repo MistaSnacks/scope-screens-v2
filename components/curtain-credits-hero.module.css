@@ -204,6 +204,39 @@
   border-top: 5px solid transparent;
   border-bottom: 5px solid transparent;
 }
+/* Mobile: the silver frame is short, so the vertically-centered Buy Tickets CTA
+   drops close to the bottom edge. Shrink the Sound/Hide toggles and tuck them
+   tighter into the corners so they clear the CTA instead of overlapping it. */
+@media (max-width: 767px) {
+  /* Narrow + shorten the centered Buy Tickets pill so it clears the bottom
+     corner toggles (its wide sides were what "Sound On" — longer than "Mute" —
+     and "Hide Text" collided with). */
+  .screenCta {
+    margin-top: 10px;
+    padding: 8px 16px;
+    gap: 5px;
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+  }
+  .soundToggle {
+    right: 2%;
+    bottom: 7px;
+    gap: 4px;
+    padding: 3px 6px;
+    font-size: 7.5px;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+  .hideToggle {
+    left: 2%;
+    right: auto;
+  }
+  .soundIcon {
+    border-left-width: 6px;
+    border-top-width: 4px;
+    border-bottom-width: 4px;
+  }
+}
 
 .subLabel {
   display: flex;
