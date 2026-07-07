@@ -31,7 +31,13 @@ describe("queryAvailableTickets", () => {
         json: {
           metaData: { total: 2 },
           definitions: [
-            { id: "ga", name: "General Admission - $22", price: { amount: "22.00", currency: "USD" }, limitPerCheckout: 50 },
+            {
+              id: "ga",
+              name: "General Admission - $22",
+              price: { amount: "22.00", currency: "USD" },
+              limitPerCheckout: 50,
+              salePeriod: { startDate: "2026-01-01T00:00:00Z", endDate: "2026-08-08T06:50:00Z" },
+            },
             { id: "free", name: "Donate", price: { amount: "0.00", currency: "USD" }, limitPerCheckout: 10 },
           ],
         },
@@ -42,8 +48,8 @@ describe("queryAvailableTickets", () => {
 
     expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(tiers).toEqual([
-      { id: "ga", name: "General Admission - $22", priceAmount: 22, priceLabel: "$22.00", currency: "USD", limit: 50, free: false },
-      { id: "free", name: "Donate", priceAmount: 0, priceLabel: "Free", currency: "USD", limit: 10, free: true },
+      { id: "ga", name: "General Admission - $22", priceAmount: 22, priceLabel: "$22.00", currency: "USD", limit: 50, free: false, saleEndsAt: "2026-08-08T06:50:00Z" },
+      { id: "free", name: "Donate", priceAmount: 0, priceLabel: "Free", currency: "USD", limit: 10, free: true, saleEndsAt: null },
     ]);
   });
 

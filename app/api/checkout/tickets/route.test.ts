@@ -22,11 +22,11 @@ describe("GET /api/checkout/tickets", () => {
 
   it("returns tiers for a valid event", async () => {
     mocked.mockResolvedValueOnce([
-      { id: "ga", name: "GA", priceAmount: 22, priceLabel: "$22.00", currency: "USD", limit: 50, free: false },
+      { id: "ga", name: "GA", priceAmount: 22, priceLabel: "$22.00", currency: "USD", limit: 50, free: false, saleEndsAt: null },
     ]);
     const res = await GET(req("http://test/api/checkout/tickets?eventId=e1"));
     expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ tiers: [{ id: "ga", name: "GA", priceAmount: 22, priceLabel: "$22.00", currency: "USD", limit: 50, free: false }] });
+    expect(await res.json()).toEqual({ tiers: [{ id: "ga", name: "GA", priceAmount: 22, priceLabel: "$22.00", currency: "USD", limit: 50, free: false, saleEndsAt: null }] });
     expect(mocked).toHaveBeenCalledWith("e1");
   });
 

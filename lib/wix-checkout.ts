@@ -14,6 +14,7 @@ export interface TicketTier {
   currency: string;
   limit: number; // max quantity per checkout
   free: boolean;
+  saleEndsAt: string | null; // ISO end of this tier's sale window (e.g. early-bird deadline), or null
 }
 
 async function getVisitorToken(): Promise<string | null> {
@@ -40,6 +41,7 @@ interface WixDefinition {
   price?: { amount?: string; currency?: string };
   limitPerCheckout?: number;
   saleStatus?: string; // SALE_SCHEDULED | SALE_STARTED | SALE_ENDED
+  salePeriod?: { startDate?: string; endDate?: string };
 }
 
 export async function queryAvailableTickets(eventId: string): Promise<TicketTier[] | null> {
@@ -70,6 +72,7 @@ export async function queryAvailableTickets(eventId: string): Promise<TicketTier
         currency,
         limit: d.limitPerCheckout ?? 50,
         free,
+        saleEndsAt: d.salePeriod?.endDate ?? null,
       };
     });
   } catch {

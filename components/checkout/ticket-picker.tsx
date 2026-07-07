@@ -2,6 +2,16 @@
 
 import type { TicketTier } from "@/lib/wix-checkout";
 
+// Wix returns sale windows in UTC; the deadline the audience cares about is
+// venue-local (Seattle), so an 11:50 PM PDT cutoff reads as its own day, not
+// the next one in UTC.
+const VENUE_TZ = "America/Los_Angeles";
+function formatSaleEnd(iso: string): string | null {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  return new Intl.DateTimeFormat("en-US", { timeZone: VENUE_TZ, month: "short", day: "numeric" }).format(d);
+}
+
 export function TicketPicker({
   tiers,
   quantities,
@@ -15,6 +25,7 @@ export function TicketPicker({
     <ul className="flex flex-col gap-3">
       {tiers.map((tier) => {
         const qty = quantities[tier.id] ?? 0;
+        const saleEnds = tier.saleEndsAt ? formatSaleEnd(tier.saleEndsAt) : null;
         return (
           <li
             key={tier.id}
@@ -23,6 +34,9 @@ export function TicketPicker({
             <div className="flex flex-col">
               <span className="font-body text-[0.9375rem] font-bold text-fg">{tier.name}</span>
               <span className="font-mono text-[0.75rem] text-smoke">{tier.priceLabel}</span>
+              {saleEnds && (
+                <span className="font-mono text-[0.6875rem] tracking-[0.04em] text-rust/90">Sale ends {saleEnds}</span>
+              )}
             </div>
             <div className="flex items-center gap-3">
               <button
