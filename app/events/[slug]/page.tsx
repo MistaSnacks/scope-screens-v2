@@ -73,10 +73,12 @@ export async function generateMetadata({
   const { slug } = await params;
   const event = await getEvent(slug);
   if (!event) return { title: "Event · Scope Screenings" };
+  // No openGraph.images override → event links inherit the site's branded
+  // open-curtain OG image (app/opengraph-image.jpg), same as the homepage,
+  // instead of the client's yellow Wix event graphic.
   return {
     title: `${displayTitle(event).replace("\n", " ")} · Scope Screenings`,
     description: event.shortDescription || undefined,
-    openGraph: event.imageUrl ? { images: [{ url: event.imageUrl }] } : undefined,
   };
 }
 
