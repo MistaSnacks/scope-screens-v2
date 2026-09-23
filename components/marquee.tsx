@@ -1,18 +1,22 @@
 import { nextScreening } from "@/lib/festival";
 import { getSiteContent } from "@/lib/site-content";
 
-export async function Marquee() {
+export async function Marquee({ nextShow }: { nextShow?: string | null } = {}) {
   // CMS "Marquee" phrases drive the ticker; festival.ts is the fallback.
+  // `nextShow` is the live Wix date/venue line, slotted in after the lead phrase
+  // ("NOW SHOWING") so the ticker always names the real next night.
   const content = await getSiteContent();
   const next = nextScreening();
   const cms = content.marquee
     ?.map((m) => m.phrase)
     .filter((p): p is string => Boolean(p));
   const ITEMS = cms?.length
-    ? cms
+    ? nextShow
+      ? [cms[0], nextShow, ...cms.slice(1)]
+      : cms
     : [
         "NOW SHOWING",
-        `${next.label} · LANGSTON HUGHES INSTITUTE`,
+        nextShow ?? `${next.label} · LANGSTON HUGHES INSTITUTE`,
         "DOORS 6:30 / SCREEN 7:30",
         "10 DIRECTORS, ONE NIGHT",
         "TROPICAL WAVY ENERGY",

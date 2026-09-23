@@ -5,7 +5,7 @@ import { SEASON_PASS, VENUE, nextScreening, reserveUrl, ticketUrl } from "@/lib/
 import { Reveal } from "@/components/motion/reveal";
 import { Stagger, StaggerItem } from "@/components/motion/stagger";
 import { KineticText } from "@/components/motion/kinetic-text";
-import type { CheckoutTarget } from "@/lib/wix-checkout";
+import type { CheckoutTarget, TicketPricing } from "@/lib/wix-checkout";
 
 const INK_BARCODE =
   "repeating-linear-gradient(90deg,#0b0a09 0,#0b0a09 2px,transparent 2px,transparent 4px,#0b0a09 4px,#0b0a09 7px,transparent 7px,transparent 9px)";
@@ -23,8 +23,13 @@ function Perforation() {
   );
 }
 
-function NightTicket({ target }: { target: CheckoutTarget | null }) {
+function NightTicket({ target, pricing }: { target: CheckoutTarget | null; pricing: TicketPricing | null }) {
+  // Live Wix fields first; festival.ts only fills in when Wix is unreachable.
   const next = nextScreening();
+  const label = target?.dateLabel ?? next.label;
+  const venueName = target?.venueName ?? VENUE.name;
+  const street = target?.street ?? VENUE.address;
+  const city = target?.city ?? VENUE.city;
   const body = (
     <>
       {/* Body */}
@@ -43,18 +48,21 @@ function NightTicket({ target }: { target: CheckoutTarget | null }) {
         <span className="-mt-2 w-fit rounded-full bg-rust/15 px-2.5 py-1 font-body text-[0.6875rem] font-extrabold uppercase tracking-[0.14em] text-rust">
           › Click to buy tickets
         </span>
-        <div className="font-display text-[3.25rem] uppercase leading-[0.9]">{next.label}</div>
+        <div className="font-display text-[3.25rem] uppercase leading-[0.9]">{label}</div>
         <div className="font-body text-[0.9375rem] font-semibold leading-snug text-ink/80">
-          {VENUE.name}
+          {venueName}
           <br />
-          {VENUE.address} · {VENUE.city}
+          {street} · {city}
         </div>
         <div className="border-t-2 border-dashed border-ink/20" />
         <div className="flex items-end justify-between">
           <div className="flex flex-col gap-0.5">
-            <span className="font-mono text-[0.6875rem] uppercase tracking-[0.16em] text-smoke">Doors / Screen</span>
+            {/* Wix has a single start time (no doors field), so live data shows that. */}
+            <span className="font-mono text-[0.6875rem] uppercase tracking-[0.16em] text-smoke">
+              {target?.startTime ? "Starts" : "Doors / Screen"}
+            </span>
             <span className="font-body text-[1.0625rem] font-extrabold">
-              {VENUE.doors.replace(" PM", "")} / {VENUE.program}
+              {target?.startTime ?? `${VENUE.doors.replace(" PM", "")} / ${VENUE.program}`}
             </span>
           </div>
           <div className="h-9 w-[6.5rem]" style={{ backgroundImage: INK_BARCODE }} aria-hidden />
@@ -65,8 +73,10 @@ function NightTicket({ target }: { target: CheckoutTarget | null }) {
       <div className="ticket-stub flex w-[10.5rem] flex-col items-center justify-between rounded-r-2xl bg-curtain px-4 py-6 text-center text-cream">
         <span className="font-mono text-[0.625rem] tracking-[0.22em] text-cream/80">ADMISSION</span>
         <div className="flex flex-col items-center gap-1">
-          <span className="font-marquee text-[2.875rem] leading-none">$22</span>
-          <span className="font-body text-[0.75rem] font-bold tracking-[0.04em] text-cream/90">GEN $22 · EARLY $18</span>
+          <span className="font-marquee text-[2.875rem] leading-none">{pricing?.price ?? "$22"}</span>
+          <span className="font-body text-[0.75rem] font-bold leading-snug tracking-[0.04em] text-cream/90">
+            {pricing?.tiers ?? "GEN $22 · EARLY $18"}
+          </span>
         </div>
         <span className="flex w-full items-center justify-center gap-1 rounded-lg bg-cream py-3 font-body text-[0.8125rem] font-extrabold tracking-[0.04em] text-curtain shadow-[0_2px_10px_rgba(0,0,0,0.25)] transition-colors group-hover:bg-rust group-hover:text-ink">
           BUY TICKETS ›
@@ -87,7 +97,7 @@ function NightTicket({ target }: { target: CheckoutTarget | null }) {
   return target ? (
     <Link
       href={`/events/${target.eventSlug}`}
-      aria-label={`Buy tickets for ${target.title}`}
+      aria-label={`Buy tickets for ${target.title}${target.dateLabel ? `, ${target.dateLabel}` : ""}`}
       className={className}
     >
       {body}
@@ -105,7 +115,9 @@ function NightTicket({ target }: { target: CheckoutTarget | null }) {
   );
 }
 
-function SeasonPassLanyard({ target }: { target: CheckoutTarget | null }) {
+function SeasonPassLanyard({ target, pricing }: { target: CheckoutTarget | null; pricing: TicketPricing | null }) {
+  // Wix's pass "date" is free text like "SEASON PASS (Pass Valid July 2026-Jan 2027)".
+  const validity = target?.dateAndTime?.match(/valid\s+([^)]+)/i)?.[1]?.trim();
   const lanyardClassName =
     "lanyard group relative flex w-[15.5rem] shrink-0 flex-col items-center cursor-pointer shadow-prop transition-transform duration-300 ease-out hover:-translate-y-1.5";
   const body = (
@@ -173,12 +185,12 @@ function SeasonPassLanyard({ target }: { target: CheckoutTarget | null }) {
           </div>
           <div className="flex items-center justify-between [text-shadow:0_1px_3px_rgba(0,0,0,0.85)]">
             <span className="font-mono text-[0.625rem] tracking-[0.16em] text-cream/80">SEASON</span>
-            <span className="font-body text-[0.875rem] font-bold text-cream">No. 05 · Jun–Dec</span>
+            <span className="font-body text-[0.875rem] font-bold text-cream">{validity ?? "No. 05 · Jun–Dec"}</span>
           </div>
           <div className="flex items-end justify-between pt-3">
             <div className="flex flex-col [text-shadow:0_2px_6px_rgba(0,0,0,0.9)]">
               <span className="font-mono text-[0.625rem] tracking-[0.16em] text-brass">SEASON PASS</span>
-              <span className="font-marquee text-[2.375rem] leading-none text-brass">{SEASON_PASS.gaPrice}</span>
+              <span className="font-marquee text-[2.375rem] leading-none text-brass">{pricing?.price ?? SEASON_PASS.gaPrice}</span>
             </div>
             <div className="mb-1 h-8 w-[5.5rem]" style={{ backgroundImage: CREAM_BARCODE }} aria-hidden />
           </div>
@@ -216,11 +228,16 @@ function SeasonPassLanyard({ target }: { target: CheckoutTarget | null }) {
 export function BuyTickets({
   nextShow,
   seasonPass,
+  nextShowPricing = null,
+  seasonPassPricing = null,
   headless = false,
   copy,
 }: {
   nextShow: CheckoutTarget | null;
   seasonPass: CheckoutTarget | null;
+  /** Live on-sale Wix pricing; the art falls back to festival.ts prices. */
+  nextShowPricing?: TicketPricing | null;
+  seasonPassPricing?: TicketPricing | null;
   /** Drop the internal eyebrow/title block when a page already supplies one. */
   headless?: boolean;
   /** CMS TicketsPage copy (same singleton /tickets uses); falls back inline. */
@@ -255,7 +272,7 @@ export function BuyTickets({
               intrinsic 548×358 box; --ps is the responsive scale. */}
           <div className="prop-scale [--pw:34.25rem] [--ph:22.375rem] [--ps:0.58] sm:[--ps:0.75] md:[--ps:0.9]">
             <div className="prop-scale-inner">
-              <NightTicket target={nextShow} />
+              <NightTicket target={nextShow} pricing={nextShowPricing} />
             </div>
           </div>
         </StaggerItem>
@@ -263,7 +280,7 @@ export function BuyTickets({
           {/* Lanyard intrinsic box 248×478; natural size on mobile, +12% on lg. */}
           <div className="prop-scale [--pw:15.5rem] [--ph:29.875rem] [--ps:1] lg:[--ps:1.12]">
             <div className="prop-scale-inner">
-              <SeasonPassLanyard target={seasonPass} />
+              <SeasonPassLanyard target={seasonPass} pricing={seasonPassPricing} />
             </div>
           </div>
         </StaggerItem>

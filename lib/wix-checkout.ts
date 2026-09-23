@@ -44,7 +44,10 @@ interface WixDefinition {
   salePeriod?: { startDate?: string; endDate?: string };
 }
 
-export async function queryAvailableTickets(eventId: string): Promise<TicketTier[] | null> {
+export async function queryAvailableTickets(
+  eventId: string,
+  opts: { revalidate?: number } = {},
+): Promise<TicketTier[] | null> {
   const token = await getVisitorToken();
   if (!token) return null;
   try {
@@ -52,7 +55,8 @@ export async function queryAvailableTickets(eventId: string): Promise<TicketTier
       method: "POST",
       headers: { Authorization: token, "Content-Type": "application/json" },
       body: JSON.stringify({ offset: 0, limit: 100, filter: { eventId } }),
-      cache: "no-store",
+      // Checkout needs live availability; display-only callers may cache briefly.
+      ...(opts.revalidate ? { next: { revalidate: opts.revalidate } } : { cache: "no-store" as const }),
     });
     if (!res.ok) return null;
     const { definitions } = (await res.json()) as { definitions?: WixDefinition[] };
@@ -152,6 +156,47 @@ export interface CheckoutTarget {
   eventId: string;
   eventSlug: string;
   title: string;
+  /** Live Wix display fields for the ticket/marquee art; absent when Wix omits them. */
+  dateLabel?: string; // "TUE SEP 29" (venue-local)
+  startTime?: string; // "7:00 PM"
+  venueName?: string; // Wix location name, e.g. "Langston"
+  street?: string; // "104 17th Ave S"
+  city?: string; // "Seattle, WA"
+  /** Free-text date line; the season pass uses it for its validity window. */
+  dateAndTime?: string;
+}
+
+/** On-sale ticket pricing for the ticket/lanyard art. */
+export interface TicketPricing {
+  price: string; // headline, e.g. "$22"
+  tiers: string; // "GENERAL ADMISSION $22 · EARLY BIRD $18"
+}
+
+function formatUsd(amount: number): string {
+  return Number.isInteger(amount) ? `$${amount}` : `$${amount.toFixed(2)}`;
+}
+
+/**
+ * Live pricing for a target, from its on-sale Wix ticket definitions. VIP tiers
+ * are skipped for the headline so the art shows the everyday price.
+ */
+export async function getTicketPricing(target: CheckoutTarget | null): Promise<TicketPricing | null> {
+  if (!target) return null;
+  const tiers = await queryAvailableTickets(target.eventId, { revalidate: 300 });
+  if (!tiers?.length) return null;
+  const standard = tiers.filter((t) => !/vip/i.test(t.name));
+  const pool = standard.length ? standard : tiers;
+  const lowest = pool.reduce((a, b) => (b.priceAmount < a.priceAmount ? b : a));
+  return {
+    price: lowest.free ? "Free" : formatUsd(lowest.priceAmount),
+    tiers: tiers
+      .map((t) => {
+        // Tier names often repeat the price ("General Admission - $22"); drop it.
+        const name = t.name.replace(/\s*[-–|·:]?\s*\$[\d.,]+\s*$/, "").trim().toUpperCase();
+        return `${name} ${t.free ? "FREE" : formatUsd(t.priceAmount)}`;
+      })
+      .join(" · "),
+  };
 }
 
 // --- Event details page (/events/[slug]) ---
@@ -230,7 +275,31 @@ interface WixEventRow {
   id?: string;
   slug?: string;
   title?: string;
-  dateAndTimeSettings?: { startDate?: string };
+  status?: string;
+  location?: { name?: string; address?: { formattedAddress?: string } };
+  dateAndTimeSettings?: {
+    startDate?: string;
+    timeZoneId?: string;
+    formatted?: { dateAndTime?: string; startTime?: string };
+  };
+}
+
+/** "TUE SEP 29" in the event's own time zone. */
+function dateLabel(iso: string, timeZone = "America/Los_Angeles"): string | undefined {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return undefined;
+  const part = (o: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat("en-US", { timeZone, ...o }).format(d);
+  return `${part({ weekday: "short" })} ${part({ month: "short" })} ${part({ day: "numeric" })}`.toUpperCase();
+}
+
+/** "104 17th Ave S, Seattle, WA 98144, USA" -> street + "Seattle, WA". */
+function splitAddress(formatted?: string): { street?: string; city?: string } {
+  if (!formatted) return {};
+  const parts = formatted.split(",").map((p) => p.trim()).filter(Boolean);
+  if (parts[parts.length - 1] && /^(USA|United States)$/i.test(parts[parts.length - 1])) parts.pop();
+  if (parts.length < 3) return { street: parts.join(", ") || undefined };
+  const state = parts[parts.length - 1].replace(/\s+\d{5}(-\d{4})?$/, "");
+  return { street: parts.slice(0, -2).join(", "), city: `${parts[parts.length - 2]}, ${state}` };
 }
 
 function nowIso(): string {
@@ -259,17 +328,34 @@ export async function getPurchasableTargets(): Promise<{
     if (!events) return empty;
 
     const isPass = (e: WixEventRow) => /season pass/i.test(e.title ?? "");
-    const toTarget = (e: WixEventRow): CheckoutTarget | null =>
-      e.id && e.slug ? { eventId: e.id, eventSlug: e.slug, title: e.title ?? "" } : null;
+    const live = events.filter((e) => e.status !== "CANCELED");
+    const toTarget = (e: WixEventRow): CheckoutTarget | null => {
+      if (!e.id || !e.slug) return null;
+      const dt = e.dateAndTimeSettings;
+      const { street, city } = splitAddress(e.location?.address?.formattedAddress);
+      const extra: Omit<CheckoutTarget, "eventId" | "eventSlug" | "title"> = {
+        dateLabel: dt?.startDate ? dateLabel(dt.startDate, dt.timeZoneId) : undefined,
+        startTime: dt?.formatted?.startTime,
+        venueName: e.location?.name,
+        street,
+        city,
+        dateAndTime: dt?.formatted?.dateAndTime,
+      };
+      // Drop undefined keys so callers can spread/compare cleanly.
+      const defined = Object.fromEntries(Object.entries(extra).filter(([, v]) => v));
+      return { eventId: e.id, eventSlug: e.slug, title: e.title ?? "", ...defined };
+    };
 
     const today = nowIso();
-    const nextShowRow = events
+    const nextShowRow = live
       .filter((e) => !isPass(e) && (e.dateAndTimeSettings?.startDate ?? "") >= today)
       .sort((a, b) => (a.dateAndTimeSettings?.startDate ?? "").localeCompare(b.dateAndTimeSettings?.startDate ?? ""))[0];
 
     // Season pass rows often have no startDate; pick the last one (newest season).
-    const passRows = events.filter(isPass);
-    const passRow = passRows[passRows.length - 1];
+    const passRows = live.filter(isPass);
+    const openPasses = passRows.filter((e) => e.status !== "ENDED");
+    const passPool = openPasses.length ? openPasses : passRows;
+    const passRow = passPool[passPool.length - 1];
 
     return {
       nextShow: nextShowRow ? toTarget(nextShowRow) : null,

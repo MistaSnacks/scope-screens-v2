@@ -5,7 +5,7 @@ import { BuyTickets } from "@/components/buy-tickets";
 import { PartnersMarquee } from "@/components/partners-marquee";
 import { ClosingBand } from "@/components/closing-band";
 import { KineticText } from "@/components/motion/kinetic-text";
-import { getPurchasableTargets } from "@/lib/wix-checkout";
+import { getPurchasableTargets, getTicketPricing } from "@/lib/wix-checkout";
 import { getSiteContent } from "@/lib/site-content";
 import { isPageHidden } from "@/lib/nav";
 import type { Metadata } from "next";
@@ -19,6 +19,10 @@ export const metadata: Metadata = {
 export default async function TicketsPage() {
   const [{ nextShow, seasonPass }, content] = await Promise.all([getPurchasableTargets(), getSiteContent()]);
   if (isPageHidden(content, "tickets")) notFound();
+  const [nextShowPricing, seasonPassPricing] = await Promise.all([
+    getTicketPricing(nextShow),
+    getTicketPricing(seasonPass),
+  ]);
   const page = content.ticketsPage;
   return (
     <main className="min-h-screen bg-bg">
@@ -35,7 +39,7 @@ export default async function TicketsPage() {
           {page?.whyBody ?? "A season pass is the cheapest seat in the house and the only one that holds your spot for all seven nights, plus first claim on the after-parties and the front-row block."}
         </p>
       </section>
-      <BuyTickets nextShow={nextShow} seasonPass={seasonPass} headless />
+      <BuyTickets nextShow={nextShow} seasonPass={seasonPass} nextShowPricing={nextShowPricing} seasonPassPricing={seasonPassPricing} headless />
       <PartnersMarquee />
       <ClosingBand
         title={page?.closingTitle ?? "See You In The Dark"}

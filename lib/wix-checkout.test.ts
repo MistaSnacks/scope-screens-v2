@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { queryAvailableTickets, createReservation, createPaymentRedirect, getPurchasableTargets, getEventBySlug } from "./wix-checkout";
+import { queryAvailableTickets, createReservation, createPaymentRedirect, getPurchasableTargets, getEventBySlug, getTicketPricing } from "./wix-checkout";
 
 const TOKEN_RES = { access_token: "visitor-token-abc" };
 
@@ -257,7 +257,7 @@ describe("getPurchasableTargets", () => {
   it("picks the soonest upcoming non-pass screening and the season pass", async () => {
     mockFetchSequence([{ json: TOKEN_RES }, { json: EVENTS }]);
     const targets = await getPurchasableTargets();
-    expect(targets?.nextShow).toEqual({ eventId: "next", eventSlug: "opening-night", title: "Scope Screenings: Opening Night" });
+    expect(targets?.nextShow).toMatchObject({ eventId: "next", eventSlug: "opening-night", title: "Scope Screenings: Opening Night" });
     expect(targets?.seasonPass).toEqual({ eventId: "pass5", eventSlug: "season-pass-5", title: "Season Pass for Scope Screenings Season 5" });
   });
 
@@ -282,5 +282,90 @@ describe("getPurchasableTargets", () => {
     const targets = await getPurchasableTargets();
     expect(targets.nextShow).toBeNull();
     expect(targets.seasonPass).toEqual({ eventId: "pass5", eventSlug: "season-pass-5", title: "Season Pass for Scope Screenings Season 5" });
+  });
+
+  it("carries live date, time and venue for the ticket art", async () => {
+    mockFetchSequence([
+      { json: TOKEN_RES },
+      {
+        json: {
+          events: [
+            {
+              id: "e3",
+              slug: "s5-e3",
+              title: "Scope Screenings S5:E3",
+              status: "UPCOMING",
+              location: { name: "Langston", address: { formattedAddress: "104 17th Ave S, Seattle, WA 98144, USA" } },
+              dateAndTimeSettings: {
+                startDate: "2999-09-30T02:00:00Z",
+                timeZoneId: "America/Los_Angeles",
+                formatted: { startTime: "7:00 PM" },
+              },
+            },
+            {
+              id: "pass5",
+              slug: "season-pass-5",
+              title: "Season Pass for Scope Screenings Season 5",
+              status: "UPCOMING",
+              dateAndTimeSettings: { formatted: { dateAndTime: "SEASON PASS (Pass Valid July 2026-Jan 2027)" } },
+            },
+          ],
+        },
+      },
+    ]);
+    const { nextShow, seasonPass } = await getPurchasableTargets();
+    expect(nextShow).toMatchObject({
+      dateLabel: "SUN SEP 29",
+      startTime: "7:00 PM",
+      venueName: "Langston",
+      street: "104 17th Ave S",
+      city: "Seattle, WA",
+    });
+    expect(seasonPass?.dateAndTime).toBe("SEASON PASS (Pass Valid July 2026-Jan 2027)");
+  });
+
+  it("skips canceled screenings and ended season passes", async () => {
+    mockFetchSequence([
+      { json: TOKEN_RES },
+      {
+        json: {
+          events: [
+            { id: "cx", slug: "canceled", title: "Canceled Night", status: "CANCELED", dateAndTimeSettings: { startDate: "2998-01-01T00:00:00Z" } },
+            { id: "ok", slug: "real", title: "Real Night", status: "UPCOMING", dateAndTimeSettings: { startDate: "2999-01-01T00:00:00Z" } },
+            { id: "p5", slug: "pass-5", title: "Season Pass Season 5", status: "UPCOMING", dateAndTimeSettings: {} },
+            { id: "p4", slug: "pass-4", title: "Season Pass Season 4", status: "ENDED", dateAndTimeSettings: {} },
+          ],
+        },
+      },
+    ]);
+    const { nextShow, seasonPass } = await getPurchasableTargets();
+    expect(nextShow?.eventId).toBe("ok");
+    expect(seasonPass?.eventId).toBe("p5");
+  });
+});
+
+describe("getTicketPricing", () => {
+  it("headlines the lowest non-VIP tier and lists every tier", async () => {
+    mockFetchSequence([
+      { json: TOKEN_RES },
+      {
+        json: {
+          definitions: [
+            { id: "vip", name: "VIP SEASON PASS", price: { amount: "500.00", currency: "USD" } },
+            { id: "ga", name: "General Admission - $22", price: { amount: "22.00", currency: "USD" } },
+          ],
+        },
+      },
+    ]);
+    expect(await getTicketPricing({ eventId: "e", eventSlug: "s", title: "t" })).toEqual({
+      price: "$22",
+      tiers: "VIP SEASON PASS $500 · GENERAL ADMISSION $22",
+    });
+  });
+
+  it("returns null without a target or tiers", async () => {
+    expect(await getTicketPricing(null)).toBeNull();
+    mockFetchSequence([{ json: TOKEN_RES }, { json: { definitions: [] } }]);
+    expect(await getTicketPricing({ eventId: "e", eventSlug: "s", title: "t" })).toBeNull();
   });
 });

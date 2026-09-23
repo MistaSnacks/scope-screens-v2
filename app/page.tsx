@@ -13,7 +13,7 @@ import { SupportPress } from "@/components/support-press";
 import { FounderBand } from "@/components/founder-band";
 import { Reveal } from "@/components/motion/reveal";
 import { KineticText } from "@/components/motion/kinetic-text";
-import { getPurchasableTargets } from "@/lib/wix-checkout";
+import { getPurchasableTargets, getTicketPricing } from "@/lib/wix-checkout";
 import { getSiteContent } from "@/lib/site-content";
 import { isPressKitHidden, isArchivesHidden } from "@/lib/nav";
 import { wixImageUrl } from "@/lib/wix-media";
@@ -34,7 +34,14 @@ export default async function Home() {
     getPurchasableTargets(),
     getSiteContent(),
   ]);
+  const [nextShowPricing, seasonPassPricing] = await Promise.all([
+    getTicketPricing(nextShow),
+    getTicketPricing(seasonPass),
+  ]);
   const hero = content.hero;
+  const marqueeNext = nextShow?.dateLabel
+    ? [nextShow.dateLabel, nextShow.venueName?.toUpperCase()].filter(Boolean).join(" · ")
+    : null;
 
   return (
     <main id="top" className="relative bg-bg">
@@ -46,7 +53,7 @@ export default async function Home() {
         videoUrl={wixVideoUrl(hero?.video) ?? undefined}
         ticketsHref={nextShow ? `/events/${nextShow.eventSlug}` : "#tickets"}
       />
-      <Marquee />
+      <Marquee nextShow={marqueeNext} />
 
       {/* scroll-mt = nav clearance (7.5rem) minus the section's own py-24 (6rem)
           top pad, so jumping to #tickets lands the "Chapter One" eyebrow just
@@ -55,6 +62,8 @@ export default async function Home() {
         <BuyTickets
           nextShow={nextShow}
           seasonPass={seasonPass}
+          nextShowPricing={nextShowPricing}
+          seasonPassPricing={seasonPassPricing}
           copy={{
             eyebrow: content.ticketsPage?.eyebrow,
             title: content.ticketsPage?.title,
