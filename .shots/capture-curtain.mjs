@@ -3,15 +3,17 @@
 // captured drape is byte-identical to every live render — the hand-off from the
 // static image to the WebGL curtain is invisible.
 //
-// Usage: `next build && next start -p 3002`, then `node .shots/capture-curtain.mjs`.
-// Re-run whenever SEED, the shaders, or the curtain layout change.
-import { chromium } from "/Users/admin/.npm/_npx/bc46ece8a1067505/node_modules/playwright/index.mjs";
+// Usage: run the site (`next dev -p 3001`, or `next build && next start -p 3002`),
+// then `CURTAIN_URL=http://localhost:3001 node .shots/capture-curtain.mjs`
+// (defaults to :3002). Re-run whenever the pile texture, the shaders, or the
+// curtain layout change.
+import { chromium } from "/Users/admin/SS/node_modules/playwright/index.mjs";
 
 // JPEG, not PNG: the clipped region is fully opaque velvet, and PNG compresses
 // the grain terribly (~800KB) while JPEG q82 is a fraction of that with no
 // perceptible difference for a sub-second first-paint stand-in.
 const OUT = "/Users/admin/SS/public/curtain-closed.jpg";
-const URL = "http://localhost:3002";
+const URL = process.env.CURTAIN_URL || "http://localhost:3002";
 
 const browser = await chromium.launch({
   args: [
@@ -34,12 +36,15 @@ const errors = [];
 page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
 page.on("pageerror", (e) => errors.push("PAGEERROR: " + e.message));
 
-await page.goto(URL, { waitUntil: "networkidle" });
+await page.goto(URL, { waitUntil: "load", timeout: 90000 });
 // Hold the curtain closed (progress 0) at the top of the pin.
 await page.evaluate(() => window.scrollTo(0, 0));
-// Let curtains.js import, build the planes, decode the texture, and paint.
-await page.waitForFunction(() => !!document.querySelector("canvas"), { timeout: 15000 });
-await page.waitForTimeout(2500);
+// Wait for the live canvas to take over from the stand-in (the hero drops its
+// "awaitingCurtains" class once the first real frame is composited). Then shoot
+// almost immediately: the cloth's idle breathing eases in from zero, so the first
+// moments are the rest pose the next page load will hand off from.
+await page.waitForFunction(() => !!document.querySelector("canvas"), { timeout: 30000 });
+await page.waitForFunction(() => !document.querySelector('[class*="awaitingCurtains"]'), { timeout: 30000 });
 
 // A locator/element screenshot captures the screen REGION, so anything stacked
 // over the canvas (nav z-60, valance z-50) or behind its transparent areas
@@ -49,13 +54,13 @@ await page.addStyleTag({
   content: `
     [class*="heroVideo"],[class*="heroScrim"],[class*="edgeGuard"],
     [class*="_screen__"],[class*="_spot__"],[class*="curtainFallback"],
-    [class*="letterbox"],[class*="scrollCue"],
+    [class*="letterbox"],[class*="scrollCue"],[class*="logoOpening"],
     nav,.z-50,.z-\\[55\\],.z-\\[100\\],
     nextjs-portal,[data-nextjs-toast],[data-next-badge-root],[id*="next-logo"] {
       opacity: 0 !important; visibility: hidden !important; display: none !important;
     }`,
 });
-await page.waitForTimeout(200);
+await page.waitForTimeout(100);
 
 // Clip to the opaque curtain region only (below the valance line). The result is
 // a fully opaque velvet rectangle positioned, in CSS, exactly where .plane sits

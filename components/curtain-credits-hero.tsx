@@ -11,12 +11,48 @@ import { PRIMARY_CREDITS, SECONDARY_CREDITS } from "@/lib/hero-nav";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
-// Billowing velvet — vertex shader gives the whole drape a slow in/out sway
-// (low-frequency folds over u + time), the rails pinned so it breathes rather
-// than flaps. Ported from the other Scope Screenings build; the exit-calm was
-// removed so the framed velvet keeps billowing at rest.
+// Theatre-velvet drape. The folds are computed from the cloth's own coordinates
+// (u across the width from the seam, v down the drop), so the SAME fold function
+// drives the vertex relief, the per-pixel normals and the lighting. They are
+// attached to the fabric: they lean as the hem trails the heading, gather as the
+// curtain is drawn, and catch the light the way pile does. Everything is sized
+// in cloth space (fold units), so it holds up at any resolution.
+//
+// Per plane (u = 0 at the seam where the two halves meet, 1 at the outer edge):
+//   uProgress  0 closed .. 1 drawn open        uGather  how far the cloth bunches up
+//   uLag       hem displacement vs the heading  uAmbient gain of the idle breathing
+//   uFolds     folds across one half-curtain    uSide    -1 left, +1 right
+const clothCommon = `
+float hash11(float n) { return fract(sin(n * 127.1) * 43758.5453123); }
+float vnoise(float x) {
+  float i = floor(x);
+  float f = fract(x);
+  f = f * f * (3.0 - 2.0 * f);
+  return mix(hash11(i), hash11(i + 1.0), f);
+}
+
+// One fold in cross-section: a wide rounded crest (1.0) and a narrow tucked valley (0.0).
+float foldCurve(float q) {
+  float s = 0.5 - 0.5 * cos(q * 6.2831853);
+  return 1.0 - pow(s, 1.7);
+}
+
+// Cloth height at material coordinate m (fold units from the seam), v down the
+// drop (0 heading .. 1 hem), t seconds, amb the idle-motion gain.
+float foldHeight(float m, float v, float t, float amb) {
+  float q = m;
+  q += 0.20 * sin(m * 0.83 + 1.7 + v * 1.1);               // folds wander, never ruler-straight
+  q += v * 0.30 * sin(m * 0.51 + 4.1);                      // and flare toward the hem
+  q += amb * 0.05 * sin(t * 0.55 + v * 2.4 + m * 0.9);      // slow breathing travels down the cloth
+  float depth = 0.70 + 0.30 * vnoise(m * 0.7 + 3.0);        // some folds sit deeper than others
+  float h = mix(0.5, foldCurve(q), depth);
+  float q2 = m * 2.6 + 0.4 * sin(m * 1.7 + v * 2.0) + amb * 0.04 * sin(t * 0.8 + v * 3.1 + m * 1.9);
+  return h * 0.86 + foldCurve(q2) * 0.14;                   // fine secondary wrinkles
+}
+`;
+
 const vertexShader = `
-precision mediump float;
+precision highp float;
 attribute vec3 aVertexPosition;
 attribute vec2 aTextureCoord;
 uniform mat4 uMVMatrix;
@@ -24,91 +60,125 @@ uniform mat4 uPMatrix;
 uniform float uProgress;
 uniform float uTime;
 uniform float uSide;
-varying vec3 vVertexPosition;
-varying vec2 vTextureCoord;
-varying float vRipple;
-
+uniform float uLag;
+uniform float uGather;
+uniform float uAmbient;
+uniform float uFolds;
+varying vec2 vUv;
+varying vec2 vNdc;
+${clothCommon}
 void main() {
   vec3 pos = aVertexPosition;
   float u = uSide < 0.0 ? (1.0 - aTextureCoord.x) : aTextureCoord.x;
-  float v = aTextureCoord.y;
+  float v = 1.0 - aTextureCoord.y;
 
-  // Pin top & bottom edges so the billow swells in/out, never fans up.
-  float vEnv = smoothstep(0.0, 0.2, v) * smoothstep(1.0, 0.8, v);
+  // Drawing the curtain bunches the cloth toward its outer edge rather than
+  // sliding a flat sheet: the same fabric in less width, so folds deepen and
+  // crowd together as it opens.
+  float g = 1.0 - uGather * uProgress;
+  pos.x = uSide + (pos.x - uSide) * g;
 
-  // Pin BOTH the inner seam (u -> 0, the visible parting/lit edge) AND the outer
-  // margin (u -> 1, against the frame) so the billow only breathes in the BODY
-  // of the drape. Previously only the outer edge was pinned and the inner seam
-  // swung free: that swept the visible leading edge through z, and perspective
-  // peeled it into an unnatural convex bulge right at the lit fold (and let the
-  // closed seam bow past its partner). Pinning the seam — as the proven
-  // persistent-curtains build does — keeps the lit edge flat and lets only the
-  // interior swell in and out, which reads as fabric rather than a dome.
-  float uEnv = smoothstep(0.0, 0.18, u) * smoothstep(1.0, 0.7, u);
+  // Heading is on the track; the hem trails it (uLag) and drifts on a faint
+  // draft. The closed seam stays pinned so the halves never gap, and is freed
+  // as the curtains part.
+  float seamFree = smoothstep(0.08, 0.45, uProgress);
+  float seamPin = mix(smoothstep(0.0, 0.3, u), 1.0, seamFree);
+  float breeze = sin(v * 2.1 - uTime * 0.7 + u * 1.3) * 0.6 + sin(v * 3.7 - uTime * 1.1 + 1.7) * 0.4;
+  pos.x += (uLag * v * v + breeze * 0.006 * pow(v, 1.5) * uAmbient) * seamPin;
 
-  // Low-frequency sway of the whole folded sheet (a soft draft, not a ripple).
-  float fold1 = sin(u * 3.0 - uTime * 1.0);
-  float fold2 = sin(u * 5.5 - uTime * 1.6);
-  float billow = fold1 * 0.6 + fold2 * 0.4;
+  // Real relief, so perspective gives the folds parallax. Flat at the seam so
+  // the lit edge stays a clean line, and pinned a little under the valance.
+  float m = u * uFolds + (uSide > 0.0 ? 3.7 : 0.0);
+  float h = foldHeight(m, v, uTime, uAmbient);
+  float amp = 0.026 * (1.0 + 2.2 * uGather * uProgress);
+  pos.z = (h - 0.55) * amp * smoothstep(0.0, 0.07, u) * smoothstep(0.0, 0.1, v);
 
-  float ripple = billow * 0.045 * vEnv * uEnv; // gentle depth, matching the reference drape
-  pos.z += ripple;
-
-  vTextureCoord = aTextureCoord;
-  vVertexPosition = pos;
-  vRipple = ripple;
-
-  gl_Position = uPMatrix * uMVMatrix * vec4(pos, 1.0);
+  vUv = vec2(u, v);
+  vec4 clip = uPMatrix * uMVMatrix * vec4(pos, 1.0);
+  vNdc = clip.xy / clip.w;
+  gl_Position = clip;
 }
 `;
 
 const fragmentShader = `
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
 precision mediump float;
-varying vec3 vVertexPosition;
-varying vec2 vTextureCoord;
-varying float vRipple;
+#endif
+varying vec2 vUv;
+varying vec2 vNdc;
 uniform sampler2D velvetTexture;
-uniform float uSide;
 uniform float uProgress;
-
+uniform float uTime;
+uniform float uSide;
+uniform float uGather;
+uniform float uAmbient;
+uniform float uFolds;
+${clothCommon}
 void main() {
-  vec2 uv = vTextureCoord;
-  float u = uSide < 0.0 ? (1.0 - uv.x) : uv.x;
+  float u = vUv.x;
+  float v = vUv.y;
+  float g = 1.0 - uGather * uProgress;
+  float m = u * uFolds + (uSide > 0.0 ? 3.7 : 0.0);
 
-  vec4 base = texture2D(velvetTexture, uv);
+  // Fold height and its slope across the cloth (central difference, in fold
+  // units), turned into a surface normal. Bunching steepens the folds by 1/g.
+  const float E = 0.02;
+  float h = foldHeight(m, v, uTime, uAmbient);
+  float dhdm = (foldHeight(m + E, v, uTime, uAmbient) - foldHeight(m - E, v, uTime, uAmbient)) / (2.0 * E);
+  vec3 n = normalize(vec3(-uSide * dhdm * 0.26 / g, 0.0, 1.0));
 
-  float fold = sin(u * 38.0) * 0.5 + 0.5;
-  fold = pow(fold, 2.4);
-  base.rgb *= mix(0.5, 1.1, fold);
+  // Key light from above and the middle of the stage, so every fold has a lit
+  // flank facing the centre and a shaded one facing the wings.
+  vec3 L = normalize(vec3(-uSide * 0.62, 0.38, 0.70));
+  float ndl = dot(n, L);
+  float lit = pow(clamp(ndl * 0.5 + 0.5, 0.0, 1.0), 1.7);
+  float ao = mix(0.28, 1.0, smoothstep(0.05, 0.62, h));      // valleys tuck into shadow
 
-  float rippleLight = clamp(1.0 + vRipple * 1.9, 0.35, 1.6);
-  base.rgb *= rippleLight;
+  // The velvet tile is stretched over the whole plane by texture coordinate, so
+  // it is pinned to the cloth (it gathers and sways with the fabric). The lift
+  // offsets the folds' shading, which would otherwise read darker overall.
+  vec2 tuv = vec2(uSide < 0.0 ? 1.0 - u : u, 1.0 - v);
+  vec3 albedo = texture2D(velvetTexture, tuv).rgb * 1.2;
 
-  // Inner-edge shading — a lit vertical gather at the leading edge: a bright
-  // crest catching the stage spot with a shadow valley tucked just behind it,
-  // so the edge reads as a rounded velvet fold against the dark screen. Closed,
-  // the center is a soft overlap shadow (the two drapes meeting); as they PART
-  // it rolls into the lit fold. That reveal ramps with uProgress (as in the
-  // first iteration) but caps at EDGE_MAX, so the fully-open look settles at the
-  // dialed-back reference brightness instead of the old too-hot full crest.
-  float EDGE_MAX = 0.7;                              // open-edge brightness (1.0 was too hot)
+  vec3 col = albedo * (0.16 + 1.1 * lit) * ao;
+
+  // Velvet: fibres catch grazing light. A saturated sheen on lit flanks plus a
+  // broad glow on the crests: deep red, never white.
+  float graze = 1.0 - n.z;
+  float sheen = smoothstep(0.05, 0.45, graze) * smoothstep(0.35, 0.95, ndl);
+  float crestGlow = smoothstep(0.55, 1.0, h) * lit;
+  col += vec3(0.62, 0.11, 0.075) * sheen * 0.85;
+  col += vec3(0.30, 0.05, 0.035) * crestGlow;
+
+  // Stage lighting: a pool on the middle of the house, falling off into the
+  // wings, with the heading shadowed by the valance and the hem by the floor.
+  float pool = 1.0 - 0.60 * smoothstep(0.25, 1.15, length(vec2(vNdc.x * 0.95, (vNdc.y - 0.15) * 0.8)));
+  col *= pool;
+  col *= mix(0.55, 1.0, smoothstep(0.0, 0.14, v));
+  col *= mix(0.60, 1.0, smoothstep(1.0, 0.82, v));
+
+  // Leading edge, measured in SCREEN width (u * g) so it keeps its thickness as
+  // the cloth bunches. Closed, the centre is a soft overlap shadow where the two
+  // drapes meet; as they part it rolls into a lit fold: bright crest, a shadow
+  // valley tucked behind it, and a thin terminator at the very edge. The reveal
+  // ramps with uProgress but caps at EDGE_MAX, the dialed-back reference level.
+  float uS = u * g;
+  float EDGE_MAX = 0.7;
   float edgeReveal = EDGE_MAX * smoothstep(0.05, 0.35, uProgress);
+  float closedShade = mix(0.32, 1.0, smoothstep(0.0, 0.16, uS));
+  float lip = smoothstep(0.014, 0.0, uS);
+  float edgeCrest = smoothstep(0.05, 0.014, uS) * smoothstep(0.0, 0.014, uS);
+  float valley = smoothstep(0.0, 0.07, uS) * smoothstep(0.22, 0.09, uS);
+  float openShade = mix(1.0, 0.34, valley) * mix(1.0, 0.55, lip);
+  col *= mix(closedShade, openShade, edgeReveal);
+  col += vec3(0.30, 0.10, 0.045) * edgeCrest * edgeReveal;
 
-  float seamShadow = smoothstep(0.0, 0.16, u);     // soft drape-overlap base shadow
-  float closedShade = mix(0.32, 1.0, seamShadow);
+  // Dither: the dark gradients would otherwise band in 8-bit.
+  col += (fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453) - 0.5) / 255.0;
 
-  float lip = smoothstep(0.014, 0.0, u);           // thin shadow terminator at the very edge
-  float crest = smoothstep(0.05, 0.014, u) * smoothstep(0.0, 0.014, u); // lit roll just inboard of the lip
-  float valley = smoothstep(0.0, 0.07, u) * smoothstep(0.22, 0.09, u);
-  float openShade = mix(1.0, 0.34, valley) * mix(1.0, 0.55, lip);       // valley + edge shadow
-
-  base.rgb *= mix(closedShade, openShade, edgeReveal);
-  base.rgb += vec3(0.30, 0.10, 0.045) * crest * edgeReveal; // warm crest catch, dialed to the reference
-
-  base.rgb *= mix(0.7, 1.0, smoothstep(0.0, 0.18, uv.y));
-  base.rgb *= mix(0.88, 1.0, smoothstep(0.95, 0.6, uv.y));
-
-  gl_FragColor = vec4(base.rgb, 1.0);
+  gl_FragColor = vec4(col, 1.0);
 }
 `;
 
@@ -117,6 +187,8 @@ interface PlaneLike {
     progress: { value: number };
     time: { value: number };
     side: { value: number };
+    lag: { value: number };
+    ambient: { value: number };
   };
   onRender: (cb: () => void) => PlaneLike;
   setRelativeTranslation: (translation: unknown) => void;
@@ -125,10 +197,21 @@ interface PlaneLike {
 interface CurtainsLike {
   dispose: () => void;
   resize: () => void;
+  enableDrawing: () => void;
+  disableDrawing: () => void;
   renderer?: {
-    gl?: unknown;
+    gl?: WebGLRenderingContext;
   };
 }
+
+// How much the cloth bunches up as the curtains are drawn (fraction of its width
+// lost at full open), and the cloth's idle sway: a damped spring that lets the
+// hem trail the heading and swing once or twice when the scroll stops.
+const GATHER = 0.4;
+const SWAY_HZ = 0.85;
+const SWAY_DAMPING = 0.3;
+const FOLDS_PER_HALF = 6.5;
+const HEM_LAG = 0.6; // hem displacement per unit of spring lag (1 = the whole slide)
 
 // The 2025 sizzle reel "SS × AMC 2" (landscape, 0:55) from the Wix media library —
 // plays muted/looped on the cinema screen the curtains reveal. 1080p is only ~23MB
@@ -157,6 +240,9 @@ export function CurtainCreditsHero({
   const frameScrimRef = useRef<HTMLDivElement>(null);
   const creditsRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef({ value: 0 });
+  // Cloth sim state: idle clock plus the hem, a spring chasing the heading's
+  // progress (in progress units) so it trails and swings instead of tracking 1:1.
+  const simRef = useRef({ t: 0, last: 0, hem: 0, hemV: 0 });
   const openFactorRef = useRef(0.86); // how far the velvet parts; overwritten in useGSAP (0.86 desktop / 0.92 mobile)
   const curtainsRef = useRef<CurtainsLike | null>(null);
 
@@ -200,20 +286,21 @@ export function CurtainCreditsHero({
     });
   }, [textHidden]);
 
-  // The original procedural velvet remains the single visual source for the
-  // valance, first-paint panels, and animated WebGL curtains.
+  // The procedural velvet is the single visual source for the valance and the
+  // animated WebGL curtains. Folds and lighting come from the shader.
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => setVelvetSrc(getVelvetDataUrl()));
     return () => window.cancelAnimationFrame(frame);
   }, [theme]);
 
-  // WebGL velvet: two curtains.js planes textured with the procedural velvet.
-  // They render into the z-22 canvas and slide apart in document space as the
-  // scroll-driven progress goes 0 → 1.
+  // WebGL velvet: two curtains.js planes textured with the procedural velvet. They
+  // render into the z-22 canvas; as the scroll-driven progress goes 0 → 1 they
+  // draw apart and the cloth bunches up toward the wings.
   useEffect(() => {
     if (!velvetSrc) return;
     let cancelled = false;
     let revealFrame: number | null = null;
+    let visibility: IntersectionObserver | null = null;
 
     (async () => {
       try {
@@ -235,7 +322,7 @@ export function CurtainCreditsHero({
 
         const curtains = new Curtains({
           container: canvasContainerRef.current,
-          pixelRatio: Math.min(1.5, window.devicePixelRatio),
+          pixelRatio: Math.min(2, window.devicePixelRatio),
           antialias: true,
           alpha: true,
           // Reveal the screen if WebGL is unavailable instead of leaving the
@@ -255,45 +342,87 @@ export function CurtainCreditsHero({
           return;
         }
 
+        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        const sim = simRef.current;
+        sim.t = 0;
+        sim.last = 0;
+        sim.hem = progressRef.current.value;
+        sim.hemV = 0;
+
         const commonParams = {
-          widthSegments: 24,
-          heightSegments: 24,
+          widthSegments: 120,
+          heightSegments: 40,
           vertexShader,
           fragmentShader,
         };
+        const makeUniforms = (side: number) => ({
+          progress: { name: "uProgress", type: "1f", value: 0 },
+          time: { name: "uTime", type: "1f", value: 0 },
+          side: { name: "uSide", type: "1f", value: side },
+          lag: { name: "uLag", type: "1f", value: 0 },
+          gather: { name: "uGather", type: "1f", value: GATHER },
+          ambient: { name: "uAmbient", type: "1f", value: 0 },
+          folds: { name: "uFolds", type: "1f", value: FOLDS_PER_HALF },
+        });
 
         const leftPlane = new Plane(curtains, leftPlaneEl.current, {
           ...commonParams,
-          uniforms: {
-            progress: { name: "uProgress", type: "1f", value: 0 },
-            time: { name: "uTime", type: "1f", value: 0 },
-            side: { name: "uSide", type: "1f", value: -1 },
-          },
+          uniforms: makeUniforms(-1),
         });
-
         const rightPlane = new Plane(curtains, rightPlaneEl.current, {
           ...commonParams,
-          uniforms: {
-            progress: { name: "uProgress", type: "1f", value: 0 },
-            time: { name: "uTime", type: "1f", value: 0 },
-            side: { name: "uSide", type: "1f", value: 1 },
-          },
+          uniforms: makeUniforms(1),
         });
+
+        // Advance the cloth once per frame, on the real clock (a fixed per-frame
+        // step runs the sway at double speed on 120Hz displays). The hem is an
+        // under-damped spring after the heading: it trails while the curtain is
+        // drawn and swings once or twice when the scroll stops.
+        const omega = 2 * Math.PI * SWAY_HZ;
+        const stepSim = () => {
+          const now = performance.now();
+          const dt = sim.last ? Math.min((now - sim.last) / 1000, 1 / 20) : 1 / 60;
+          sim.last = now;
+          sim.t += dt;
+          const p = progressRef.current.value;
+          // A scroll jump (restored position, refresh) shouldn't whip the hem.
+          if (Math.abs(sim.hem - p) > 0.6) {
+            sim.hem = p;
+            sim.hemV = 0;
+          }
+          const steps = Math.max(1, Math.ceil(dt * 120));
+          const h = dt / steps;
+          for (let i = 0; i < steps; i++) {
+            const acc = omega * omega * (p - sim.hem) - 2 * SWAY_DAMPING * omega * sim.hemV;
+            sim.hemV += acc * h;
+            sim.hem += sim.hemV * h;
+          }
+        };
 
         const tick = (plane: PlaneLike, side: number, el: HTMLDivElement | null) => {
           const p = progressRef.current.value;
-          plane.uniforms.progress.value = p;
-          plane.uniforms.time.value += 0.016;
-          // Slide the plane off its own side to the framed resting position. y
-          // locked to 0 so it parts dead-flat horizontally. `|| ` (not `??`) so a
-          // 0-width measurement during a racy mount falls back too, instead of
-          // collapsing the translation and misaligning the halves.
+          // `|| ` (not `??`) so a 0-size measurement during a racy mount falls
+          // back too, instead of collapsing the translation and misaligning the
+          // halves.
           const width = el?.offsetWidth || window.innerWidth / 2;
-          plane.setRelativeTranslation(
-            new Vec3(side * p * width * openFactorRef.current, 0, 0)
-          );
+          // The seam travels openFactor of the half-width; the bunching eats
+          // GATHER of that on its own, so the slide only covers the difference.
+          const slide = openFactorRef.current - GATHER;
+          const lag = Math.max(-0.35, Math.min(0.35, sim.hem - p));
+
+          plane.uniforms.progress.value = p;
+          plane.uniforms.time.value = sim.t;
+          // Hem offset in plane-local units (a plane spans 2), signed toward +x.
+          plane.uniforms.lag.value = side * lag * slide * 2 * HEM_LAG;
+          plane.uniforms.ambient.value = reducedMotion ? 0 : Math.min(1, sim.t / 3);
+          // y locked to 0 so it parts dead-flat horizontally.
+          plane.setRelativeTranslation(new Vec3(side * p * width * slide, 0, 0));
         };
-        leftPlane.onRender(() => tick(leftPlane, -1, leftPlaneEl.current));
+        leftPlane.onRender(() => {
+          stepSim();
+          tick(leftPlane, -1, leftPlaneEl.current);
+        });
         let firstFrame = true;
         rightPlane.onRender(() => {
           tick(rightPlane, 1, rightPlaneEl.current);
@@ -307,6 +436,16 @@ export function CurtainCreditsHero({
           }
         });
 
+        // The hero is only worth rendering while it's on screen; once the page
+        // has scrolled past it, stop drawing so the rest of the site stays smooth.
+        if (root.current && "IntersectionObserver" in window) {
+          visibility = new IntersectionObserver(([entry]) => {
+            if (entry.isIntersecting) curtains.enableDrawing();
+            else curtains.disableDrawing();
+          });
+          visibility.observe(root.current);
+        }
+
         // Re-measure after the planes exist alongside the pinned hero so the two
         // halves seat exactly against center on refresh and restored scroll.
         curtains.resize();
@@ -319,6 +458,7 @@ export function CurtainCreditsHero({
     return () => {
       cancelled = true;
       if (revealFrame !== null) window.cancelAnimationFrame(revealFrame);
+      visibility?.disconnect();
       curtainsRef.current?.dispose();
       curtainsRef.current = null;
     };
@@ -343,7 +483,7 @@ export function CurtainCreditsHero({
             reduced: boolean;
           };
           // Framing open: curtains rest as side drapes that frame a large
-          // screen (closer to the reference) while keeping visible billow.
+          // screen (closer to the reference), the cloth gathered into folds.
           openFactorRef.current = mobile ? 0.84 : 0.76;
 
           // Reduced motion: skip the scroll choreography, show the framed hero
